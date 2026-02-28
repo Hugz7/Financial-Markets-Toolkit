@@ -89,11 +89,15 @@ def render():
     # ── Initialize leg state ──
     if "legs" not in st.session_state:
         st.session_state.legs = [
-            dict(instrument="Call", direction="Long", K=100.0, barrier=0.0, T=1.0, premium=2.0, qty=1)
+            dict(instrument="Call", direction="Long", K=100.0, barrier=0.0, T=1.0, premium=2.0, qty=1.0)
         ] + [
-            dict(instrument="None", direction="Long", K=100.0, barrier=0.0, T=1.0, premium=0.0, qty=0)
+            dict(instrument="None", direction="Long", K=100.0, barrier=0.0, T=1.0, premium=0.0, qty=0.0)
             for _ in range(19)
         ]
+    else:
+        # Coerce any legacy integer qty values to float (required by number_input min_value=0.0)
+        for leg in st.session_state.legs:
+            leg["qty"] = float(leg["qty"])
     if "last_preset" not in st.session_state:
         st.session_state.last_preset = "── Select a preset ──"
 
@@ -110,8 +114,11 @@ def render():
             st.session_state[f"sp_barr_{i}"] = float(leg_i["barrier"])
         if f"sp_prem_{i}" not in st.session_state:
             st.session_state[f"sp_prem_{i}"] = float(leg_i["premium"])
+        # Always ensure qty is float in widget state (handles legacy int sessions)
         if f"sp_qty_{i}" not in st.session_state:
             st.session_state[f"sp_qty_{i}"] = float(leg_i["qty"])
+        elif not isinstance(st.session_state[f"sp_qty_{i}"], float):
+            st.session_state[f"sp_qty_{i}"] = float(st.session_state[f"sp_qty_{i}"])
 
     # Apply preset only when it changes
     if preset != "── Select a preset ──" and preset != st.session_state.last_preset:
@@ -126,14 +133,14 @@ def render():
             else:
                 st.session_state.legs[i] = dict(
                     instrument="None", direction="Long", K=100.0, barrier=0.0,
-                    T=1.0, premium=0.0, qty=0)
+                    T=1.0, premium=0.0, qty=0.0)
             # Force widget state to match so the inputs re-render with preset values
             st.session_state[f"sp_inst_{i}"] = st.session_state.legs[i]["instrument"]
             st.session_state[f"sp_dir_{i}"] = st.session_state.legs[i]["direction"]
             st.session_state[f"sp_K_{i}"] = st.session_state.legs[i]["K"]
             st.session_state[f"sp_barr_{i}"] = st.session_state.legs[i]["barrier"]
             st.session_state[f"sp_prem_{i}"] = st.session_state.legs[i]["premium"]
-            st.session_state[f"sp_qty_{i}"] = st.session_state.legs[i]["qty"]
+            st.session_state[f"sp_qty_{i}"] = float(st.session_state.legs[i]["qty"])
 
     # ── Leg Configuration Table ──
     st.markdown("#### Instrument Legs (20 legs)")

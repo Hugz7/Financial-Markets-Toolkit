@@ -82,6 +82,210 @@ def _spread_badge(label: str, value_bps: float) -> str:
     return _glass_card(label, f"{sign}{value_bps:.1f} bps", color)
 
 
+# ── Curve Interpretation ──────────────────────────────────────────────────────
+
+def _render_curve_interpretation(spreads: dict) -> None:
+    """
+    Automatic plain-language interpretation of the bootstrapped yield curve.
+    Covers slope, inversion signals, butterfly shape, and carry regime.
+    """
+    s2s10  = spreads["2s10s"]
+    s3m10  = spreads["3M10Y"]
+    s10s30 = spreads["10s30s"]
+    bfly   = spreads["butterfly_2_5_10"]
+    z3m    = spreads["3M"]
+    z10    = spreads["10Y"]
+    z30    = spreads["30Y"]
+
+    # ── Slope classification ─────────────────────────────────────────────────
+    if s2s10 > 100:
+        slope_label = "STEEP NORMAL"
+        slope_color = ACCENT_GREEN
+        slope_desc  = (
+            f"2s10s spread of **{s2s10:+.1f} bps** — the long end is significantly above "
+            "the short end. Markets are pricing in sustained growth, higher future inflation, "
+            "or a rising term premium. Typical of early expansion phases or post-tightening recoveries."
+        )
+    elif s2s10 > 25:
+        slope_label = "NORMAL"
+        slope_color = ACCENT_GREEN
+        slope_desc  = (
+            f"2s10s spread of **{s2s10:+.1f} bps** — classic upward-sloping curve. "
+            "Term premium is positive: investors demand more compensation for longer maturities. "
+            "Consistent with a neutral-to-accommodative monetary policy backdrop."
+        )
+    elif s2s10 > -25:
+        slope_label = "FLAT"
+        slope_color = ACCENT_GOLD
+        slope_desc  = (
+            f"2s10s spread of **{s2s10:+.1f} bps** — near-zero slope signals uncertainty. "
+            "The market is undecided between growth (steepening) and tightening (inversion). "
+            "Flat curves often precede inflection points in the rate cycle."
+        )
+    elif s2s10 > -75:
+        slope_label = "MILDLY INVERTED"
+        slope_color = ACCENT_RED
+        slope_desc  = (
+            f"2s10s spread of **{s2s10:+.1f} bps** — mild inversion. "
+            "Short rates exceed 10Y rates, historically signalling late-cycle Fed tightening "
+            "or decelerating growth expectations. Has preceded 7 of the last 8 US recessions."
+        )
+    else:
+        slope_label = "DEEPLY INVERTED"
+        slope_color = ACCENT_RED
+        slope_desc  = (
+            f"2s10s spread of **{s2s10:+.1f} bps** — deep inversion. "
+            "A strong recessionary signal: the Fed is keeping short rates elevated while "
+            "long-end rates anticipate future cuts. Duration trades (long bonds) have "
+            "historically outperformed in this regime."
+        )
+
+    # ── 3M10Y signal (Fed's preferred recession predictor) ───────────────────
+    if s3m10 < -50:
+        recession_label = "RECESSIONARY"
+        recession_color = ACCENT_RED
+        recession_desc  = (
+            f"3M10Y = **{s3m10:+.1f} bps** — deeply negative. "
+            "This is the Fed's preferred recession predictor (Estrella & Mishkin, 1996). "
+            "A sustained inversion > 3 months preceded every US recession since 1968 "
+            "with an average 12–18 month lead time."
+        )
+    elif s3m10 < 0:
+        recession_label = "MILDLY INVERTED"
+        recession_color = ACCENT_GOLD
+        recession_desc  = (
+            f"3M10Y = **{s3m10:+.1f} bps** — negative but not extreme. "
+            "Short-end rates above long-end: a watch signal. Duration of inversion matters more "
+            "than depth for recession probability."
+        )
+    else:
+        recession_label = "POSITIVE"
+        recession_color = ACCENT_GREEN
+        recession_desc  = (
+            f"3M10Y = **{s3m10:+.1f} bps** — positive. "
+            "No imminent recession signal from this measure. "
+            "The term structure is paying a premium for holding longer maturities."
+        )
+
+    # ── Long end (10s30s) ────────────────────────────────────────────────────
+    if s10s30 > 30:
+        long_end_desc = (
+            f"10s30s = **{s10s30:+.1f} bps** — steep long end. "
+            "Term premium at the ultra-long end is elevated: fiscal deficit concerns, "
+            "inflation risk, or low demand from pension funds / foreign buyers."
+        )
+    elif s10s30 > -10:
+        long_end_desc = (
+            f"10s30s = **{s10s30:+.1f} bps** — flat long end. "
+            "Typical of mature tightening cycles or strong demand for long-duration assets "
+            "(insurance/pension liability matching)."
+        )
+    else:
+        long_end_desc = (
+            f"10s30s = **{s10s30:+.1f} bps** — inverted long end. "
+            "Ultra-long rates below 10Y: strong structural demand for 30Y duration "
+            "(LDI, foreign reserve managers), or pricing in long-run rate compression."
+        )
+
+    # ── Butterfly shape ───────────────────────────────────────────────────────
+    if bfly > 20:
+        bfly_desc = (
+            f"Butterfly (2-5-10) = **{bfly:+.1f} bps** — positive (humped). "
+            "The 5Y is cheap vs wings: the belly of the curve is concave. "
+            "Often driven by supply pressure at 5Y or flight-to-quality at 2Y/10Y."
+        )
+    elif bfly < -20:
+        bfly_desc = (
+            f"Butterfly (2-5-10) = **{bfly:+.1f} bps** — negative (concave). "
+            "The 5Y is rich vs wings: the belly outperforms. "
+            "Common in easing cycles where the 5Y anchors rate-cut expectations."
+        )
+    else:
+        bfly_desc = (
+            f"Butterfly (2-5-10) = **{bfly:+.1f} bps** — near zero. "
+            "Balanced curvature: the curve is relatively linear across the belly."
+        )
+
+    # ── Carry & roll-down comment ─────────────────────────────────────────────
+    if s2s10 > 0:
+        carry_desc = (
+            "**Positive carry regime** — owning duration earns carry. "
+            "A bond held at 10Y will roll down the curve toward the steeper short end, "
+            "generating mark-to-market gains if rates stay unchanged (roll-down effect)."
+        )
+    else:
+        carry_desc = (
+            "**Negative carry regime** — owning duration costs carry. "
+            "Investors in long bonds must rely on a rally (rate decline) to profit. "
+            "Short-end positions or floating-rate instruments are rewarded in this environment."
+        )
+
+    # ── Render ────────────────────────────────────────────────────────────────
+    st.markdown("#### Curve Interpretation")
+
+    # Main slope badge + description
+    st.markdown(
+        f"<div style='background:rgba(8,18,32,0.72);border:1px solid {slope_color}33;"
+        f"border-left:4px solid {slope_color};border-radius:8px;"
+        f"padding:12px 16px;margin-bottom:8px'>"
+        f"<span style='color:{slope_color};font-size:0.72rem;font-weight:700;"
+        f"letter-spacing:0.1em;text-transform:uppercase'>Curve Shape — {slope_label}</span>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(slope_desc)
+
+    # Three columns: recession signal | long end | carry
+    ic1, ic2, ic3 = st.columns(3)
+
+    with ic1:
+        st.markdown(
+            f"<div style='background:rgba(8,18,32,0.60);border-left:3px solid {recession_color};"
+            f"border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:6px'>"
+            f"<span style='color:{recession_color};font-size:0.68rem;font-weight:700;"
+            f"letter-spacing:0.08em;text-transform:uppercase'>3M10Y — {recession_label}</span>"
+            f"</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(f"<span style='font-size:0.82rem;color:#9BAEC8'>{recession_desc}</span>",
+                    unsafe_allow_html=True)
+
+    with ic2:
+        st.markdown(
+            f"<div style='background:rgba(8,18,32,0.60);border-left:3px solid {ACCENT_BLUE};"
+            f"border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:6px'>"
+            f"<span style='color:{ACCENT_BLUE};font-size:0.68rem;font-weight:700;"
+            f"letter-spacing:0.08em;text-transform:uppercase'>Long End (10s30s)</span>"
+            f"</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(f"<span style='font-size:0.82rem;color:#9BAEC8'>{long_end_desc}</span>",
+                    unsafe_allow_html=True)
+
+    with ic3:
+        st.markdown(
+            f"<div style='background:rgba(8,18,32,0.60);border-left:3px solid {ACCENT_GOLD};"
+            f"border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:6px'>"
+            f"<span style='color:{ACCENT_GOLD};font-size:0.68rem;font-weight:700;"
+            f"letter-spacing:0.08em;text-transform:uppercase'>Carry & Roll-Down</span>"
+            f"</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(f"<span style='font-size:0.82rem;color:#9BAEC8'>{carry_desc}</span>",
+                    unsafe_allow_html=True)
+
+    # Butterfly in its own row, smaller
+    st.markdown(
+        f"<div style='background:rgba(8,18,32,0.50);border:1px solid #1A2E45;"
+        f"border-radius:6px;padding:8px 14px;margin-top:6px'>"
+        f"<span style='color:#5A6A82;font-size:0.68rem;font-weight:700;"
+        f"letter-spacing:0.08em;text-transform:uppercase'>Butterfly </span>"
+        f"<span style='font-size:0.82rem;color:#9BAEC8'>{bfly_desc}</span>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+
+
 # ── Main render ────────────────────────────────────────────────────────────────
 
 def render():
@@ -219,6 +423,9 @@ def render():
         ms4.metric("5s30s",            f"{spreads['5s30s']:+.1f} bps")
         ms5.metric("Butterfly 2-5-10", f"{spreads['butterfly_2_5_10']:+.1f} bps",
                    help="2Y + 10Y - 2×5Y. Positive = humped curve.")
+
+        # ── Curve Interpretation ───────────────────────────────────────────
+        _render_curve_interpretation(spreads)
 
         st.markdown("---")
 
