@@ -111,7 +111,7 @@ def render():
         if f"sp_prem_{i}" not in st.session_state:
             st.session_state[f"sp_prem_{i}"] = float(leg_i["premium"])
         if f"sp_qty_{i}" not in st.session_state:
-            st.session_state[f"sp_qty_{i}"] = int(leg_i["qty"])
+            st.session_state[f"sp_qty_{i}"] = float(leg_i["qty"])
 
     # Apply preset only when it changes
     if preset != "── Select a preset ──" and preset != st.session_state.last_preset:
@@ -122,7 +122,7 @@ def render():
                 inst, dirn, K, barr, T, prem, qty = preset_data[i]
                 st.session_state.legs[i] = dict(
                     instrument=inst, direction=dirn, K=float(K), barrier=float(barr),
-                    T=float(T), premium=float(prem), qty=int(qty))
+                    T=float(T), premium=float(prem), qty=float(qty))
             else:
                 st.session_state.legs[i] = dict(
                     instrument="None", direction="Long", K=100.0, barrier=0.0,
@@ -183,7 +183,7 @@ def render():
             if i == 0:
                 st.caption("Qty")
             leg["qty"] = st.number_input(
-                f"qty_{i}", step=1, min_value=0,
+                f"qty_{i}", step=0.5, min_value=0.0, format="%.2f",
                 key=f"sp_qty_{i}", label_visibility="collapsed")
 
     # ── Compute Payoffs ──

@@ -20,32 +20,68 @@ def render():
 
     with col1:
         st.markdown("#### Swap Parameters")
-        swap_type = st.selectbox("Swap Type", SWAP_TYPES, key="sw_type")
+        swap_type = st.selectbox("Swap Type", SWAP_TYPES, key="sw_type",
+                                  help="IRS Pay Fixed: you pay fixed, receive float. "
+                                       "Basis Swap: float-for-float (e.g. SOFR vs EURIBOR). "
+                                       "XCCY: cross-currency notional exchange at start and end.")
         notional = st.number_input("Notional (N)", value=1_000_000, step=100_000,
-                                   format="%d", key="sw_notional")
+                                   format="%d", key="sw_notional",
+                                   help="Principal used to calculate cashflows. "
+                                        "Fixed CF = N × r_fixed × Δt. "
+                                        "Never exchanged in a vanilla IRS.")
         fixed_rate = st.number_input("Fixed Rate", value=0.030, step=0.001,
-                                     format="%.3f", key="sw_fixed")
+                                     format="%.3f", key="sw_fixed",
+                                     help="Annual fixed coupon rate r_K. "
+                                          "Fixed leg CF = N × r_K × α (α = year fraction). "
+                                          "Break-even rate = PV(float) / (N × Σ df_i × α).")
         float_rate = st.number_input("Floating Rate (SOFR/LIBOR)", value=0.025,
-                                     step=0.001, format="%.3f", key="sw_float")
+                                     step=0.001, format="%.3f", key="sw_float",
+                                     help="Current floating reference rate (SOFR, EURIBOR…). "
+                                          "Float CF = N × (r_float + spread) × α. "
+                                          "Resets each period to the prevailing market rate.")
         float_spread = st.number_input("Floating Spread", value=0.001,
-                                       step=0.001, format="%.3f", key="sw_spread")
-        tenor = st.number_input("Tenor (years)", value=5, step=1, key="sw_tenor")
-        freq = st.selectbox("Payment Frequency (/year)", [1, 2, 4, 12], index=1, key="sw_freq")
+                                       step=0.001, format="%.3f", key="sw_spread",
+                                       help="Basis-point add-on to the floating rate. "
+                                            "Compensates for credit or liquidity premium. "
+                                            "Effective float rate = r_float + spread.")
+        tenor = st.number_input("Tenor (years)", value=5, step=1, key="sw_tenor",
+                                help="Total life of the swap in years. "
+                                     "Number of periods = tenor × frequency.")
+        freq = st.selectbox("Payment Frequency (/year)", [1, 2, 4, 12], index=1, key="sw_freq",
+                            help="Coupon payments per year. "
+                                 "Year fraction α = 1/freq. "
+                                 "More frequent payments → higher annuity factor.")
         discount_rate = st.number_input("Discount Rate", value=0.028,
-                                        step=0.001, format="%.3f", key="sw_disc")
-        day_count = st.selectbox("Day Count", DAY_COUNTS, key="sw_dc")
+                                        step=0.001, format="%.3f", key="sw_disc",
+                                        help="OIS / risk-free rate used for discounting. "
+                                             "Discount factor: df(t) = (1 + r)^(−t). "
+                                             "NPV (pay fixed) = PV(float leg) − PV(fixed leg). "
+                                             "DV01 ≈ ΔNPV for +1 bp shift in float rate.")
+        day_count = st.selectbox("Day Count", DAY_COUNTS, key="sw_dc",
+                                 help="Convention for computing year fractions. "
+                                      "30/360: each month = 30 days, year = 360. "
+                                      "ACT/360: actual days / 360 (money market). "
+                                      "ACT/365: actual days / 365 (sterling, AUD).")
         currency = st.text_input("Currency", "USD", key="sw_ccy")
 
     with col2:
         st.markdown("#### XCCY / Basis Add-ons")
         fx_spot = st.number_input("FX Spot Rate", value=1.08, step=0.01,
-                                  format="%.4f", key="sw_fx")
+                                  format="%.4f", key="sw_fx",
+                                  help="Spot FX rate (domestic per foreign). "
+                                       "Used to convert notionals in XCCY swaps. "
+                                       "XCCY: notionals exchanged at start (spot) and end.")
         foreign_notional = st.number_input("Foreign Notional", value=int(notional * fx_spot),
-                                           step=100_000, format="%d", key="sw_fn")
+                                           step=100_000, format="%d", key="sw_fn",
+                                           help="Notional in the foreign currency leg. "
+                                                "Typically: foreign_notional = domestic_notional × FX_spot.")
         foreign_fixed = st.number_input("Foreign Fixed Rate", value=0.025,
-                                        step=0.001, format="%.3f", key="sw_ffixed")
+                                        step=0.001, format="%.3f", key="sw_ffixed",
+                                        help="Fixed rate on the foreign currency leg (XCCY swap).")
         foreign_float = st.number_input("Foreign Floating Rate", value=0.020,
-                                        step=0.001, format="%.3f", key="sw_ffloat")
+                                        step=0.001, format="%.3f", key="sw_ffloat",
+                                        help="Floating reference rate in the foreign currency "
+                                             "(e.g. EURIBOR for EUR leg).")
         ccy_pair = st.text_input("Currency Pair", "USD/EUR", key="sw_ccypair")
 
     st.markdown("---")

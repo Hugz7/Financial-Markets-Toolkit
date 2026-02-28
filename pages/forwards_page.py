@@ -82,34 +82,64 @@ def render():
         S = st.number_input(
             "Spot Price S" if fwd_type != "fx" else "Spot Rate S (dom/for)",
             value=100.0, step=1.0, format="%.4f", key="fwd_S",
+            help=(
+                "Current spot price of the underlying. "
+                "Equity/Commodity: price per share or unit. "
+                "FX: domestic units per 1 foreign unit (e.g. 1.08 USD/EUR)."
+            ),
         )
         r = st.number_input(
             "Risk-Free Rate r" if fwd_type != "fx" else "Domestic Rate r_d",
             value=0.05, step=0.005, format="%.4f", key="fwd_r",
+            help=(
+                "Continuous risk-free rate (or domestic rate for FX). "
+                "Equity: F = S·e^((r−q)·T). "
+                "FX: F = S·e^((r_d−r_f)·T)  [covered interest parity]. "
+                "Commodity: F = S·e^((r+u−c)·T)."
+            ),
         )
 
         if fwd_type == "equity":
             q = st.number_input("Dividend Yield q", value=0.02,
-                                step=0.005, format="%.4f", key="fwd_q")
+                                step=0.005, format="%.4f", key="fwd_q",
+                                help="Continuous dividend yield. "
+                                     "Reduces the cost of carry: b = r − q. "
+                                     "High q → F < S·e^(r·T) (forward at a discount).")
             r_f = 0.0; u = 0.0; c = 0.0
         elif fwd_type == "fx":
             r_f = st.number_input("Foreign Rate r_f", value=0.02,
-                                  step=0.005, format="%.4f", key="fwd_rf")
+                                  step=0.005, format="%.4f", key="fwd_rf",
+                                  help="Foreign risk-free rate (continuous). "
+                                       "Covered Interest Parity: F = S·e^((r_d−r_f)·T). "
+                                       "If r_d > r_f → F > S (domestic currency at premium). "
+                                       "Deviations create arbitrage via forward contracts.")
             q = 0.0; u = 0.0; c = 0.0
         else:  # commodity
             u = st.number_input("Storage Cost u (annual)", value=0.03,
-                                step=0.005, format="%.4f", key="fwd_u")
+                                step=0.005, format="%.4f", key="fwd_u",
+                                help="Continuous annual storage cost rate. "
+                                     "Increases the forward: you must be compensated for "
+                                     "holding the physical commodity. b = r + u − c.")
             c = st.number_input("Convenience Yield c (annual)", value=0.01,
-                                step=0.005, format="%.4f", key="fwd_c")
+                                step=0.005, format="%.4f", key="fwd_c",
+                                help="Convenience yield: benefit of holding physical inventory "
+                                     "(e.g. avoiding production shutdown). "
+                                     "Reduces the forward. Backwardation: c > r + u → F < S.")
             q = 0.0; r_f = 0.0
 
         T = st.number_input("Maturity T (years)", value=1.0,
-                            step=0.25, format="%.2f", key="fwd_T")
+                            step=0.25, format="%.2f", key="fwd_T",
+                            help="Time to delivery / maturity in years. "
+                                 "Forward price grows with T when the cost of carry is positive. "
+                                 "Value of existing forward decays toward (F−K) as T→0.")
 
         K = st.number_input(
             "Delivery Price K (existing forward — 0 = new)",
             value=0.0, step=1.0, format="%.4f", key="fwd_K",
-            help="Set to the forward price at contract inception to value an existing position.",
+            help="Agreed delivery price at contract inception. "
+                 "Value of long forward: V = (F − K)·e^(−r·T). "
+                 "V > 0 if current F > K (you locked in a cheap buy). "
+                 "Set to 0 for a new contract (V = 0 by definition at inception).",
         )
 
     # ── Forward price computation ──────────────────────────────────────────────

@@ -468,6 +468,7 @@ with st.sidebar:
     _nav("Swaps")
     _nav("Forwards")
     _nav("Monte Carlo")
+    _nav("Yield Curve")
     st.markdown(_SEP, unsafe_allow_html=True)
     _nav("Suggested Improvements")
 
@@ -512,6 +513,10 @@ elif page == "Forwards":
 
 elif page == "Monte Carlo":
     from pages.monte_carlo_page import render
+    render()
+
+elif page == "Yield Curve":
+    from pages.yield_curve_page import render
     render()
 
 elif page == "Suggested Improvements":
