@@ -7,7 +7,7 @@ import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
 from config import (PLOTLY_LAYOUT, ACCENT_GOLD, ACCENT_BLUE, ACCENT_GREEN,
-                    ACCENT_RED, TEXT_GREY, ACCENT_CYAN)
+                    ACCENT_RED, TEXT_GREY, ACCENT_CYAN, require)
 from models.monte_carlo import (
     simulate_gbm, price_options_mc, terminal_distribution_stats,
     convergence_analysis, sample_paths, histogram_data,
@@ -47,6 +47,13 @@ def render():
         seed = st.number_input("Random Seed", value=42, step=1, key="mc_seed")
 
     st.markdown("---")
+
+    # ── Input validation ──
+    require(S0 > 0, "Spot S₀ must be positive.")
+    require(K > 0, "Strike K must be positive.")
+    require(T > 0, "Maturity T must be greater than 0.")
+    require(sigma > 0, "Volatility σ must be positive.")
+    require(H_up > H_down, f"Upper Barrier H ({H_up}) must be greater than Lower Barrier L ({H_down}).")
 
     # ── Run Simulation ──
     if st.button("Run Monte Carlo Simulation", type="primary", key="mc_run"):

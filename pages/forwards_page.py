@@ -8,7 +8,7 @@ import streamlit as st
 import plotly.graph_objects as go
 from config import (
     PLOTLY_LAYOUT, ACCENT_CYAN, ACCENT_BLUE, ACCENT_GREEN, ACCENT_RED,
-    ACCENT_GOLD, TEXT_GREY,
+    ACCENT_GOLD, TEXT_GREY, require,
 )
 from models.forwards import (
     equity_forward, fx_forward, commodity_forward,
@@ -141,6 +141,10 @@ def render():
                  "V > 0 if current F > K (you locked in a cheap buy). "
                  "Set to 0 for a new contract (V = 0 by definition at inception).",
         )
+
+    # ── Input validation ──────────────────────────────────────────────────────
+    require(S > 0, "Spot price S must be positive.")
+    require(T > 0, "Maturity T must be greater than 0.")
 
     # ── Forward price computation ──────────────────────────────────────────────
     if fwd_type == "equity":

@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 import pandas as pd
 from config import (SWAP_TYPES, DAY_COUNTS, PLOTLY_LAYOUT, GRID_STYLE,
                     ACCENT_GOLD, ACCENT_BLUE, ACCENT_GREEN, ACCENT_RED, TEXT_GREY,
-                    ACCENT_CYAN)
+                    ACCENT_CYAN, require)
 from models.swaps import generate_swap_schedule, swap_metrics
 
 
@@ -86,6 +86,9 @@ def render():
 
     st.markdown("---")
 
+    require(tenor > 0, "Tenor must be greater than 0.")
+    require(discount_rate >= 0, "Discount rate must be non-negative.")
+
     # ── Generate Schedule ──
     df = generate_swap_schedule(
         notional=notional, fixed_rate=fixed_rate, float_rate=float_rate,
@@ -111,11 +114,20 @@ def render():
     # ── Cashflow Chart ──
     st.markdown("#### Cashflow Schedule")
 
-    net_cf_col = "net_pay_fixed" if "Pay" in swap_type else "net_rec_fixed"
+    # IRS Receive Fixed shows the net from the receiver's perspective; all others use pay-fixed net.
+    net_cf_col = "net_rec_fixed" if swap_type == "IRS Receive Fixed" else "net_pay_fixed"
+
+    # Contextual leg labels for chart and table
+    if swap_type == "Basis Swap":
+        leg_a_label, leg_b_label = "Leg A (SOFR)", "Leg B (Float+Spread)"
+    elif swap_type == "XCCY Swap":
+        leg_a_label, leg_b_label = "Dom. Fixed Leg", "For. Float Leg (dom. CCY)"
+    else:
+        leg_a_label, leg_b_label = "Fixed Leg", "Floating Leg"
 
     fig = go.Figure()
 
-    # ── Net CF bars — positive (pay float) = emerald, negative = rose ──
+    # ── Net CF bars — positive (inflow) = emerald, negative (outflow) = rose ──
     net = df[net_cf_col]
     fig.add_trace(go.Bar(
         x=df["date"], y=np.where(net >= 0, net, 0), name="Net CF (inflow)",
@@ -128,22 +140,22 @@ def render():
         hovertemplate="<b>Net outflow</b><br>%{x}<br>%{y:+,.0f}<extra></extra>",
     ))
 
-    # ── Fixed leg — thin line with small markers ──
+    # ── Leg A — thin line with small markers ──
     fig.add_trace(go.Scatter(
-        x=df["date"], y=df["fixed_cf"], name="Fixed Leg",
+        x=df["date"], y=df["fixed_cf"], name=leg_a_label,
         mode="lines+markers",
         line=dict(color="rgba(56,189,248,0.70)", width=1.5, dash="dot"),
         marker=dict(size=4, color="#38BDF8", line=dict(width=0)),
-        hovertemplate="<b>Fixed</b><br>%{x}<br>%{y:,.0f}<extra></extra>",
+        hovertemplate=f"<b>{leg_a_label}</b><br>%{{x}}<br>%{{y:,.0f}}<extra></extra>",
     ))
 
-    # ── Floating leg — thin line ──
+    # ── Leg B — thin line ──
     fig.add_trace(go.Scatter(
-        x=df["date"], y=df["float_cf"], name="Floating Leg",
+        x=df["date"], y=df["float_cf"], name=leg_b_label,
         mode="lines+markers",
         line=dict(color="rgba(167,139,250,0.70)", width=1.5, dash="dot"),
         marker=dict(size=4, color="#A78BFA", line=dict(width=0)),
-        hovertemplate="<b>Float</b><br>%{x}<br>%{y:,.0f}<extra></extra>",
+        hovertemplate=f"<b>{leg_b_label}</b><br>%{{x}}<br>%{{y:,.0f}}<extra></extra>",
     ))
 
     # ── Cumulative NPV — secondary axis ──
@@ -182,18 +194,20 @@ def render():
 
     # ── Schedule Table ──
     with st.expander("Full Schedule", expanded=False):
+        if swap_type == "XCCY Swap":
+            st.caption("Final period includes notional re-exchange. Coupon periods only — inception exchange not shown.")
         display_df = df.copy()
         display_df.columns = [
-            "Period", "Date", "Year Frac", "Fixed CF", "Floating CF",
-            "Net CF (Pay Fix)", "Net CF (Rec Fix)", "Disc Factor",
-            "PV Fixed", "PV Float", "PV Net", "Cumul NPV"
+            "Period", "Date", "Year Frac", leg_a_label + " CF", leg_b_label + " CF",
+            "Net CF (Pay A)", "Net CF (Rec A)", "Disc Factor",
+            "PV Leg A", "PV Leg B", "PV Net", "Cumul NPV"
         ]
         st.dataframe(
             display_df.style.format({
-                "Fixed CF": "{:,.0f}", "Floating CF": "{:,.0f}",
-                "Net CF (Pay Fix)": "{:,.0f}", "Net CF (Rec Fix)": "{:,.0f}",
+                leg_a_label + " CF": "{:,.0f}", leg_b_label + " CF": "{:,.0f}",
+                "Net CF (Pay A)": "{:,.0f}", "Net CF (Rec A)": "{:,.0f}",
                 "Disc Factor": "{:.6f}",
-                "PV Fixed": "{:,.0f}", "PV Float": "{:,.0f}",
+                "PV Leg A": "{:,.0f}", "PV Leg B": "{:,.0f}",
                 "PV Net": "{:,.0f}", "Cumul NPV": "{:,.0f}",
             }),
             use_container_width=True, hide_index=True,

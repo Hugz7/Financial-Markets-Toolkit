@@ -7,7 +7,7 @@ import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
 from config import (PLOTLY_LAYOUT, ACCENT_GOLD, ACCENT_BLUE, ACCENT_GREEN,
-                    ACCENT_RED, TEXT_GREY, ACCENT_CYAN)
+                    ACCENT_RED, TEXT_GREY, ACCENT_CYAN, require)
 from models.exotic_options import price_all_exotics
 from models.black_scholes import (
     call_price, put_price, call_greeks, put_greeks,
@@ -116,6 +116,14 @@ def render():
         K_gap = st.number_input("Gap Strike K_gap", value=105.0, step=1.0, key="ex_Kgap")
 
     st.markdown("---")
+
+    # ── Input validation ──
+    require(S > 0, "Spot price S₀ must be positive.")
+    require(K > 0, "Strike K must be positive.")
+    require(T > 0, "Maturity T must be greater than 0.")
+    require(sigma > 0, "Volatility σ must be positive.")
+    require(H_up > H_down, f"Upper Barrier H ({H_up}) must be greater than Lower Barrier L ({H_down}).")
+    require(t_c < T, f"Chooser time t_c ({t_c}) must be less than maturity T ({T}).")
 
     # ── Price All 15 Exotics ──
     results = price_all_exotics(

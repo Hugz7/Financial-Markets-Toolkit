@@ -2,6 +2,15 @@
 config.py — Shared styles, constants, and color palette for the app.
 """
 
+import streamlit as st
+
+
+def require(condition, message):
+    """Validate a condition; display an error and stop rendering if it fails."""
+    if not condition:
+        st.error(message)
+        st.stop()
+
 # ── Color Palette ──────────────────────────────────────────────
 DARK_BG    = "#080C14"        # near-black main background
 CARD_BG    = "#0F1923"        # dark card background

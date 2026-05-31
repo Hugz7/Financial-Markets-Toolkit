@@ -13,13 +13,18 @@ def generate_swap_schedule(notional, fixed_rate, float_rate, float_spread,
                            fx_spot=1.0, foreign_notional=None,
                            foreign_fixed=0.025, foreign_float=0.02):
     """
-    Generate full cashflow schedule for an IRS.
-    Returns DataFrame with all cashflows and PV calculations.
+    Generate full cashflow schedule for a swap.
+
+    Swap types
+    ----------
+    IRS Pay/Receive Fixed : fixed leg vs (float_rate + float_spread) leg.
+    Basis Swap            : float_rate leg (Leg A) vs (float_rate + float_spread) leg (Leg B).
+    XCCY Swap             : domestic fixed coupon vs foreign floating coupon (in domestic CCY).
+                            Final period includes notional re-exchange.
     """
     n_periods = int(tenor * freq)
     year_frac = 1.0 / freq
 
-    # Day count adjustment (simplified)
     if day_count == "ACT/360":
         year_frac_adj = 365 / 360 * year_frac
     elif day_count == "ACT/365":
@@ -27,16 +32,40 @@ def generate_swap_schedule(notional, fixed_rate, float_rate, float_spread,
     else:  # 30/360
         year_frac_adj = year_frac
 
+    if foreign_notional is None:
+        foreign_notional = notional * fx_spot
+    foreign_notional_dom = foreign_notional / fx_spot  # in domestic CCY
+
     rows = []
     cumul_npv = 0.0
     for i in range(1, n_periods + 1):
         t = i / freq
-        df = (1 + discount_rate) ** (-i / freq)
-        fixed_cf = notional * fixed_rate * year_frac_adj
-        float_cf = notional * (float_rate + float_spread) * year_frac_adj
+        df = (1 + discount_rate) ** (-t)
 
-        net_pay = float_cf - fixed_cf   # Net CF if paying fixed
-        net_rec = fixed_cf - float_cf   # Net CF if receiving fixed
+        if swap_type == "Basis Swap":
+            # Float-for-float: Leg A (e.g. SOFR = float_rate flat),
+            #                  Leg B (e.g. EURIBOR + basis = float_rate + float_spread).
+            # fixed_rate input is not used — both legs are floating.
+            fixed_cf = notional * float_rate * year_frac_adj
+            float_cf = notional * (float_rate + float_spread) * year_frac_adj
+
+        elif swap_type == "XCCY Swap":
+            # Domestic fixed coupon vs foreign floating coupon (converted at fx_spot).
+            # At final period, add notional re-exchange:
+            #   pay back foreign notional (increases fixed_cf), receive domestic notional (increases float_cf).
+            fixed_cf = notional * fixed_rate * year_frac_adj
+            float_cf = foreign_notional_dom * foreign_float * year_frac_adj
+            if i == n_periods:
+                fixed_cf += foreign_notional_dom
+                float_cf += notional
+
+        else:
+            # IRS Pay Fixed or IRS Receive Fixed
+            fixed_cf = notional * fixed_rate * year_frac_adj
+            float_cf = notional * (float_rate + float_spread) * year_frac_adj
+
+        net_pay = float_cf - fixed_cf
+        net_rec = fixed_cf - float_cf
 
         pv_fixed = fixed_cf * df
         pv_float = float_cf * df
@@ -68,12 +97,14 @@ def swap_metrics(df, notional, fixed_rate, float_rate, float_spread, discount_ra
     npv_pay = pv_float - pv_fixed
     npv_rec = pv_fixed - pv_float
 
-    # DV01: approximate by bumping the rate by 1bp
-    dv01 = abs(npv_pay) / ((float_rate + float_spread) * 10000) if float_rate > 0 else 0
+    # DV01: PV change of the fixed annuity for a 1bp parallel shift.
+    # = notional × Σ(disc_factor_i × year_frac_i) × 0.0001
+    # Excludes notional re-exchange rows (year_frac unchanged, so the sum is over coupon accrual only).
+    dv01 = notional * (df["disc_factor"] * df["year_frac"]).sum() * 0.0001
 
-    # Break-even fixed rate
-    sum_df_yf = df["disc_factor"].sum() * (1 / freq)
-    be_rate = (pv_float / (notional * sum_df_yf)) if sum_df_yf > 0 else 0
+    # Break-even fixed rate: the rate that makes NPV = 0.
+    annuity = (df["disc_factor"] * df["year_frac"]).sum()
+    be_rate = (pv_float / (notional * annuity)) if annuity > 0 else 0
 
     return dict(
         pv_fixed=round(pv_fixed, 2),

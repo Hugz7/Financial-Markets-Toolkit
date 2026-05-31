@@ -53,10 +53,6 @@ def price_options_mc(S_paths, K, r, T, H_up=120, H_down=80):
             exact=None, error_pct=None,
         )
 
-    bsm_call = call_price(S_paths[0, 0], K, T, r,
-                           estimate_vol_from_paths(S_paths, T),
-                           q=0)
-    # Use exact BSM for comparison
     results = []
 
     # European Call
@@ -103,8 +99,8 @@ def estimate_vol_from_paths(S_paths, T):
     """Estimate realized vol from paths (for reference only)."""
     n_steps = S_paths.shape[1] - 1
     dt = T / n_steps
-    log_returns = np.diff(np.log(S_paths[0, :]))
-    return np.std(log_returns) / np.sqrt(dt)
+    log_rets = np.diff(np.log(S_paths), axis=1)  # shape: (n_sims, n_steps)
+    return np.std(log_rets) / np.sqrt(dt)
 
 
 def terminal_distribution_stats(S_T, K):
