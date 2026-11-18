@@ -97,9 +97,11 @@ def _build_template() -> go.layout.Template:
         font=dict(family=FONT_STACK, color=C.text_2, size=12),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        title=dict(font=dict(size=14, color=C.text), x=0, xanchor="left",
-                   y=0.98, yanchor="top", pad=dict(l=2)),
-        margin=dict(l=8, r=8, t=48, b=8),
+        # Title pinned to the top of the figure; the legend sits in its own band
+        # just above the plot area, so the two never overlap.
+        title=dict(font=dict(size=14, color=C.text), x=0, xref="paper", xanchor="left",
+                   y=1, yref="container", yanchor="top", pad=dict(t=10)),
+        margin=dict(l=8, r=8, t=76, b=8),
         xaxis=axis,
         yaxis=axis,
         legend=dict(

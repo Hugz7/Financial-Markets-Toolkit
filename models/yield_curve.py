@@ -149,19 +149,26 @@ def spot_to_par(
     Par/coupon rates from the spot curve.
         par(T) = (1 − df(T)) / Σ df(t_i) × α
 
-    where the sum runs over coupon dates at frequency `freq`.
+    where the sum runs over coupon dates at frequency `freq`, scheduled back
+    from maturity; a non-whole number of periods gives a short first (stub)
+    period whose accrual is its actual length.
     """
-    alpha   = 1.0 / freq
-    par     = np.zeros_like(t_grid)
+    alpha = 1.0 / freq
+    par = np.full(len(t_grid), np.nan, dtype=float)
 
     for j, T in enumerate(t_grid):
-        n           = max(1, int(round(T * freq)))
-        coup_times  = np.linspace(alpha, T, n)
-        z_coup      = np.interp(coup_times, t_grid, spot_grid)
-        dfs         = (1.0 + z_coup) ** (-coup_times)
-        df_T        = (1.0 + spot_grid[j]) ** (-T)
-        annuity     = dfs.sum() * alpha
-        par[j]      = (1.0 - df_T) / annuity if annuity > 0 else np.nan
+        if T <= 0:
+            continue
+        n = int(np.ceil(T * freq - 1e-9))
+        coup_times = (T - alpha * np.arange(n))[::-1]
+        coup_times = coup_times[coup_times > 1e-9]
+        accruals = np.diff(np.concatenate(([0.0], coup_times)))
+        z_coup = np.interp(coup_times, t_grid, spot_grid)
+        dfs = (1.0 + z_coup) ** (-coup_times)
+        df_T = (1.0 + spot_grid[j]) ** (-T)
+        annuity = float(np.sum(dfs * accruals))
+        if annuity > 0:
+            par[j] = (1.0 - df_T) / annuity
 
     return par
 

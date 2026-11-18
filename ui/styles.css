@@ -50,9 +50,9 @@ h1.fm-title { padding: 0 !important; color: var(--fm-text) !important; font-size
 }
 .fm-stat-label { color: var(--fm-muted); font-size: 0.74rem; font-weight: 500; margin-bottom: 0.35rem;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fm-stat-value { color: var(--fm-text); font-size: 1.3rem; font-weight: 600; letter-spacing: -0.01em;
+.fm-stat-value { color: var(--fm-text); font-size: clamp(1rem, 1.25vw, 1.3rem); font-weight: 600; letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fm-stat-value.sm { font-size: 1.05rem; }
+.fm-stat-value.sm { font-size: clamp(0.9rem, 1vw, 1.05rem); }
 .fm-stat-hint { color: var(--fm-subtle); font-size: 0.74rem; margin-top: 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fm-stat-delta { font-size: 0.78rem; font-weight: 500; margin-top: 0.3rem; font-variant-numeric: tabular-nums; }
 .fm-stat .fm-dot { display: inline-block; width: 7px; height: 7px; border-radius: 2px; margin-right: 6px; vertical-align: 1px; }

@@ -123,8 +123,8 @@ def chart(fig: go.Figure, height: int = 400, key: str | None = None,
     fig.update_layout(template="fmt", height=height)
     if title is not None:
         fig.update_layout(title_text=title)
-    elif not (fig.layout.title and fig.layout.title.text):
-        fig.update_layout(margin=dict(t=36))
+    if not (fig.layout.title and fig.layout.title.text):
+        fig.update_layout(margin=dict(t=40))  # legend band only
     st.plotly_chart(fig, theme=None, width="stretch", key=key,
                     config={"displaylogo": False, "modeBarButtonsToRemove": ["lasso2d", "select2d"]})
 
