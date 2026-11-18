@@ -1,0 +1,43 @@
+# Native Streamlit theme — the single source of truth for widget styling.
+# Colours mirror the tokens in ui/theme.py; keep the two in sync.
+
+[client]
+toolbarMode = "minimal"
+showErrorDetails = "type"
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "dark"
+primaryColor = "#5B8DEF"
+backgroundColor = "#0B0D11"
+secondaryBackgroundColor = "#151922"
+textColor = "#E7E9EE"
+borderColor = "#252A35"
+dataframeBorderColor = "#252A35"
+dataframeHeaderBackgroundColor = "#12151C"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "0.6rem"
+buttonRadius = "0.5rem"
+baseFontSize = 14
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+headingFontWeights = [650, 600, 600, 600, 600, 600]
+headingFontSizes = ["1.75rem", "1.25rem", "1.05rem", "0.95rem", "0.9rem", "0.85rem"]
+metricValueFontSize = "1.45rem"
+metricValueFontWeight = 600
+linkColor = "#7FA6F5"
+linkUnderline = false
+greenColor = "#2FBF71"
+redColor = "#EF5B67"
+yellowColor = "#E8A93B"
+blueColor = "#5B8DEF"
+chartCategoricalColors = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#0ca30c", "#9085e9", "#e66767"]
+
+[theme.sidebar]
+backgroundColor = "#0E1116"
+secondaryBackgroundColor = "#151922"
+borderColor = "#1E232C"

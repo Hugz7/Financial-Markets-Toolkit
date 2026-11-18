@@ -1,100 +1,70 @@
-# Financial Markets Toolkit
+# Markets Toolkit
 
-A Streamlit web app for pricing, analysing, and simulating financial derivatives and structured products. Provides institutional-grade tools for options, bonds, swaps, and exotic instruments with live market data integration.
+A Streamlit app for pricing, analysing and simulating derivatives and rates products: options and exotics, volatility smiles, yield curves, swaps, forwards and Monte Carlo, plus a live market monitor.
 
-## Features
+## Pages
 
-| Page | What it does |
-|------|-------------|
-| **Market Monitor** | Live quotes for 9 major assets (equities, FX, rates, vol, crypto) + financial news feeds |
-| **Payoff Analyzer** | Multi-leg option strategy builder with 20 pre-built strategy presets and interactive payoff chart |
-| **Exotic Pricer** | Closed-form pricing for 15 exotic option types (touch, barrier, Asian, lookback, chooser, gap, power, range accrual) across 3 models (BSM, Black-76, Bachelier) |
-| **Vol Smile** | Live implied-vol smile from real option chains (via yfinance), 2D/3D vol surface, skew metrics |
-| **Swaps** | Full cashflow schedules, NPV, correct DV01, and break-even rate for IRS Pay/Receive Fixed, Basis Swap (float-for-float), and XCCY Swap (domestic fixed vs foreign float) |
-| **Forwards** | Equity, FX, and commodity forward pricing with term structure and sensitivity analysis |
-| **Monte Carlo** | GBM path simulation, pricing of 8 option types, convergence analysis vs analytical BSM benchmarks, terminal distribution statistics |
-| **Yield Curve** | Zero-coupon curve bootstrapping from market instruments |
+| Section | Page | What it does |
+|---------|------|-------------|
+| Markets | **Market Monitor** | Cross-asset quotes (equities, vol, rates, FX, commodities, crypto) and headlines from 8 financial RSS feeds |
+| Options | **Payoff Analyzer** | Multi-leg strategy builder with 14 presets and a P&L-at-maturity chart |
+| Options | **Exotic Pricer** | 15 exotic options in closed form, vanillas under BSM, Black-76 and Bachelier |
+| Options | **Volatility Smile** | Implied-vol smiles, term structure and surface from live option chains |
+| Rates & Forwards | **Yield Curve** | Zero-curve bootstrapping, forwards and spread interpretation |
+| Rates & Forwards | **Swaps** | Cashflows, NPV, DV01 and break-even rate for IRS, basis and cross-currency swaps |
+| Rates & Forwards | **Forwards** | Equity, FX and commodity forwards with term structure and sensitivities |
+| Simulation | **Monte Carlo** | GBM paths, 8 payoffs priced with confidence intervals, convergence vs BSM |
+| Project | **Roadmap** | Editable list of planned features |
 
-## Tech stack
+## Architecture
 
-- **Python 3.10+**
-- **Streamlit** — interactive web UI
-- **NumPy / SciPy** — numerical pricing engines
-- **Pandas** — data manipulation
-- **Plotly** — interactive financial charts
-- **yfinance** — live market data and option chains
-- **feedparser** — financial news RSS aggregation
+```
+main.py              entry point: page config, theme, st.navigation
+.streamlit/          native theme (colours, fonts, radii) — config.toml
+assets/              logo and icon
+ui/                  presentation layer
+  theme.py             design tokens, chart palette, Plotly "fmt" template
+  components.py        page_header, section, Stat/stat_grid, callout, chart, …
+  formatting.py        number formatting (money, pct, bp)
+  styles.css           the few global styles the native theme can't express
+views/               one module per page, each exposing render()
+services/            data access, cached: market quotes, news, option chains, persistence
+models/              pure pricing maths — no Streamlit, no I/O, unit-tested
+tests/               pytest suite for models/
+```
 
-## Pricing models
+The dependency direction is one-way: `views → ui, services, models`; `services → models`; `models` depends on nothing in the app. Views contain no inline HTML or hard-coded colours: every colour comes from `ui/theme.py`, and every chart is rendered through `ui.components.chart`, which applies the shared template.
 
-| Model | Location | Used for |
-|-------|----------|---------|
-| Black-Scholes-Merton | `models/black_scholes.py` | European options, Greeks, implied vol (Newton-Raphson) |
-| Black-76 | `models/black_scholes.py` | Options on forwards/futures |
-| Bachelier (Normal) | `models/black_scholes.py` | Options on assets that can go negative |
-| Goldman-Sosin-Gatto | `models/exotic_options.py` | Lookback call (floating strike) |
-| Kemna-Vorst | `models/exotic_options.py` | Asian geometric average call |
-| Rubinstein | `models/exotic_options.py` | Chooser option |
-| Reflection principle | `models/exotic_options.py` | One-Touch / No-Touch barriers |
-| Log-Euler GBM | `models/monte_carlo.py` | Monte Carlo path simulation |
-| Discount factor annuity | `models/swaps.py` | Swap NPV, DV01, break-even rate |
+Chart colours use a validated categorical palette (colour-blind-safe adjacent pairs, ≥ 3:1 contrast against the dark surface), assigned in fixed order.
 
 ## Setup
 
 ```bash
-# Install dependencies
 pip install -r requirements.txt
-
-# Run the app
 streamlit run main.py
 ```
 
-The app opens at `http://localhost:8501`.
+The app opens at `http://localhost:8501`. The Market Monitor and Volatility Smile pages need internet access (Yahoo Finance and RSS feeds); every other page works offline.
 
-## Running tests
+## Tests
 
 ```bash
-pip install pytest
 pytest -q
 ```
 
-The test suite covers:
+Covers put-call parity, BSM reference values, implied-vol round-trips, touch/no-touch identities, Monte Carlo convergence against BSM, swap DV01 against a 1 bp bump, break-even rates, swap-type differentiation and payoff sanity checks.
 
-- **Put-call parity** and known BSM reference values
-- **Implied vol round-trip** (price → IV → price)
-- **Touch/no-touch identity**: OT + NT = e^{-rT}
-- **Gap call** equals vanilla call when trigger = strike
-- **Monte Carlo convergence**: European call/put within 95% CI of analytical BSM (100k paths, fixed seed)
-- **Swap DV01** matches 1bp finite-difference bump within 1%
-- **Break-even rate** produces NPV ≈ 0 when used as the fixed rate
-- **Swap type differentiation**: Basis and XCCY produce different cashflows from IRS
+## Pricing models
 
-## Project structure
-
-```
-.
-├── main.py                   # Streamlit entry point and page router
-├── config.py                 # Colour palette, constants, require() validation helper
-├── requirements.txt
-├── models/
-│   ├── black_scholes.py      # BSM, Black-76, Bachelier, Greeks, implied vol
-│   ├── exotic_options.py     # 15 exotic option types (closed-form)
-│   ├── forwards.py           # Equity, FX, commodity forwards
-│   ├── monte_carlo.py        # GBM simulator, payoff pricing, convergence
-│   └── swaps.py              # IRS, Basis, XCCY swap cashflows and metrics
-├── pages/
-│   ├── home_dashboard.py
-│   ├── structured_products.py
-│   ├── exotic_pricer.py
-│   ├── vol_smile_page.py
-│   ├── swaps_page.py
-│   ├── forwards_page.py
-│   ├── monte_carlo_page.py
-│   ├── yield_curve_page.py
-│   └── roadmap.py
-└── tests/
-    ├── test_black_scholes.py
-    ├── test_exotics.py
-    ├── test_monte_carlo.py
-    └── test_swaps.py
-```
+| Model | Module | Used for |
+|-------|--------|---------|
+| Black-Scholes-Merton | `models/black_scholes.py` | European options, Greeks, implied vol |
+| Black-76 | `models/black_scholes.py` | Options on forwards/futures |
+| Bachelier | `models/black_scholes.py` | Normal-model options |
+| Reflection principle | `models/exotic_options.py` | One-touch / no-touch |
+| Kemna-Vorst | `models/exotic_options.py` | Geometric Asian call |
+| Goldman-Sosin-Gatto | `models/exotic_options.py` | Floating-strike lookback |
+| Rubinstein | `models/exotic_options.py` | Chooser option |
+| Log-Euler GBM | `models/monte_carlo.py` | Path simulation |
+| Bootstrapping | `models/yield_curve.py` | Zero and forward curves |
+| Annuity discounting | `models/swaps.py` | Swap NPV, DV01, break-even rate |
