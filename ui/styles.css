@@ -58,10 +58,35 @@
 /* Film grain: fixed fractal-noise texture over everything, barely visible. */
 .stApp::after {
   content: ""; position: fixed; inset: 0; z-index: 999990; pointer-events: none;
-  opacity: 0.055; mix-blend-mode: overlay;
+  opacity: 0.08; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 [data-testid="stAppViewContainer"] { position: relative; z-index: 1; }
+
+/* Market horizon: procedural candlesticks + moving average (ui/backdrop.py),
+   tiling seamlessly and scrolling very slowly along the bottom of the screen. */
+[data-testid="stAppViewContainer"]::before {
+  content: ""; position: fixed; left: 0; right: 0; bottom: 0; height: 420px; z-index: -1; pointer-events: none;
+  background-image: var(--fm-market-tile); background-repeat: repeat-x;
+  background-size: 2400px 420px; background-position: 0 100%;
+  opacity: 0.11;
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 45%, transparent 100%);
+          mask-image: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 45%, transparent 100%);
+  animation: fm-tape 240s linear infinite;
+}
+/* Terminal grid: fine graph-paper lines, fading out from the top-centre. */
+[data-testid="stAppViewContainer"]::after {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 0%, black 0%, transparent 75%);
+          mask-image: radial-gradient(70% 60% at 50% 0%, black 0%, transparent 75%);
+}
+@keyframes fm-tape { from { background-position: 0 100%; } to { background-position: -2400px 100%; } }
 
 @keyframes fm-drift {
   0%   { transform: translate3d(0, 0, 0) scale(1); }
@@ -107,6 +132,27 @@ section[data-testid="stSidebar"] {
   background: radial-gradient(closest-side, rgba(10,132,255,0.16), transparent 70%);
   filter: blur(20px); pointer-events: none;
 }
+/* Self-drawing price line behind the headline (unique per page) */
+.fm-hero-art {
+  position: absolute; right: -2%; top: -12%; width: 52%; height: 128%; z-index: -1; pointer-events: none;
+  opacity: 0.72;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 30%, black 100%);
+          mask-image: linear-gradient(90deg, transparent 0%, black 30%, black 100%);
+}
+.fm-hero-line { width: 100%; height: 100%; display: block; overflow: visible; }
+.fm-hero-path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: fm-draw 2.6s var(--fm-ease) .3s forwards;
+  filter: drop-shadow(0 0 6px rgba(10,132,255,0.55)); }
+.fm-hero-area { opacity: 0; animation: fm-fade-in 1.6s ease 1.6s forwards; }
+.fm-hero-dot {
+  position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%;
+  background: #BF5AF2; box-shadow: 0 0 0 4px rgba(191,90,242,0.18), 0 0 18px #BF5AF2;
+  opacity: 0; animation: fm-fade-in .4s ease 2.7s forwards, fm-pulse 2.4s ease-in-out 3.1s infinite;
+}
+@keyframes fm-draw { to { stroke-dashoffset: 0; } }
+@keyframes fm-fade-in { to { opacity: 1; } }
+@keyframes fm-pulse { 0%, 100% { box-shadow: 0 0 0 4px rgba(191,90,242,0.18), 0 0 18px #BF5AF2; }
+                      50% { box-shadow: 0 0 0 10px rgba(191,90,242,0), 0 0 26px #BF5AF2; } }
+
 .fm-eyebrow {
   display: inline-block; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.02em;
   margin-bottom: 0.6rem;
@@ -371,6 +417,78 @@ button[data-testid="stBaseButton-secondary"]:hover, button[data-testid="stBaseBu
 /* Element entrance for native blocks */
 [data-testid="stDataFrame"], [data-testid="stExpander"], [data-testid="stAlert"] { animation: fm-rise .8s var(--fm-ease) .1s both; }
 
+/* ═══ Flashcards (3D flip, CSS-only) ═══════════════════════════════════ */
+
+.fm-deck { position: relative; margin: 0.75rem 0 1.25rem; padding-bottom: 14px; }
+/* two ghost cards stacked behind for depth */
+.fm-deck::before, .fm-deck::after {
+  content: ""; position: absolute; left: 4%; right: 4%; bottom: 6px; height: 40px; z-index: 0;
+  border-radius: var(--fm-r-lg); background: rgba(44,44,46,0.55);
+  box-shadow: 0 0 0 1px var(--fm-hair); transform: translateZ(0);
+}
+.fm-deck::after { left: 8%; right: 8%; bottom: 0; background: rgba(36,36,38,0.4); }
+.fm-flip-toggle { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.fm-flip { display: block; position: relative; z-index: 1; cursor: pointer; perspective: 1800px; margin: 0;
+  animation: fm-deal .75s var(--fm-ease) both; }
+.fm-flip-inner {
+  display: grid; transform-style: preserve-3d;
+  transition: transform .9s cubic-bezier(0.3, 1.3, 0.4, 1);
+}
+.fm-flip-toggle:checked + .fm-flip .fm-flip-inner { transform: rotateY(180deg); }
+.fm-flip-toggle:focus-visible + .fm-flip .fm-face { box-shadow: var(--fm-shadow), 0 0 0 3px rgba(10,132,255,0.6); }
+.fm-flip:hover .fm-flip-inner { transform: rotateY(0deg) translateY(-3px); }
+.fm-flip-toggle:checked + .fm-flip:hover .fm-flip-inner { transform: rotateY(180deg) translateY(-3px); }
+
+.fm-face {
+  grid-area: 1 / 1; min-height: 340px; display: flex; flex-direction: column;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-radius: var(--fm-r-lg); padding: 1.6rem 1.8rem 1.4rem; position: relative; overflow: hidden;
+  box-shadow: var(--fm-shadow);
+}
+.fm-front {
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba(10,132,255,0.22), transparent 55%),
+    radial-gradient(90% 80% at 100% 100%, rgba(191,90,242,0.18), transparent 60%),
+    linear-gradient(180deg, #232326 0%, #161618 100%);
+}
+.fm-back {
+  transform: rotateY(180deg);
+  background:
+    radial-gradient(100% 80% at 100% 0%, rgba(48,209,88,0.12), transparent 55%),
+    linear-gradient(180deg, #1F1F22 0%, #141416 100%);
+}
+/* faint engraved grid on the card stock */
+.fm-face::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+  background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(80% 80% at 50% 40%, black, transparent);
+  -webkit-mask-image: radial-gradient(80% 80% at 50% 40%, black, transparent);
+}
+.fm-face > * { position: relative; }
+.fm-card-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.1rem; }
+.fm-card-eyebrow { font-size: 0.8rem; font-weight: 600;
+  background: linear-gradient(90deg, #2997FF, #BF5AF2); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.fm-card-count { color: var(--fm-subtle); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.fm-card-q { font-family: var(--fm-display); color: var(--fm-text); font-weight: 650;
+  font-size: clamp(1.35rem, 2.6vw, 2.1rem); line-height: 1.2; letter-spacing: -0.025em; margin: auto 0; max-width: 32ch; }
+.fm-card-a { color: var(--fm-text-2); font-size: clamp(0.95rem, 1.25vw, 1.06rem); line-height: 1.62; }
+.fm-card-points { margin: 0.9rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
+.fm-card-points li { color: var(--fm-text); font-size: 0.9rem; font-weight: 500; padding-left: 1.1rem; position: relative; }
+.fm-card-points li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--fm-accent); box-shadow: 0 0 8px var(--fm-accent); }
+.fm-card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 1.4rem; gap: 0.75rem; }
+.fm-card-hint { color: var(--fm-subtle); font-size: 0.78rem; margin-left: auto; }
+
+@keyframes fm-deal {
+  from { opacity: 0; transform: translate3d(40px, 10px, 0) rotate(2.5deg) scale(0.97); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+/* Progress bar: thin luminous track */
+[data-testid="stProgress"] [role="progressbar"] > div { border-radius: 999px; }
+
 /* ═══ Footer ════════════════════════════════════════════════════════════ */
 
 .fm-foot { color: var(--fm-subtle); font-size: 0.75rem; line-height: 1.6; margin-top: 5rem;
@@ -406,4 +524,5 @@ button[data-testid="stBaseButton-secondary"]:hover, button[data-testid="stBaseBu
   .block-container { padding-left: 1rem; padding-right: 1rem; padding-top: 2.5rem; }
   .fm-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .fm-hero { margin-bottom: 2rem; }
+  .fm-hero-art { width: 90%; opacity: 0.45; }
 }

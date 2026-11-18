@@ -10,6 +10,7 @@ that drives the entrance animation.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from html import escape
 from pathlib import Path
 from typing import Iterable, Literal, Optional
@@ -17,6 +18,7 @@ from typing import Iterable, Literal, Optional
 import plotly.graph_objects as go
 import streamlit as st
 
+from ui.backdrop import hero_line_svg, market_tile_svg, svg_data_uri
 from ui.theme import C
 
 Tone = Literal["default", "pos", "neg", "warn", "accent", "muted"]
@@ -35,10 +37,16 @@ def _cls(tone: Optional[str]) -> str:
 
 # ── Global ────────────────────────────────────────────────────────────────────
 
+@lru_cache(maxsize=1)
+def _backdrop_css() -> str:
+    """CSS variables carrying the procedural market artwork (built once per process)."""
+    return f':root {{ --fm-market-tile: url("{svg_data_uri(market_tile_svg())}"); }}'
+
+
 def inject_styles() -> None:
     """Load ui/styles.css and reset per-run counters (call once from main.py)."""
     st.session_state[_PANEL_SEQ] = 0
-    _html(f"<style>{_CSS_PATH.read_text(encoding='utf-8')}</style>")
+    _html(f"<style>{_backdrop_css()}\n{_CSS_PATH.read_text(encoding='utf-8')}</style>")
 
 
 def require(condition: bool, message: str) -> None:
@@ -67,7 +75,10 @@ def page_header(title: str, subtitle: str | None = None, eyebrow: str | None = N
     """Hero block: gradient eyebrow, large gradient headline, soft subtitle."""
     eb = f"<div class='fm-eyebrow'>{escape(eyebrow)}</div>" if eyebrow else ""
     sub = f"<p class='fm-subtitle'>{escape(subtitle)}</p>" if subtitle else ""
-    _html(f"<header class='fm-hero'>{eb}<h1 class='fm-title'>{escape(title)}</h1>{sub}</header>")
+    svg, dx, dy = hero_line_svg(title)
+    art = (f"<div class='fm-hero-art' aria-hidden='true'>{svg}"
+           f"<span class='fm-hero-dot' style='left:{dx:.1f}%;top:{dy:.1f}%'></span></div>")
+    _html(f"<header class='fm-hero'>{art}{eb}<h1 class='fm-title'>{escape(title)}</h1>{sub}</header>")
 
 
 def section(title: str, caption: str | None = None) -> None:
@@ -201,6 +212,47 @@ def news_grid(articles: Iterable[dict]) -> None:
             f"<div class='fm-news-title'>{escape(a['title'])}</div>{summary}</div></a>"
         )
     _html("<div class='fm-news'>" + "".join(cards) + "</div>")
+
+
+# ── Flashcards ────────────────────────────────────────────────────────────────
+
+def flashcard(card_id: str, question: str, answer: str, *, eyebrow: str, counter: str,
+              points: Iterable[str] = (), status: str | None = None) -> None:
+    """A 3D flip card. Clicking (or Space on the focused card) flips it client-side:
+    a visually hidden checkbox drives the rotation, so no rerun is needed.
+    `status` is 'known' or 'review' to show a badge on both faces."""
+    cid = escape(card_id, quote=True)
+    tag = ""
+    if status == "known":
+        tag = badge("Known", "pos")
+    elif status == "review":
+        tag = badge("To review", "warn")
+    pts = "".join(f"<li>{escape(p)}</li>" for p in points)
+    pts_html = f"<ul class='fm-card-points'>{pts}</ul>" if pts else ""
+    # Keyed container: a new card mounts fresh DOM, so it starts question-side up
+    # and replays the deal-in animation (otherwise React reuses the checked input).
+    with st.container(key=f"fmcard-{card_id}"):
+        _flashcard_markup(cid, question, answer, eyebrow, counter, tag, pts_html)
+
+
+def _flashcard_markup(cid, question, answer, eyebrow, counter, tag, pts_html) -> None:
+    _html(
+        f"<div class='fm-deck'>"
+        f"<input type='checkbox' id='fc-{cid}' class='fm-flip-toggle' aria-label='Reveal answer'>"
+        f"<label for='fc-{cid}' class='fm-flip'><div class='fm-flip-inner'>"
+        f"<div class='fm-face fm-front'>"
+        f"<div class='fm-card-top'><span class='fm-card-eyebrow'>{escape(eyebrow)}</span>"
+        f"<span class='fm-card-count'>{escape(counter)}</span></div>"
+        f"<div class='fm-card-q'>{escape(question)}</div>"
+        f"<div class='fm-card-foot'>{tag}<span class='fm-card-hint'>Tap to reveal the answer</span></div>"
+        f"</div>"
+        f"<div class='fm-face fm-back'>"
+        f"<div class='fm-card-top'><span class='fm-card-eyebrow'>Answer</span>"
+        f"<span class='fm-card-count'>{escape(counter)}</span></div>"
+        f"<div class='fm-card-a'>{escape(answer)}</div>{pts_html}"
+        f"<div class='fm-card-foot'>{tag}<span class='fm-card-hint'>Tap to flip back</span></div>"
+        f"</div></div></label></div>"
+    )
 
 
 # ── Footer ────────────────────────────────────────────────────────────────────

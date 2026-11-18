@@ -14,18 +14,22 @@ A Streamlit app for pricing, analysing and simulating derivatives and rates prod
 | Rates & Forwards | **Swaps** | Cashflows, NPV, DV01 and break-even rate for IRS, basis and cross-currency swaps |
 | Rates & Forwards | **Forwards** | Equity, FX and commodity forwards with term structure and sensitivities |
 | Simulation | **Monte Carlo** | GBM paths, 8 payoffs priced with confidence intervals, convergence vs BSM |
+| Practice | **Interview Prep** | 90 flip-card questions (20 technical markets questions with model answers, 70 behavioural), self-scoring, review-missed mode, searchable list |
 | Project | **Roadmap** | Editable list of planned features |
 
 ## Architecture
 
 ```
 main.py              entry point: page config, theme, st.navigation
+navigation.py        page registry: sections, titles, icons, URL slugs
+data/                flashcards.json (interview decks)
 .streamlit/          native theme (colours, fonts, radii) — config.toml
 assets/              logo and icon
 ui/                  presentation layer
   theme.py             design tokens, chart palette, Plotly "fmt" template
   components.py        page_header, section, Stat/stat_grid, callout, chart, …
   formatting.py        number formatting (money, pct, bp)
+  backdrop.py          procedural market artwork (candlestick horizon, hero price lines)
   styles.css           the few global styles the native theme can't express
 views/               one module per page, each exposing render()
 services/            data access, cached: market quotes, news, option chains, persistence
@@ -39,7 +43,7 @@ The dependency direction is one-way: `views → ui, services, models`; `services
 
 The look follows Apple's "Pro" product pages:
 
-- **Canvas and texture**: a true-black background with slowly drifting coloured light and a faint film-grain overlay.
+- **Canvas and texture**: a true-black background with slowly drifting coloured light, a faint film-grain overlay, a trading-terminal grid, and a procedurally generated candlestick "horizon" (price, moving average, volume) that scrolls slowly along the bottom. Each page title has its own price line that draws itself on load.
 - **Materials and depth**: translucent graphite panels with background blur, top-edge highlights and layered shadows; cards lift on hover.
 - **Typography**: SF Pro on Apple devices (Inter elsewhere), large gradient headlines, and two-tone section titles ("Valuation. Grey continuation.").
 - **Navigation**: a translucent top bar with section menus, which becomes a drawer on phones.
