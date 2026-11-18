@@ -144,6 +144,16 @@ def test_irs_pay_receive_are_symmetric():
     assert abs(m["npv_pay_fixed"] + m["npv_rec_fixed"]) < 1e-6
 
 
+def test_xccy_breakeven_makes_npv_zero():
+    """XCCY break-even excludes the notional re-exchange: plugging it back gives NPV ≈ 0,
+    and with matched notionals it equals the foreign floating rate."""
+    df = make_schedule(swap_type="XCCY Swap", foreign_float=0.02)
+    be = make_metrics(df)["breakeven_rate"]
+    assert abs(be - 0.02) < 1e-6
+    df_be = make_schedule(swap_type="XCCY Swap", foreign_float=0.02, fixed_rate=be)
+    assert abs(make_metrics(df_be, fixed_rate=be)["npv_pay_fixed"]) < 1.0
+
+
 def test_xccy_final_period_includes_notional():
     """XCCY Swap last period cashflows include notional re-exchange."""
     notional = 1_000_000

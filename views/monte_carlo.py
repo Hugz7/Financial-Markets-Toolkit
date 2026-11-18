@@ -1,260 +1,214 @@
-"""
-monte_carlo_page.py — Monte Carlo Simulation Engine.
-"""
+"""views/monte_carlo.py — GBM Monte Carlo engine: pricing, paths, distribution, convergence."""
 
-import streamlit as st
 import numpy as np
-import plotly.graph_objects as go
 import pandas as pd
-from config import (PLOTLY_LAYOUT, ACCENT_GOLD, ACCENT_BLUE, ACCENT_GREEN,
-                    ACCENT_RED, TEXT_GREY, ACCENT_CYAN, require)
+import plotly.graph_objects as go
+import streamlit as st
+
+from models.black_scholes import call_price, put_price
 from models.monte_carlo import (
-    simulate_gbm, price_options_mc, terminal_distribution_stats,
-    convergence_analysis, sample_paths, histogram_data,
+    convergence_analysis, histogram_data, price_options_mc, sample_paths,
+    simulate_gbm, terminal_distribution_stats,
 )
-from models.black_scholes import call_price
+from ui.components import Stat, chart, empty_state, page_header, require, section, stat_grid
+from ui.formatting import num, pct
+from ui.theme import C, SERIES, rgba
+
+PATH = SERIES[0]
+BAND = C.text      # neutral envelope over the blue paths
+MEAN = SERIES[1]
+REF = SERIES[2]
 
 
 def render():
-    st.markdown("## Monte Carlo Simulation Engine")
-    st.caption("GBM Price Paths · European/Asian/Barrier/Lookback Pricing · "
-               "Convergence Analysis · Terminal Distribution")
+    page_header(
+        "Monte Carlo Simulation",
+        "Geometric Brownian motion paths priced across European, Asian, barrier and lookback payoffs, "
+        "benchmarked against closed-form Black-Scholes.",
+        eyebrow="Simulation",
+    )
 
-    # ── Parameters ──
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("#### Simulation Parameters")
-        S0 = st.number_input("Spot S₀", value=100.0, step=1.0, key="mc_S")
-        K = st.number_input("Strike K", value=100.0, step=1.0, key="mc_K")
-        T = st.number_input("Maturity T (yr)", value=1.0, step=0.25, key="mc_T")
-        r = st.number_input("Risk-Free Rate r", value=0.05, step=0.005,
-                            format="%.3f", key="mc_r")
-        sigma = st.number_input("Volatility σ", value=0.20, step=0.01,
-                                format="%.2f", key="mc_sig")
-        q = st.number_input("Dividend Yield q", value=0.02, step=0.005,
-                            format="%.3f", key="mc_q")
+    # ── Inputs ──
+    with st.container(border=True):
+        st.markdown("**Market**")
+        c1, c2, c3, c4, c5, c6 = st.columns(6)
+        S0 = c1.number_input("Spot S₀", value=100.0, step=1.0, key="mc_S")
+        K = c2.number_input("Strike K", value=100.0, step=1.0, key="mc_K")
+        T = c3.number_input("Maturity T (yr)", value=1.0, step=0.25, key="mc_T")
+        r = c4.number_input("Risk-free r", value=0.05, step=0.005, format="%.3f", key="mc_r")
+        sigma = c5.number_input("Volatility σ", value=0.20, step=0.01, format="%.2f", key="mc_sig")
+        q = c6.number_input("Dividend yield q", value=0.02, step=0.005, format="%.3f", key="mc_q")
 
-    with col2:
-        st.markdown("#### Engine Settings")
-        n_sims = st.select_slider("Nb Simulations",
+        st.markdown("**Engine**")
+        c1, c2, c3, c4, c5 = st.columns([1.6, 1.3, 1, 1, 0.8])
+        n_sims = c1.select_slider("Simulations",
                                   options=[1000, 5000, 10000, 25000, 50000, 100000, 250000, 500000],
-                                  value=50000, key="mc_nsims")
-        n_steps = st.select_slider("Nb Time Steps",
-                                   options=[52, 126, 252, 504],
-                                   value=252, key="mc_nsteps")
-        H_up = st.number_input("Upper Barrier H", value=120.0, step=5.0, key="mc_H")
-        H_down = st.number_input("Lower Barrier L", value=80.0, step=5.0, key="mc_L")
-        seed = st.number_input("Random Seed", value=42, step=1, key="mc_seed")
+                                  value=50000, key="mc_nsims", format_func=lambda n: f"{n:,}")
+        n_steps = c2.select_slider("Time steps", options=[52, 126, 252, 504], value=252, key="mc_nsteps")
+        H_up = c3.number_input("Upper barrier H", value=120.0, step=5.0, key="mc_H")
+        H_down = c4.number_input("Lower barrier L", value=80.0, step=5.0, key="mc_L")
+        seed = c5.number_input("Seed", value=42, step=1, key="mc_seed")
 
-    st.markdown("---")
-
-    # ── Input validation ──
     require(S0 > 0, "Spot S₀ must be positive.")
     require(K > 0, "Strike K must be positive.")
     require(T > 0, "Maturity T must be greater than 0.")
     require(sigma > 0, "Volatility σ must be positive.")
-    require(H_up > H_down, f"Upper Barrier H ({H_up}) must be greater than Lower Barrier L ({H_down}).")
+    require(H_up > H_down, f"Upper barrier H ({H_up}) must be greater than lower barrier L ({H_down}).")
 
-    # ── Run Simulation ──
-    if st.button("Run Monte Carlo Simulation", type="primary", key="mc_run"):
-        with st.spinner(f"Simulating {n_sims:,} paths × {n_steps} steps..."):
-            S_paths = simulate_gbm(S0, r, q, sigma, T, n_sims, n_steps, seed)
-            st.session_state.mc_paths = S_paths
+    if st.button("Run simulation", type="primary", key="mc_run", icon=":material/play_arrow:"):
+        with st.spinner(f"Simulating {n_sims:,} paths × {n_steps} steps…"):
+            st.session_state.mc_paths = simulate_gbm(S0, r, q, sigma, T, n_sims, n_steps, seed)
             st.session_state.mc_params = dict(S0=S0, K=K, T=T, r=r, sigma=sigma,
-                                               q=q, H_up=H_up, H_down=H_down)
-        st.success(f"Simulation complete: {n_sims:,} paths generated.")
+                                              q=q, H_up=H_up, H_down=H_down)
+        st.toast(f"Simulated {n_sims:,} paths", icon=":material/check_circle:")
 
     if "mc_paths" not in st.session_state:
-        st.info("Click **Run Monte Carlo Simulation** to generate paths.")
+        empty_state("No simulation yet", "Set the parameters above and press Run simulation.")
         return
 
     S_paths = st.session_state.mc_paths
-    params = st.session_state.mc_params
+    p = st.session_state.mc_params
     S_T = S_paths[:, -1]
+    if any(p[k] != v for k, v in dict(S0=S0, K=K, T=T, r=r, sigma=sigma, q=q,
+                                         H_up=H_up, H_down=H_down).items()):
+        st.caption(":material/info: Showing the last run — parameters changed since; press Run simulation to update.")
 
-    # ── MC Pricing Results ──
-    st.markdown("#### MC Pricing Results")
-    mc_results = price_options_mc(S_paths, params["K"], params["r"], params["T"],
-                                  params["H_up"], params["H_down"])
+    # ── Pricing ──
+    mc = price_options_mc(S_paths, p["K"], p["r"], p["T"], p["H_up"], p["H_down"])
+    bsm_c = call_price(p["S0"], p["K"], p["T"], p["r"], p["sigma"], p["q"])
+    bsm_p = put_price(p["S0"], p["K"], p["T"], p["r"], p["sigma"], p["q"])
+    for res, exact in ((mc[0], bsm_c), (mc[1], bsm_p)):
+        res["exact"] = exact
+        res["error_pct"] = abs(res["price"] - exact) / exact * 100
 
-    # Add BSM exact for Euro call/put
-    bsm_c = call_price(params["S0"], params["K"], params["T"], params["r"],
-                       params["sigma"], params["q"])
-    from models.black_scholes import put_price as bsm_put
-    bsm_p = bsm_put(params["S0"], params["K"], params["T"], params["r"],
-                     params["sigma"], params["q"])
-    mc_results[0]["exact"] = bsm_c
-    mc_results[0]["error_pct"] = abs(mc_results[0]["price"] - bsm_c) / bsm_c * 100
-    mc_results[1]["exact"] = bsm_p
-    mc_results[1]["error_pct"] = abs(mc_results[1]["price"] - bsm_p) / bsm_p * 100
+    section("Pricing", f"{len(S_T):,} paths · 95% confidence intervals")
+    call_ok = mc[0]["ci_low"] <= bsm_c <= mc[0]["ci_high"]
+    stat_grid([
+        Stat("European call (MC)", num(mc[0]["price"], 4), hint=f"BSM {bsm_c:.4f}"),
+        Stat("European put (MC)", num(mc[1]["price"], 4), hint=f"BSM {bsm_p:.4f}"),
+        Stat("Call pricing error", f"{mc[0]['error_pct']:.2f}%", tone="pos" if call_ok else "warn",
+             hint="BSM inside 95% CI" if call_ok else "BSM outside 95% CI"),
+        Stat("Std error (call)", num(mc[0]["se"], 5), hint="σ(payoff)·e^(−rT)/√n"),
+    ], columns=4)
 
-    rows = []
-    for res in mc_results:
-        row = {
-            "Option": res["name"],
-            "MC Price": f"{res['price']:.4f}",
-            "Std Error": f"{res['se']:.6f}",
-            "95% CI Low": f"{res['ci_low']:.4f}",
-            "95% CI High": f"{res['ci_high']:.4f}",
-            "BSM Exact": f"{res['exact']:.4f}" if res["exact"] else "N/A",
-            "Error %": f"{res['error_pct']:.2f}%" if res["error_pct"] else "",
-            "Status": ("OK" if res["error_pct"] and res["error_pct"] < 5
-                       else (">" if res["error_pct"] else "")),
-        }
-        rows.append(row)
-
-    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
-
-    # ── Sample Paths Chart ──
-    st.markdown("#### Sample GBM Paths")
-    n_show = st.slider("Paths to display", 10, 1000, 200, key="mc_nshow")
-    sp = sample_paths(S_paths, n_sample=n_show)
-    n_months = sp.shape[1]
-    months = list(range(n_months))
-
-    # Generate multicolor spectrum — vivid HSL wheel with saturation variance
-    def mc_colors(n):
-        colors = []
-        sat_cycle = [92, 80, 88, 76, 95]   # vary saturation for vibrancy
-        lit_cycle = [58, 65, 52, 70, 55]   # vary lightness for depth
-        for i in range(n):
-            hue = int(360 * i / max(n, 1))
-            sat = sat_cycle[i % len(sat_cycle)]
-            lit = lit_cycle[i % len(lit_cycle)]
-            colors.append(f"hsl({hue},{sat}%,{lit}%)")
-        return colors
-
-    path_colors = mc_colors(sp.shape[0])
-    path_opacity = 0.80 if n_show <= 50 else max(0.08, 0.55 - n_show * 0.0004)
-    path_width = 1.1 if n_show <= 150 else 0.7
-
-    fig_paths = go.Figure()
-    for i in range(sp.shape[0]):
-        fig_paths.add_trace(go.Scatter(
-            x=months, y=sp[i],
-            mode="lines",
-            name=f"Path {i+1}" if n_show <= 20 else None,
-            line=dict(color=path_colors[i], width=path_width),
-            opacity=path_opacity,
-            showlegend=(n_show <= 20),
-        ))
-
-    fig_paths.add_hline(y=params["S0"], line_dash="dash", line_color=TEXT_GREY)
-    if params["H_up"] > params["S0"]:
-        fig_paths.add_hline(y=params["H_up"], line_dash="dot",
-                            line_color=ACCENT_RED, annotation_text="H_up")
-    if params["H_down"] < params["S0"]:
-        fig_paths.add_hline(y=params["H_down"], line_dash="dot",
-                            line_color=ACCENT_RED, annotation_text="H_down")
-
-    fig_paths.update_layout(
-        **PLOTLY_LAYOUT,
-        title="Sample GBM Paths (monthly sampling)",
-        xaxis_title="Month", yaxis_title="Price",
-        height=400, showlegend=False,
+    table = pd.DataFrame([{
+        "Option": res["name"],
+        "MC price": res["price"],
+        "Std error": res["se"],
+        "95% CI low": res["ci_low"],
+        "95% CI high": res["ci_high"],
+        "BSM exact": f"{res['exact']:.4f}" if res["exact"] is not None else "—",
+        "Error %": f"{res['error_pct']:.2f}%" if res["error_pct"] is not None else "—",
+        "Status": ("" if not res["exact"] else
+                   "Within CI" if res["ci_low"] <= res["exact"] <= res["ci_high"] else "Outside CI"),
+    } for res in mc])
+    st.dataframe(
+        table.style.format({"MC price": "{:.4f}", "Std error": "{:.6f}", "95% CI low": "{:.4f}",
+                            "95% CI high": "{:.4f}"}),
+        width="stretch", hide_index=True,
     )
-    st.plotly_chart(fig_paths, use_container_width=True)
 
-    # ── Terminal Distribution + Convergence ──
-    col_dist, col_conv = st.columns(2)
+    tab_paths, tab_dist, tab_conv = st.tabs(["Sample paths", "Terminal distribution", "Convergence"])
 
-    with col_dist:
-        st.markdown("#### Terminal Distribution S_T")
-        hist = histogram_data(S_T, n_bins=30)
-        fig_hist = go.Figure()
-        fig_hist.add_trace(go.Bar(
-            x=[(h["bin_low"] + h["bin_high"]) / 2 for h in hist],
-            y=[h["freq"] for h in hist],
-            width=[(h["bin_high"] - h["bin_low"]) * 0.9 for h in hist],
-            marker_color=ACCENT_BLUE, opacity=0.8,
-        ))
-        fig_hist.add_vline(x=params["K"], line_dash="dash",
-                           line_color=ACCENT_CYAN, annotation_text="K")
-        fig_hist.update_layout(
-            **PLOTLY_LAYOUT, title="S_T Distribution",
-            xaxis_title="S_T", yaxis_title="Frequency %", height=350,
-        )
-        st.plotly_chart(fig_hist, use_container_width=True)
+    # ── Paths: one hue at low opacity + mean and percentile bands ──
+    with tab_paths:
+        n_show = st.slider("Paths to display", 10, 1000, 200, key="mc_nshow")
+        sp = sample_paths(S_paths, n_sample=n_show)
+        allp = sample_paths(S_paths, n_sample=len(S_paths))
+        months = np.arange(sp.shape[1])
+        p5, p25, p50, p75, p95 = np.percentile(allp, [5, 25, 50, 75, 95], axis=0)
+        mean = allp.mean(axis=0)
 
-        # Stats — glass cards
-        stats = terminal_distribution_stats(S_T, params["K"])
-        _color_map = {
-            "Mean": "#00E5FF", "Median": "#38BDF8",
-            "Std Dev": "#A78BFA", "Skewness": "#F0B429",
-            "Kurtosis": "#FB923C", "Min": "#FF4D6D", "Max": "#10D48A",
-        }
-        _cards = []
-        for k, v in stats.items():
-            _fmt = f"{v:.4f}" if isinstance(v, float) else str(v)
-            _col = _color_map.get(k, "#9BAEC8")
-            _cards.append(
-                f"<div style='background:rgba(8,18,32,0.72);backdrop-filter:blur(14px);"
-                f"-webkit-backdrop-filter:blur(14px);border:1px solid rgba(0,229,255,0.13);"
-                f"border-radius:8px;padding:9px 13px;margin:4px 0;"
-                f"box-shadow:0 2px 14px rgba(0,0,0,0.35)'>"
-                f"<div style='color:#5A6A82;font-size:0.62rem;text-transform:uppercase;"
-                f"letter-spacing:0.07em;font-weight:600;margin-bottom:2px'>{k}</div>"
-                f"<div style='color:{_col};font-size:1.05rem;font-weight:700;"
-                f"font-variant-numeric:tabular-nums'>{_fmt}</div>"
-                f"</div>"
-            )
-        st.markdown(
-            "<div style='display:grid;grid-template-columns:1fr 1fr;gap:4px'>"
-            + "".join(_cards)
-            + "</div>",
-            unsafe_allow_html=True,
-        )
+        fig = go.Figure()
+        opacity = 0.3 if n_show <= 50 else max(0.05, 0.22 - n_show * 0.0002)
+        for i in range(sp.shape[0]):
+            fig.add_trace(go.Scatter(x=months, y=sp[i], mode="lines", showlegend=False,
+                                     line=dict(color=PATH, width=1), opacity=opacity, hoverinfo="skip"))
+        # Percentile envelope drawn on top of the paths so it stays legible
+        fig.add_trace(go.Scatter(x=months, y=p75, mode="lines", line=dict(width=0), showlegend=False,
+                                 hoverinfo="skip"))
+        fig.add_trace(go.Scatter(x=months, y=p25, mode="lines", line=dict(width=0), fill="tonexty",
+                                 fillcolor=rgba(BAND, 0.18), name="25–75th percentile",
+                                 hoverinfo="skip"))
+        for y, name, show in ((p95, "5th / 95th percentile", True), (p5, "5th percentile", False)):
+            fig.add_trace(go.Scatter(x=months, y=y, mode="lines", name=name, showlegend=show,
+                                     line=dict(color=C.text_2, width=1.2, dash="dash"),
+                                     hovertemplate=name.split(" /")[0] + " %{y:.2f}<extra></extra>"))
+        fig.add_trace(go.Scatter(x=months, y=mean, mode="lines", name="Mean",
+                                 line=dict(color=MEAN, width=2.5),
+                                 hovertemplate="Month %{x}<br>Mean %{y:.2f}<extra></extra>"))
+        fig.add_trace(go.Scatter(x=months, y=p50, mode="lines", name="Median",
+                                 line=dict(color=C.text, width=1.5, dash="dot"),
+                                 hovertemplate="Median %{y:.2f}<extra></extra>"))
+        fig.add_hline(y=p["S0"], line_dash="dash", line_color=C.muted, line_width=1)
+        if p["H_up"] > p["S0"]:
+            fig.add_hline(y=p["H_up"], line_dash="dot", line_color=C.neg, line_width=1,
+                          annotation_text="H", annotation_font_color=C.neg)
+        if p["H_down"] < p["S0"]:
+            fig.add_hline(y=p["H_down"], line_dash="dot", line_color=C.neg, line_width=1,
+                          annotation_text="L", annotation_font_color=C.neg)
+        fig.update_layout(xaxis_title="Month", yaxis_title="Price", hovermode="x unified")
+        chart(fig, height=440, title="Simulated GBM paths (monthly sampling)")
 
-    with col_conv:
-        st.markdown("#### Convergence (European Call)")
-        conv = convergence_analysis(S_paths, params["K"], params["r"], params["T"])
+    # ── Terminal distribution ──
+    with tab_dist:
+        col_h, col_s = st.columns([1.6, 1], gap="large")
+        with col_h:
+            hist = histogram_data(S_T, n_bins=30)
+            fig_h = go.Figure(go.Bar(
+                x=[(h["bin_low"] + h["bin_high"]) / 2 for h in hist],
+                y=[h["freq"] for h in hist],
+                width=[(h["bin_high"] - h["bin_low"]) * 0.92 for h in hist],
+                marker_color=PATH, name="Frequency",
+                hovertemplate="S_T ≈ %{x:.2f}<br>%{y:.2f}% of paths<extra></extra>",
+            ))
+            fig_h.add_vline(x=p["K"], line_dash="dash", line_color=MEAN,
+                            annotation_text="K", annotation_font_color=MEAN)
+            fig_h.update_layout(xaxis_title="S_T", yaxis_title="Frequency (%)", showlegend=False,
+                                hovermode="closest")
+            chart(fig_h, height=380, title="Distribution of S_T")
+        with col_s:
+            s = terminal_distribution_stats(S_T, p["K"])
+            stat_grid([
+                Stat("Mean", num(s["mean"]), small=True),
+                Stat("Median", num(s["median"]), small=True),
+                Stat("Std dev", num(s["std"]), small=True),
+                Stat("Skewness", num(s["skewness"], 3), small=True),
+                Stat("Kurtosis", num(s["kurtosis"], 3), small=True, hint="Pearson (normal = 3)"),
+                Stat("5th / 95th pct", f"{s['p5']:.1f} / {s['p95']:.1f}", small=True),
+                Stat("P(S_T > K)", pct(s["prob_above_K"], 1), small=True),
+                Stat("Expected shortfall 5%", num(s["expected_shortfall_5"]), small=True,
+                     hint="mean of worst 5% S_T"),
+            ], columns=2)
 
-        fig_conv = go.Figure()
+    # ── Convergence ──
+    with tab_conv:
+        conv = convergence_analysis(S_paths, p["K"], p["r"], p["T"])
         n_paths = [c["n_paths"] for c in conv]
-        mc_prices = [c["mc_price"] for c in conv]
-        se_vals = [c["std_error"] for c in conv]
-
-        fig_conv.add_trace(go.Scatter(
-            x=n_paths, y=mc_prices, name="MC Price",
-            line=dict(color=ACCENT_GREEN, width=2),
-            error_y=dict(type="data", array=[1.96 * s for s in se_vals],
-                         visible=True, color=ACCENT_GREEN),
-        ))
-        fig_conv.add_hline(y=bsm_c, line_dash="dash", line_color=ACCENT_CYAN,
-                           annotation_text=f"BSM = {bsm_c:.4f}")
-        fig_conv.update_layout(
-            **PLOTLY_LAYOUT, title="MC Price Convergence",
-            xaxis_title="Number of Paths", yaxis_title="MC Price",
-            xaxis_type="log", height=350,
-        )
-        st.plotly_chart(fig_conv, use_container_width=True)
-
-        # Convergence summary glass cards
-        last_mc = mc_prices[-1]
-        last_se = se_vals[-1]
-        abs_err = abs(last_mc - bsm_c)
-        rel_err = abs_err / bsm_c * 100
-        _conv_items = [
-            ("BSM Exact", f"{bsm_c:.4f}", "#00E5FF"),
-            ("MC Price", f"{last_mc:.4f}", "#38BDF8"),
-            ("Std Error", f"{last_se:.5f}", "#A78BFA"),
-            ("Abs Error", f"{abs_err:.5f}", "#F0B429"),
-            ("Rel Error", f"{rel_err:.3f}%", "#FB923C"),
-            ("N Paths", f"{n_paths[-1]:,}", "#10D48A"),
-        ]
-        _conv_cards = "".join(
-            f"<div style='background:rgba(8,18,32,0.72);backdrop-filter:blur(14px);"
-            f"-webkit-backdrop-filter:blur(14px);border:1px solid rgba(0,229,255,0.13);"
-            f"border-radius:8px;padding:9px 13px;margin:4px 0;"
-            f"box-shadow:0 2px 14px rgba(0,0,0,0.35)'>"
-            f"<div style='color:#5A6A82;font-size:0.62rem;text-transform:uppercase;"
-            f"letter-spacing:0.07em;font-weight:600;margin-bottom:2px'>{lbl}</div>"
-            f"<div style='color:{col};font-size:1.05rem;font-weight:700;"
-            f"font-variant-numeric:tabular-nums'>{val}</div></div>"
-            for lbl, val, col in _conv_items
-        )
-        st.markdown(
-            "<div style='display:grid;grid-template-columns:1fr 1fr;gap:4px'>"
-            + _conv_cards + "</div>",
-            unsafe_allow_html=True,
-        )
+        prices = [c["mc_price"] for c in conv]
+        ses = [c["std_error"] for c in conv]
+        col_c, col_k = st.columns([1.6, 1], gap="large")
+        with col_c:
+            fig_c = go.Figure()
+            fig_c.add_trace(go.Scatter(
+                x=n_paths, y=prices, name="MC price (±1.96 SE)", mode="lines+markers",
+                line=dict(color=PATH),
+                error_y=dict(type="data", array=[1.96 * x for x in ses], visible=True,
+                             color=rgba(PATH, 0.6), thickness=1.2),
+                hovertemplate="%{x:,} paths<br>%{y:.4f}<extra></extra>",
+            ))
+            fig_c.add_hline(y=bsm_c, line_dash="dash", line_color=REF,
+                            annotation_text=f"BSM {bsm_c:.4f}", annotation_font_color=REF)
+            fig_c.update_layout(xaxis_title="Number of paths", yaxis_title="Call price",
+                                xaxis_type="log", hovermode="closest")
+            chart(fig_c, height=380, title="European call convergence")
+        with col_k:
+            abs_err = abs(prices[-1] - bsm_c)
+            stat_grid([
+                Stat("BSM exact", num(bsm_c, 4), small=True),
+                Stat("MC price", num(prices[-1], 4), small=True),
+                Stat("Std error", num(ses[-1], 5), small=True),
+                Stat("Abs error", num(abs_err, 5), small=True),
+                Stat("Rel error", f"{abs_err / bsm_c * 100:.3f}%", small=True),
+                Stat("Paths used", f"{n_paths[-1]:,}", small=True),
+            ], columns=2)

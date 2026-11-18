@@ -6,6 +6,9 @@ Supports IRS Pay/Receive Fixed, Basis Swap, XCCY Swap.
 import numpy as np
 import pandas as pd
 
+SWAP_TYPES = ["IRS Pay Fixed", "IRS Receive Fixed", "Basis Swap", "XCCY Swap"]
+DAY_COUNTS = ["30/360", "ACT/360", "ACT/365"]
+
 
 def generate_swap_schedule(notional, fixed_rate, float_rate, float_spread,
                            tenor, freq, discount_rate, day_count="30/360",
@@ -41,6 +44,7 @@ def generate_swap_schedule(notional, fixed_rate, float_rate, float_spread,
     for i in range(1, n_periods + 1):
         t = i / freq
         df = (1 + discount_rate) ** (-t)
+        fixed_notional = 0.0  # notional re-exchange carried in fixed_cf (XCCY final period)
 
         if swap_type == "Basis Swap":
             # Float-for-float: Leg A (e.g. SOFR = float_rate flat),
@@ -56,6 +60,7 @@ def generate_swap_schedule(notional, fixed_rate, float_rate, float_spread,
             fixed_cf = notional * fixed_rate * year_frac_adj
             float_cf = foreign_notional_dom * foreign_float * year_frac_adj
             if i == n_periods:
+                fixed_notional = foreign_notional_dom
                 fixed_cf += foreign_notional_dom
                 float_cf += notional
 
@@ -85,6 +90,7 @@ def generate_swap_schedule(notional, fixed_rate, float_rate, float_spread,
             pv_float=round(pv_float, 2),
             pv_net=round(pv_net, 2),
             cumul_npv=round(cumul_npv, 2),
+            pv_fixed_notional=round(fixed_notional * df, 2),
         ))
 
     return pd.DataFrame(rows)
@@ -102,9 +108,12 @@ def swap_metrics(df, notional, fixed_rate, float_rate, float_spread, discount_ra
     # Excludes notional re-exchange rows (year_frac unchanged, so the sum is over coupon accrual only).
     dv01 = notional * (df["disc_factor"] * df["year_frac"]).sum() * 0.0001
 
-    # Break-even fixed rate: the rate that makes NPV = 0.
+    # Break-even fixed rate s: NPV = 0 ⇔ PV_float = N·s·annuity + PV(fixed-side notional),
+    # so s = (PV_float − PV_fixed_notional) / (N·annuity). The notional term is
+    # non-zero only for XCCY, whose final period carries the re-exchange.
     annuity = (df["disc_factor"] * df["year_frac"]).sum()
-    be_rate = (pv_float / (notional * annuity)) if annuity > 0 else 0
+    fixed_notional_pv = df["pv_fixed_notional"].sum() if "pv_fixed_notional" in df else 0.0
+    be_rate = ((pv_float - fixed_notional_pv) / (notional * annuity)) if annuity > 0 else 0
 
     return dict(
         pv_fixed=round(pv_fixed, 2),
