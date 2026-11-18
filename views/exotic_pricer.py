@@ -1,123 +1,131 @@
-"""
-exotic_pricer.py — Exotic Options Pricer with 15 closed-form options + Greeks.
-"""
+"""views/exotic_pricer.py — 15 closed-form exotic options + vanilla benchmark across 3 models."""
 
-import streamlit as st
 import numpy as np
-import plotly.graph_objects as go
 import pandas as pd
-from config import (PLOTLY_LAYOUT, ACCENT_GOLD, ACCENT_BLUE, ACCENT_GREEN,
-                    ACCENT_RED, TEXT_GREY, ACCENT_CYAN, require)
-from models.exotic_options import price_all_exotics
+import plotly.graph_objects as go
+import streamlit as st
+
 from models.black_scholes import (
-    call_price, put_price, call_greeks, put_greeks,
-    black76_call, black76_put, black76_greeks,
-    bachelier_call, bachelier_put, bachelier_greeks,
+    bachelier_call, bachelier_greeks, bachelier_put,
+    black76_call, black76_greeks, black76_put,
+    call_greeks, call_price, put_greeks, put_price,
 )
+from models.exotic_options import price_all_exotics
+from ui.components import Stat, callout, chart, page_header, require, section, stat_grid
+from ui.formatting import num
+from ui.theme import C, SEQUENTIAL, SERIES, rgba
 
-
-_MODEL_INFO = {
-    "BSM — Black-Scholes-Merton": {
-        "desc": "Standard log-normal model. Underlying follows geometric Brownian motion.",
-        "color": "#38BDF8",
-    },
-    "Black-76 — Black's Model": {
-        "desc": "Log-normal model for forwards/futures. Uses F = S·e^{(r−q)T} as underlying.",
-        "color": "#F0B429",
-    },
-    "Bachelier — Normal Model": {
-        "desc": "Arithmetic Brownian motion. Handles negative underlyings. Input σ is lognormal; "
-                "converted to normal vol σ_n = σ·F.",
-        "color": "#10D48A",
-    },
+_MODELS = {
+    "BSM — Black-Scholes-Merton":
+        "Standard log-normal model: the underlying follows geometric Brownian motion.",
+    "Black-76 — Black's Model":
+        "Log-normal model for forwards and futures, using F = S·e^((r−q)T) as the underlying.",
+    "Bachelier — Normal Model":
+        "Arithmetic Brownian motion; handles negative underlyings. The lognormal σ input is "
+        "converted to a normal vol σₙ = σ·F.",
 }
+
+_FORMULAS = [
+    ("European call", r"C = S e^{-qT} N(d_1) - K e^{-rT} N(d_2)"),
+    ("European put", r"P = K e^{-rT} N(-d_2) - S e^{-qT} N(-d_1)"),
+    ("d₁, d₂", r"d_1 = \frac{\ln(S/K) + (r - q + \sigma^2/2)T}{\sigma\sqrt{T}},\quad d_2 = d_1 - \sigma\sqrt{T}"),
+    ("Digital call / put", r"DC = Q e^{-rT} N(d_2),\quad DP = Q e^{-rT} N(-d_2)"),
+    ("One-touch up", r"OT_\uparrow = e^{-rT}\left[N\!\left(\tfrac{\mu T - b}{\sigma\sqrt{T}}\right) + e^{2\mu b/\sigma^2} N\!\left(\tfrac{-\mu T - b}{\sigma\sqrt{T}}\right)\right]"),
+    ("No-touch", r"NT = e^{-rT} - OT"),
+    ("Asian (geometric, Kemna–Vorst)", r"\hat\sigma = \sigma/\sqrt{3},\quad \hat b = \tfrac12\left(r - q - \sigma^2/6\right)"),
+    ("Chooser (Rubinstein)", r"C(S,K,T) + K e^{-rT} N(-d_2(t_c)) - S e^{-qT} N(-d_1(t_c))"),
+    ("Gap call", r"GC = S e^{-qT} N(d_1(K_{gap})) - K e^{-rT} N(d_2(K_{gap}))"),
+    ("Power", r"e^{-rT} S^n \exp\!\left[n(r-q)T + \tfrac{n(n-1)}{2}\sigma^2 T\right]"),
+    ("Range accrual", r"e^{-rT}\,\mathbb{P}(L < S_T < H)"),
+]
+
+
+def _vanillas(model_choice, S, K, T, r, sigma, q):
+    """Vanilla call/put prices and greeks under the selected model."""
+    F = S * np.exp((r - q) * T)
+    sigma_n = sigma * F
+    if model_choice.startswith("Black-76"):
+        return ("B76", F, sigma_n, black76_call(F, K, T, r, sigma), black76_put(F, K, T, r, sigma),
+                black76_greeks(F, K, T, r, sigma, is_call=True),
+                black76_greeks(F, K, T, r, sigma, is_call=False))
+    if model_choice.startswith("Bachelier"):
+        return ("Bachelier", F, sigma_n,
+                bachelier_call(F, K, T, r, sigma_n), bachelier_put(F, K, T, r, sigma_n),
+                bachelier_greeks(F, K, T, r, sigma_n, is_call=True),
+                bachelier_greeks(F, K, T, r, sigma_n, is_call=False))
+    return ("BSM", F, sigma_n, call_price(S, K, T, r, sigma, q), put_price(S, K, T, r, sigma, q),
+            call_greeks(S, K, T, r, sigma, q), put_greeks(S, K, T, r, sigma, q))
+
+
+def _greek_grid(greek_fn, key, spots, sigmas, K, T, r, q):
+    Z = np.zeros((len(sigmas), len(spots)))
+    for i, sv in enumerate(sigmas):
+        for j, spot in enumerate(spots):
+            try:
+                Z[i, j] = greek_fn(spot, K, T, r, sv, q)[key]
+            except Exception:
+                Z[i, j] = 0
+    return Z
+
+
+def _f(x, d=4):
+    return num(x, d) if x is not None else "—"
 
 
 def render():
-    st.markdown("## Exotic Options Pricer — Multi-Model")
-    st.caption("BSM · Black-76 · Bachelier · Digitals · Touch · Barriers · Asian · Lookback · "
-               "Chooser · Gap · Power · Range Accrual")
-
-    # ── Copy Zone ──
-    _has_sp_data = "sp_S0" in st.session_state
-    _import_label = (
-        f"Payoff Analyzer data available — S₀ = <b>{st.session_state.get('sp_S0', '—')}</b>"
-        if _has_sp_data
-        else "No Payoff Analyzer data yet — go to <b>Payoff Analyzer</b> first to populate"
-    )
-    _banner_color = "rgba(16,212,138,0.08)" if _has_sp_data else "rgba(240,180,41,0.07)"
-    _border_color = "#10D48A" if _has_sp_data else "#F0B429"
-    st.markdown(
-        f"<div style='background:{_banner_color};border:1px solid {_border_color}55;"
-        f"border-left:3px solid {_border_color};border-radius:8px;padding:10px 16px;"
-        f"margin-bottom:10px;display:flex;align-items:center;justify-content:space-between'>"
-        f"<span style='color:#9BAEC8;font-size:0.84rem'>{_import_label}</span>"
-        f"</div>",
-        unsafe_allow_html=True,
-    )
-    use_copy = st.toggle(
-        "⇠ Import S₀ & σ from Payoff Analyzer",
-        value=False,
-        key="ex_copy",
-        disabled=not _has_sp_data,
-        help="Auto-fills Spot and Volatility from the Payoff Analyzer tab" if _has_sp_data
-             else "Open the Payoff Analyzer tab first to make data available",
+    page_header(
+        "Exotic Pricer",
+        "Closed-form prices and Greeks for 15 exotic payoffs, benchmarked against vanillas "
+        "under Black-Scholes, Black-76 or Bachelier.",
+        eyebrow="Options",
     )
 
-    # ── Model Selector ──
-    st.markdown(
-        "<div style='height:1px;background:linear-gradient(90deg,#1A2E45,transparent);"
-        "margin:10px 0 12px 0'></div>",
-        unsafe_allow_html=True,
-    )
-    model_choice = st.radio(
-        "**Pricing Model**",
-        list(_MODEL_INFO.keys()),
-        horizontal=True,
-        key="ex_model",
-    )
-    _minfo = _MODEL_INFO[model_choice]
-    st.markdown(
-        f"<div style='background:rgba(8,18,32,0.65);backdrop-filter:blur(10px);"
-        f"-webkit-backdrop-filter:blur(10px);border:1px solid {_minfo['color']}33;"
-        f"border-left:3px solid {_minfo['color']};border-radius:8px;padding:8px 14px;"
-        f"margin-bottom:12px'>"
-        f"<span style='color:#7B8EA8;font-size:0.82rem'>{_minfo['desc']}</span>"
-        f"</div>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        "<div style='height:1px;background:linear-gradient(90deg,#1A2E45,transparent);"
-        "margin:0 0 12px 0'></div>",
-        unsafe_allow_html=True,
-    )
+    # ── Model + import ──
+    shared_spot = st.session_state.get("shared_spot")
+    has_sp = shared_spot is not None
 
-    # ── Market Parameters ──
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("#### Market Parameters")
-        default_S = st.session_state.get("sp_S0", 100.0) if st.session_state.get("ex_copy") else 100.0
-        S = st.number_input("Spot Price S₀", value=default_S, step=1.0, key="ex_S")
-        K = st.number_input("Strike K", value=100.0, step=1.0, key="ex_K")
-        T = st.number_input("Maturity T (yr)", value=1.0, step=0.25, key="ex_T")
-        r = st.number_input("Risk-Free Rate r", value=0.05, step=0.005, format="%.3f", key="ex_r")
-        sigma = st.number_input("Volatility σ", value=0.20, step=0.01, format="%.2f", key="ex_sig")
-        q = st.number_input("Dividend Yield q", value=0.02, step=0.005, format="%.3f", key="ex_q")
+    def _import_spot():
+        if st.session_state.get("ex_copy") and has_sp:
+            st.session_state["ex_S"] = float(shared_spot)
 
-    with col2:
-        st.markdown("#### Exotic Parameters")
-        H_up = st.number_input("Upper Barrier H", value=120.0, step=5.0, key="ex_H")
-        H_down = st.number_input("Lower Barrier L", value=80.0, step=5.0, key="ex_L")
-        Q_pay = st.number_input("Digital Payout Q", value=1.0, step=0.1, key="ex_Q")
-        sig2 = st.number_input("2nd Asset Vol σ₂", value=0.25, step=0.01, format="%.2f", key="ex_sig2")
-        rho = st.number_input("Correlation ρ", value=0.50, step=0.1, format="%.2f", key="ex_rho")
-        n_pow = st.number_input("Power n", value=2, step=1, key="ex_npow")
-        t_c = st.number_input("Chooser Time t_c", value=0.5, step=0.1, format="%.2f", key="ex_tc")
-        K_gap = st.number_input("Gap Strike K_gap", value=105.0, step=1.0, key="ex_Kgap")
+    top_l, top_r = st.columns([2.4, 1], vertical_alignment="center")
+    model_choice = top_l.radio("Pricing model", list(_MODELS), horizontal=True, key="ex_model")
+    top_r.toggle(
+        "Import S₀ from Payoff Analyzer", value=False, key="ex_copy", disabled=not has_sp,
+        on_change=_import_spot,
+        help=(f"Payoff Analyzer spot available: S₀ = {shared_spot}" if has_sp
+              else "Open the Payoff Analyzer first to make its spot available."),
+    )
+    callout(_MODELS[model_choice], tone="neutral")
 
-    st.markdown("---")
+    # ── Inputs ──
+    col_mkt, col_exo = st.columns(2, gap="medium")
+    with col_mkt, st.container(border=True):
+        st.markdown("**Market**")
+        a, b, c = st.columns(3)
+        S = a.number_input("Spot S₀", value=100.0, step=1.0, key="ex_S")
+        K = b.number_input("Strike K", value=100.0, step=1.0, key="ex_K")
+        T = c.number_input("Maturity T (y)", value=1.0, step=0.25, key="ex_T")
+        a, b, c = st.columns(3)
+        r = a.number_input("Rate r", value=0.05, step=0.005, format="%.3f", key="ex_r")
+        sigma = b.number_input("Vol σ", value=0.20, step=0.01, format="%.2f", key="ex_sig")
+        q = c.number_input("Div. yield q", value=0.02, step=0.005, format="%.3f", key="ex_q")
+    with col_exo, st.container(border=True):
+        st.markdown("**Exotic parameters**")
+        a, b, c = st.columns(3)
+        H_up = a.number_input("Upper barrier H", value=120.0, step=5.0, key="ex_H")
+        H_down = b.number_input("Lower barrier L", value=80.0, step=5.0, key="ex_L")
+        Q_pay = c.number_input("Digital payout Q", value=1.0, step=0.1, key="ex_Q")
+        a, b, c = st.columns(3)
+        K_gap = a.number_input("Gap trigger", value=105.0, step=1.0, key="ex_Kgap")
+        n_pow = b.number_input("Power n", value=2, step=1, key="ex_npow")
+        t_c = c.number_input("Chooser t_c", value=0.5, step=0.1, format="%.2f", key="ex_tc")
+        a, b, _ = st.columns(3)
+        sig2 = a.number_input("2nd asset σ₂", value=0.25, step=0.01, format="%.2f", key="ex_sig2",
+                              help="Reserved for two-asset exotics.")
+        rho = b.number_input("Correlation ρ", value=0.50, step=0.1, format="%.2f", key="ex_rho",
+                             help="Reserved for two-asset exotics.")
 
-    # ── Input validation ──
     require(S > 0, "Spot price S₀ must be positive.")
     require(K > 0, "Strike K must be positive.")
     require(T > 0, "Maturity T must be greater than 0.")
@@ -125,228 +133,127 @@ def render():
     require(H_up > H_down, f"Upper Barrier H ({H_up}) must be greater than Lower Barrier L ({H_down}).")
     require(t_c < T, f"Chooser time t_c ({t_c}) must be less than maturity T ({T}).")
 
-    # ── Price All 15 Exotics ──
-    results = price_all_exotics(
-        S, K, T, r, sigma, q, H_up, H_down, Q_pay,
-        sig2, rho, 95, n_pow, t_c, K_gap,
-    )
-
-    # ── Compute vanilla prices using the selected model ──
-    F = S * np.exp((r - q) * T)  # forward price (shared by B76 and Bachelier)
-    sigma_n = sigma * F           # normal vol for Bachelier (ATM approximation)
-
-    if model_choice.startswith("Black-76"):
-        call_p = black76_call(F, K, T, r, sigma)
-        put_p  = black76_put(F, K, T, r, sigma)
-        call_g = black76_greeks(F, K, T, r, sigma, is_call=True)
-        put_g  = black76_greeks(F, K, T, r, sigma, is_call=False)
-        model_label = "B76"
-    elif model_choice.startswith("Bachelier"):
-        call_p = bachelier_call(F, K, T, r, sigma_n)
-        put_p  = bachelier_put(F, K, T, r, sigma_n)
-        call_g = bachelier_greeks(F, K, T, r, sigma_n, is_call=True)
-        put_g  = bachelier_greeks(F, K, T, r, sigma_n, is_call=False)
-        model_label = "Bachelier"
-    else:
-        call_p = call_price(S, K, T, r, sigma, q)
-        put_p  = put_price(S, K, T, r, sigma, q)
-        call_g = call_greeks(S, K, T, r, sigma, q)
-        put_g  = put_greeks(S, K, T, r, sigma, q)
-        model_label = "BSM"
-
-    call_d = call_g.get("delta")
-    put_d  = put_g.get("delta")
-    call_v = call_g.get("vega")
-    call_t = call_g.get("theta")
-
-    # ── Mini Dashboard ──
-    by_name = {r["name"]: r for r in results}
+    # ── Pricing ──
+    results = price_all_exotics(S, K, T, r, sigma, q, H_up, H_down, Q_pay,
+                                sig2, rho, 95, n_pow, t_c, K_gap)
+    model_label, F, sigma_n, call_p, put_p, call_g, put_g = _vanillas(
+        model_choice, S, K, T, r, sigma, q)
+    by_name = {res["name"]: res for res in results}
 
     def price_of(name):
-        r = by_name.get(name)
-        return r["price"] if r else float("nan")
+        res = by_name.get(name)
+        return res["price"] if res else float("nan")
 
-    def delta_of(name):
-        r = by_name.get(name)
-        return r.get("delta") if r else None
+    pow_name = next((res["name"] for res in results if res["name"].startswith("Power")), "")
+    asian, lookback = price_of("Asian Call (Geometric)"), price_of("Lookback Call (Floating)")
 
-    # ── Vanilla row ──
-    st.markdown(f"#### Vanilla Benchmark <span style='color:#5A6A82;font-size:0.75rem;font-weight:400'>— {model_label}</span>",
-                unsafe_allow_html=True)
-    _fwd_note = f"F = {F:.3f}" if not model_choice.startswith("BSM") else ""
-    if _fwd_note:
-        st.caption(f"Forward price: {_fwd_note}" + (f"  |  σ_n = {sigma_n:.3f}" if model_choice.startswith("Bachelier") else ""))
-    vc1, vc2, vc3, vc4, vc5, vc6 = st.columns(6)
-    vc1.metric("Call Price",   f"{call_p:.4f}")
-    vc2.metric("Put Price",    f"{put_p:.4f}")
-    vc3.metric("Call Δ",       f"{call_d:.4f}" if call_d is not None else "—")
-    vc4.metric("Put Δ",        f"{put_d:.4f}"  if put_d  is not None else "—")
-    vc5.metric("Vega",         f"{call_v:.4f}" if call_v is not None else "—")
-    vc6.metric("Put-Call Par.", f"{abs(call_p - put_p):.4f}", help="|C − P|")
+    tab_dash, tab_table, tab_greeks, tab_method = st.tabs(
+        ["Overview", "Prices & Greeks", "Greeks explorer", "Methodology"])
 
-    # ── Digitals row ──
-    st.markdown("#### Digitals")
-    dc1, dc2, dc3, dc4 = st.columns(4)
-    dc1.metric("Digital Call",  f"{price_of('Digital Call'):.4f}")
-    dc2.metric("Digital Put",   f"{price_of('Digital Put'):.4f}")
-    dc3.metric("Digital C+P",   f"{price_of('Digital Call') + price_of('Digital Put'):.4f}",
-               help="Should ≈ Q·e⁻ʳᵀ")
+    with tab_dash:
+        caption = f"{model_label}"
+        if not model_choice.startswith("BSM"):
+            caption += f" · forward F = {F:.3f}"
+        if model_choice.startswith("Bachelier"):
+            caption += f" · σₙ = {sigma_n:.3f}"
+        section("Vanilla benchmark", caption)
+        stat_grid([
+            Stat("Call price", _f(call_p)),
+            Stat("Put price", _f(put_p)),
+            Stat("Call Δ", _f(call_g.get("delta"))),
+            Stat("Put Δ", _f(put_g.get("delta"))),
+            Stat("Vega", _f(call_g.get("vega"))),
+            Stat("|C − P|", _f(abs(call_p - put_p)), hint="put-call gap"),
+        ], columns=6)
 
-    # ── Barriers / Touch row ──
-    st.markdown("#### Touch / Barrier")
-    bc1, bc2, bc3, bc4, bc5 = st.columns(5)
-    bc1.metric("One-Touch ↑",   f"{price_of('One-Touch (Up)'):.4f}")
-    bc2.metric("No-Touch ↑",    f"{price_of('No-Touch (Up)'):.4f}")
-    bc3.metric("One-Touch ↓",   f"{price_of('One-Touch (Down)'):.4f}")
-    bc4.metric("No-Touch ↓",    f"{price_of('No-Touch (Down)'):.4f}")
-    bc5.metric("Dbl No-Touch",  f"{price_of('Double No-Touch'):.4f}")
+        section("Digitals", f"payout Q = {Q_pay:g}")
+        stat_grid([
+            Stat("Digital call", _f(price_of("Digital Call"))),
+            Stat("Digital put", _f(price_of("Digital Put"))),
+            Stat("Digital C + P", _f(price_of("Digital Call") + price_of("Digital Put")),
+                 hint=f"≈ Q·e^(−rT) = {Q_pay * np.exp(-r * T):.4f}"),
+        ], columns=3)
 
-    # ── Path-Dependent row ──
-    st.markdown("#### Path-Dependent & Exotics")
-    ec1, ec2, ec3 = st.columns(3)
-    ec1.metric("Asian Call (Geom.)", f"{price_of('Asian Call (Geometric)'):.4f}",
-               delta=f"{price_of('Asian Call (Geometric)') - call_p:.4f} vs Call",
-               delta_color="normal")
-    ec2.metric("Lookback Call",      f"{price_of('Lookback Call (Floating)'):.4f}",
-               delta=f"{price_of('Lookback Call (Floating)') - call_p:.4f} vs Call",
-               delta_color="normal")
-    ec3.metric("Chooser",            f"{price_of('Chooser Option'):.4f}")
+        section("Touch & barrier", f"L = {H_down:g} · H = {H_up:g}")
+        stat_grid([
+            Stat("One-touch ↑", _f(price_of("One-Touch (Up)"))),
+            Stat("No-touch ↑", _f(price_of("No-Touch (Up)"))),
+            Stat("One-touch ↓", _f(price_of("One-Touch (Down)"))),
+            Stat("No-touch ↓", _f(price_of("No-Touch (Down)"))),
+            Stat("Double no-touch", _f(price_of("Double No-Touch"))),
+        ], columns=5)
 
-    pow_name = next((r["name"] for r in results if r["name"].startswith("Power")), "")
-    ec4, ec5, ec6 = st.columns(3)
-    ec4.metric("Gap Call",           f"{price_of('Gap Call'):.4f}")
-    ec5.metric("Power Option",       f"{price_of(pow_name):.4f}" if pow_name else "—")
-    ec6.metric("Range Accrual",      f"{price_of('Range Accrual'):.4f}")
+        section("Path-dependent & other exotics", "always priced with BSM closed forms")
+        stat_grid([
+            Stat("Asian call (geom.)", _f(asian), delta=asian - call_p, delta_fmt="{:+.4f} vs call"),
+            Stat("Lookback call", _f(lookback), delta=lookback - call_p, delta_fmt="{:+.4f} vs call"),
+            Stat("Chooser", _f(price_of("Chooser Option")), hint=f"t_c = {t_c:g}y"),
+            Stat("Gap call", _f(price_of("Gap Call")), hint=f"trigger {K_gap:g}"),
+            Stat("Power option", _f(price_of(pow_name)) if pow_name else "—", hint=f"n = {n_pow}"),
+            Stat("Range accrual", _f(price_of("Range Accrual"))),
+        ], columns=6)
 
-    st.markdown("---")
-    st.markdown(
-        "#### Full Table — Prices & Greeks "
-        "<span style='color:#5A6A82;font-size:0.75rem;font-weight:400'>"
-        "— Exotic options always use BSM closed-form</span>",
-        unsafe_allow_html=True,
-    )
+    with tab_table:
+        callout("Exotic options always use BSM closed forms; Greeks are shown where an "
+                "analytic expression is implemented.", tone="neutral")
+        rows = []
+        for i, res in enumerate(results):
+            row = {"#": i + 1, "Option": res["name"], "Method": res["method"], "Price": res["price"]}
+            for g in ["delta", "gamma", "vega", "theta", "rho"]:
+                row[g.capitalize()] = res.get(g)
+            rows.append(row)
+        st.dataframe(
+            pd.DataFrame(rows), width="stretch", hide_index=True, height=580,
+            column_config={
+                "Price": st.column_config.NumberColumn(format="%.4f"),
+                **{g: st.column_config.NumberColumn(format="%.6f")
+                   for g in ["Delta", "Gamma", "Vega", "Theta", "Rho"]},
+            },
+        )
 
-    # Build display table
-    rows = []
-    for i, res in enumerate(results):
-        row = {
-            "#": i + 1,
-            "Option": res["name"],
-            "Method": res["method"],
-            "Price": f"{res['price']:.4f}",
-        }
-        for g in ["delta", "gamma", "vega", "theta", "rho"]:
-            val = res.get(g)
-            row[g.capitalize()] = f"{val:.6f}" if val is not None else "—"
-        rows.append(row)
+    with tab_greeks:
+        g1, g2, _ = st.columns([1, 1, 2])
+        greek_choice = g1.selectbox("Greek", ["Delta", "Gamma", "Vega", "Theta"], key="ex_greek")
+        opt_type = g2.radio("Option type", ["Call", "Put"], horizontal=True, key="ex_opttype")
+        greek_key = greek_choice.lower()
+        greek_fn = call_greeks if opt_type == "Call" else put_greeks
+        S_range = np.linspace(max(S * 0.5, 1), S * 1.5, 80)
+        sig_range = np.linspace(0.05, 0.60, 50)
 
-    df = pd.DataFrame(rows)
-    st.dataframe(df, use_container_width=True, hide_index=True, height=580)
+        left, right = st.columns([1.3, 1], gap="medium")
+        with left:
+            Z = _greek_grid(greek_fn, greek_key, S_range, sig_range, K, T, r, q)
+            fig = go.Figure(go.Surface(x=S_range, y=sig_range, z=Z, colorscale=SEQUENTIAL,
+                                       opacity=0.95, showscale=False))
+            fig.update_layout(
+                title=f"{greek_choice} surface — {opt_type} (K = {K:g})",
+                scene=dict(xaxis_title="Spot S", yaxis_title="Vol σ", zaxis_title=greek_choice),
+                hovermode="closest", margin=dict(l=0, r=0, t=48, b=0),
+            )
+            chart(fig, height=480)
+        with right:
+            greek_2d = _greek_grid(greek_fn, greek_key, S_range, [sigma], K, T, r, q)[0]
+            fig2d = go.Figure(go.Scatter(
+                x=S_range, y=greek_2d, mode="lines", name=f"{greek_choice} ({opt_type})",
+                line=dict(color=SERIES[0], width=2),
+                fill="tozeroy", fillcolor=rgba(SERIES[0], 0.08),
+                hovertemplate=f"S %{{x:.2f}}<br>{greek_choice} %{{y:.5f}}<extra></extra>",
+            ))
+            fig2d.add_vline(x=S, line_dash="dash", line_color=C.muted, line_width=1,
+                            annotation_text=f"S₀ = {S:g}", annotation_font_color=C.muted)
+            fig2d.add_vline(x=K, line_dash="dot", line_color=C.subtle, line_width=1,
+                            annotation_text=f"K = {K:g}", annotation_font_color=C.subtle,
+                            annotation_position="bottom right")
+            fig2d.update_layout(
+                title=f"{greek_choice} vs spot · σ = {sigma:.2f}, T = {T:.2f}y",
+                xaxis_title="Spot S", yaxis_title=greek_choice, showlegend=False,
+                hovermode="closest",
+            )
+            chart(fig2d, height=480)
 
-    # ── Greeks Surface ──
-    st.markdown("---")
-    st.markdown("#### Greeks Visualization")
-
-    greek_choice = st.selectbox("Select Greek to plot", ["Delta", "Gamma", "Vega", "Theta"],
-                                key="ex_greek")
-    opt_type = st.radio("Option type", ["Call", "Put"], horizontal=True, key="ex_opttype")
-
-    S_range = np.linspace(max(S * 0.5, 1), S * 1.5, 80)
-    sig_range = np.linspace(0.05, 0.60, 50)
-
-    greek_key = greek_choice.lower()
-    greek_fn = call_greeks if opt_type == "Call" else put_greeks
-
-    Z = np.zeros((len(sig_range), len(S_range)))
-    for i, sv in enumerate(sig_range):
-        for j, spot in enumerate(S_range):
-            try:
-                g = greek_fn(spot, K, T, r, sv, q)
-                Z[i, j] = g[greek_key]
-            except Exception:
-                Z[i, j] = 0
-
-    fig = go.Figure(data=[go.Surface(
-        x=S_range, y=sig_range, z=Z,
-        colorscale="Blues", opacity=0.92,
-        reversescale=True,
-    )])
-    fig.update_layout(
-        title=f"{greek_choice} Surface — {opt_type} (K={K})",
-        scene=dict(
-            xaxis_title="Spot Price S",
-            yaxis_title="Volatility σ",
-            zaxis_title=greek_choice,
-            bgcolor="rgba(14,17,23,0.8)",
-        ),
-        **{k: v for k, v in PLOTLY_LAYOUT.items() if k != "template"},
-        template="plotly_dark",
-        height=550,
-    )
-    st.plotly_chart(fig, use_container_width=True)
-
-    # ── 2D Greek vs Spot Price ──
-    st.markdown(
-        f"**{greek_choice} vs Spot Price** "
-        f"<span style='color:#5A6A82;font-size:0.80rem'>"
-        f"— σ = {sigma:.2f}, K = {K}, T = {T:.2f}y, r = {r:.3f}</span>",
-        unsafe_allow_html=True,
-    )
-    greek_2d = np.zeros(len(S_range))
-    for j, spot in enumerate(S_range):
-        try:
-            g = greek_fn(spot, K, T, r, sigma, q)
-            greek_2d[j] = g[greek_key]
-        except Exception:
-            greek_2d[j] = 0
-
-    _color_2d = _minfo["color"]
-    fig2d = go.Figure()
-    fig2d.add_trace(go.Scatter(
-        x=S_range, y=greek_2d,
-        mode="lines",
-        line=dict(color=_color_2d, width=2.5),
-        fill="tozeroy",
-        fillcolor=f"rgba({int(_color_2d[1:3],16)},{int(_color_2d[3:5],16)},{int(_color_2d[5:7],16)},0.07)",
-        name=f"{greek_choice} ({opt_type})",
-        hovertemplate=f"<b>S</b>: %{{x:.2f}}<br><b>{greek_choice}</b>: %{{y:.5f}}<extra></extra>",
-    ))
-    fig2d.add_vline(x=S, line_dash="dash", line_color=ACCENT_GOLD, line_width=1.2,
-                    annotation_text=f"S₀={S}", annotation_font_color=ACCENT_GOLD,
-                    annotation_font_size=10)
-    fig2d.add_vline(x=K, line_dash="dot", line_color=TEXT_GREY, line_width=1,
-                    annotation_text=f"K={K}", annotation_font_color=TEXT_GREY,
-                    annotation_font_size=10)
-    fig2d.update_layout(
-        **PLOTLY_LAYOUT,
-        title=dict(text=f"{greek_choice} ({opt_type}) vs Spot Price",
-                   font=dict(size=13, color="#9BAEC8")),
-        xaxis_title="Spot Price S",
-        yaxis_title=greek_choice,
-        height=320,
-        showlegend=False,
-    )
-    fig2d.update_xaxes(showgrid=False, tickfont=dict(size=10))
-    fig2d.update_yaxes(showgrid=True, gridcolor="#1A2E45", zeroline=True,
-                       zerolinecolor="#1A2E45", tickfont=dict(size=10))
-    st.plotly_chart(fig2d, use_container_width=True)
-
-    # ── Formulas Reference ──
-    with st.expander("Formulas Reference"):
-        formulas = [
-            ("European Call", "C = S·e⁻qᵀ·N(d₁) − K·e⁻ʳᵀ·N(d₂)"),
-            ("European Put", "P = K·e⁻ʳᵀ·N(−d₂) − S·e⁻qᵀ·N(−d₁)"),
-            ("d₁, d₂", "d₁ = [ln(S/K) + (r−q+σ²/2)T] / (σ√T),  d₂ = d₁ − σ√T"),
-            ("Digital Call", "DC = Q·e⁻ʳᵀ·N(d₂)"),
-            ("Digital Put", "DP = Q·e⁻ʳᵀ·N(−d₂)"),
-            ("One-Touch Up", "OT↑ = e⁻ʳᵀ·[N((μT−b)/(σ√T)) + e^(2μb/σ²)·N((−μT−b)/(σ√T))]"),
-            ("No-Touch", "NT = e⁻ʳᵀ − OT"),
-            ("Asian (Geom.)", "Kemna-Vorst: σ̂=σ/√3, b̂=½(r−q−σ²/6), then BSM(S,K,T,r,σ̂,b̂)"),
-            ("Lookback", "Goldman-Sosin-Gatto closed-form with running min"),
-            ("Chooser", "Rubinstein: C(S,K,T) + K·e⁻ʳᵀ·N(−d₂(tc)) − S·e⁻qᵀ·N(−d₁(tc))"),
-            ("Gap Call", "GC = S·e⁻qᵀ·N(d₁(K_gap)) − K·e⁻ʳᵀ·N(d₂(K_gap))"),
-            ("Power", "e⁻ʳᵀ · Sⁿ · exp[n(r−q)T + n(n−1)σ²T/2]"),
-            ("Range Accrual", "P(L < S_T < H) · e⁻ʳᵀ via log-normal CDF"),
-        ]
-        for name, formula in formulas:
-            st.markdown(f"**{name}**: `{formula}`")
+    with tab_method:
+        for name, latex in _FORMULAS:
+            st.markdown(f"**{name}**")
+            st.latex(latex)
+        st.caption("Lookback: Goldman–Sosin–Gatto closed form with running minimum. "
+                   "μ = r − q − σ²/2, b = ln(H/S).")

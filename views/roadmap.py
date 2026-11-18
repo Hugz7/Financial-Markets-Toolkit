@@ -1,162 +1,114 @@
-"""
-roadmap.py — Suggested Improvements (user-editable).
-"""
+"""views/roadmap.py — Collaborative feature tracker (persisted to suggestions.json)."""
 
-import json
-import os
 import streamlit as st
 
-SUGGESTIONS_FILE = os.path.join(os.path.dirname(__file__), "..", "suggestions.json")
+from services.suggestions import PRIORITIES, STATUSES, load_suggestions, save_suggestions
+from ui.components import Stat, badges, empty_state, page_header, section, stat_grid
 
-DEFAULT_SUGGESTIONS = [
-    {"title": "Volatility Smile / Skew", "description": "SABR, SVI, or spline interpolation", "priority": "High", "author": "System", "status": "Planned"},
-    {"title": "Yield Curve Bootstrapping", "description": "Zero-coupon from swaps/bonds", "priority": "High", "author": "System", "status": "Planned"},
-    {"title": "Variance Reduction MC", "description": "Antithetic variates, control variates, importance sampling — 50-70% error reduction", "priority": "High", "author": "System", "status": "Planned"},
-    {"title": "VaR / CVaR", "description": "Parametric + historical 99%/95% + Expected Shortfall", "priority": "High", "author": "System", "status": "Planned"},
-    {"title": "Multi-Asset Correlation", "description": "Cholesky decomposition for worst-of, best-of, rainbow options", "priority": "Medium", "author": "System", "status": "Planned"},
-    {"title": "Heston Stochastic Vol", "description": "FFT Carr-Madan calibration", "priority": "Medium", "author": "System", "status": "Planned"},
-    {"title": "Swaption Pricer", "description": "Black76, Bachelier, vol cube", "priority": "Medium", "author": "System", "status": "Planned"},
-    {"title": "Binomial/Trinomial Trees", "description": "CRR for American options, early exercise boundary", "priority": "Medium", "author": "System", "status": "Planned"},
-    {"title": "Jump-Diffusion (Merton)", "description": "Poisson jumps + lognormal for fat tails", "priority": "Low", "author": "System", "status": "Planned"},
-    {"title": "PDF Report Generator", "description": "Automated export with charts and commentary", "priority": "Low", "author": "System", "status": "Planned"},
-]
-
-PRIORITY_COLORS = {
-    "High":   ("", "rgba(255,77,109,0.10)",  "#FF4D6D"),
-    "Medium": ("", "rgba(240,180,41,0.10)",  "#F0B429"),
-    "Low":    ("", "rgba(56,189,248,0.10)",  "#38BDF8"),
-}
-STATUS_OPTIONS = ["Planned", "In Progress", "Done", "Rejected"]
+_PRIORITY_TONE = {"High": "neg", "Medium": "warn", "Low": "accent"}
+_STATUS_TONE = {"Done": "pos", "In Progress": "accent", "Planned": "default", "Rejected": "default"}
 
 
-def load_suggestions():
-    if os.path.exists(SUGGESTIONS_FILE):
-        with open(SUGGESTIONS_FILE, "r") as f:
-            return json.load(f)
-    return DEFAULT_SUGGESTIONS.copy()
+def _persist_and_rerun() -> None:
+    save_suggestions(st.session_state.suggestions)
+    st.rerun()
 
 
-def save_suggestions(suggestions):
-    with open(SUGGESTIONS_FILE, "w") as f:
-        json.dump(suggestions, f, indent=2)
+def _edit_form(i: int, s: dict) -> None:
+    with st.form(key=f"form_edit_{i}", border=False):
+        new_title = st.text_input("Title", value=s["title"])
+        new_desc = st.text_area("Description", value=s["description"])
+        a, b = st.columns(2)
+        new_prio = a.selectbox("Priority", PRIORITIES, index=PRIORITIES.index(s["priority"]))
+        new_status = b.selectbox("Status", STATUSES, index=STATUSES.index(s["status"]))
+        save_col, cancel_col, _ = st.columns([1, 1, 4])
+        submitted = save_col.form_submit_button("Save", type="primary", width="stretch")
+        cancelled = cancel_col.form_submit_button("Cancel", width="stretch")
+    if submitted:
+        st.session_state.suggestions[i].update(
+            title=new_title, description=new_desc, priority=new_prio, status=new_status)
+        st.session_state[f"editing_{i}"] = False
+        _persist_and_rerun()
+    if cancelled:
+        st.session_state[f"editing_{i}"] = False
+        st.rerun()
+
+
+def _item(i: int, s: dict) -> None:
+    with st.container(border=True):
+        main, actions = st.columns([9, 1], vertical_alignment="center")
+        with main:
+            st.markdown(f"**{s['title']}**")
+            badges([(s["priority"], _PRIORITY_TONE.get(s["priority"], "default")),
+                    (s["status"], _STATUS_TONE.get(s["status"], "default"))])
+            if s.get("description"):
+                st.caption(f"{s['description']} · by {s['author']}")
+            else:
+                st.caption(f"by {s['author']}")
+        with actions:
+            e, d = st.columns(2)
+            if e.button("", key=f"edit_{i}", icon=":material/edit:", help="Edit"):
+                st.session_state[f"editing_{i}"] = True
+            if d.button("", key=f"del_{i}", icon=":material/delete:", help="Delete"):
+                st.session_state.suggestions.pop(i)
+                _persist_and_rerun()
+        if st.session_state.get(f"editing_{i}"):
+            _edit_form(i, s)
 
 
 def render():
-    st.markdown("## Suggested Improvements")
-    st.caption("Collaborative feature tracker — add, edit, and vote on improvements")
+    page_header("Roadmap",
+                "Collaborative feature tracker — add, edit and prioritise improvements.",
+                eyebrow="Project")
 
     if "suggestions" not in st.session_state:
         st.session_state.suggestions = load_suggestions()
-
     suggestions = st.session_state.suggestions
 
-    # ── Stats bar ──
-    total = len(suggestions)
-    by_status = {s: sum(1 for x in suggestions if x["status"] == s) for s in STATUS_OPTIONS}
-    c1, c2, c3, c4, c5 = st.columns(5)
-    c1.metric("Total", total)
-    c2.metric("High", sum(1 for x in suggestions if x["priority"] == "High"))
-    c3.metric("Medium", sum(1 for x in suggestions if x["priority"] == "Medium"))
-    c4.metric("Low", sum(1 for x in suggestions if x["priority"] == "Low"))
-    c5.metric("Done", by_status.get("Done", 0))
+    count = lambda key, val: sum(1 for x in suggestions if x[key] == val)  # noqa: E731
+    stat_grid([
+        Stat("Total", str(len(suggestions))),
+        Stat("High priority", str(count("priority", "High")), tone="neg"),
+        Stat("Medium priority", str(count("priority", "Medium")), tone="warn"),
+        Stat("Low priority", str(count("priority", "Low")), tone="accent"),
+        Stat("Done", str(count("status", "Done")), tone="pos"),
+    ], columns=5)
 
-    st.markdown("---")
-
-    # ── Filter ──
-    col_f1, col_f2 = st.columns([1, 1])
-    with col_f1:
-        filter_priority = st.selectbox("Filter by Priority", ["All", "High", "Medium", "Low"], key="sg_fp")
-    with col_f2:
-        filter_status = st.selectbox("Filter by Status", ["All"] + STATUS_OPTIONS, key="sg_fs")
-
+    section("Backlog")
+    f1, f2, _ = st.columns([1, 1, 2])
+    filter_priority = f1.selectbox("Priority", ["All"] + PRIORITIES, key="sg_fp")
+    filter_status = f2.selectbox("Status", ["All"] + STATUSES, key="sg_fs")
     filtered = [
         (i, s) for i, s in enumerate(suggestions)
         if (filter_priority == "All" or s["priority"] == filter_priority)
         and (filter_status == "All" or s["status"] == filter_status)
     ]
+    st.caption(f"{len(filtered)} of {len(suggestions)} shown")
 
-    st.markdown(f"**{len(filtered)}** suggestion(s) shown")
-    st.markdown("---")
+    if not filtered:
+        empty_state("Nothing matches these filters", "Change the priority or status filter.")
+    for i, s in filtered:
+        _item(i, s)
 
-    # ── List ──
-    for orig_i, s in filtered:
-        emoji, bg, color = PRIORITY_COLORS.get(s["priority"], ("", "rgba(255,255,255,0.05)", "#fff"))
-        status_badge = ""
-
-        with st.container():
-            col_main, col_actions = st.columns([5, 1])
-            with col_main:
-                st.markdown(
-                    f"<div style='background:{bg};border-left:3px solid {color};"
-                    f"padding:10px 14px;border-radius:6px;margin-bottom:4px'>"
-                    f"<b style='color:{color}'>{emoji} {s['title']}</b> "
-                    f"<span style='color:#5A6A82;font-size:0.82em'>[{s['priority']}] {status_badge} {s['status']}"
-                    f" · by {s['author']}</span><br>"
-                    f"<span style='color:#9BAEC8;font-size:0.88em'>{s['description']}</span>"
-                    f"</div>",
-                    unsafe_allow_html=True,
-                )
-            with col_actions:
-                st.markdown("<div style='margin-top:6px'></div>", unsafe_allow_html=True)
-                col_edit, col_del = st.columns(2)
-                with col_edit:
-                    if st.button("Edit", key=f"edit_{orig_i}", help="Edit"):
-                        st.session_state[f"editing_{orig_i}"] = True
-                with col_del:
-                    if st.button("Del", key=f"del_{orig_i}", help="Delete"):
-                        st.session_state.suggestions.pop(orig_i)
-                        save_suggestions(st.session_state.suggestions)
-                        st.rerun()
-
-            # Inline edit form
-            if st.session_state.get(f"editing_{orig_i}"):
-                with st.form(key=f"form_edit_{orig_i}"):
-                    new_title = st.text_input("Title", value=s["title"])
-                    new_desc = st.text_area("Description", value=s["description"])
-                    new_prio = st.selectbox("Priority", ["High", "Medium", "Low"],
-                                            index=["High", "Medium", "Low"].index(s["priority"]))
-                    new_status = st.selectbox("Status", STATUS_OPTIONS,
-                                              index=STATUS_OPTIONS.index(s["status"]))
-                    col_save, col_cancel = st.columns(2)
-                    with col_save:
-                        submitted = st.form_submit_button("Save", type="primary")
-                    with col_cancel:
-                        cancelled = st.form_submit_button("Cancel")
-
-                    if submitted:
-                        st.session_state.suggestions[orig_i].update(
-                            title=new_title, description=new_desc,
-                            priority=new_prio, status=new_status)
-                        save_suggestions(st.session_state.suggestions)
-                        st.session_state[f"editing_{orig_i}"] = False
-                        st.rerun()
-                    if cancelled:
-                        st.session_state[f"editing_{orig_i}"] = False
-                        st.rerun()
-
-    # ── Add new suggestion ──
-    st.markdown("---")
-    st.markdown("#### Add a Suggestion")
-    with st.form("add_suggestion_form", clear_on_submit=True):
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            new_title = st.text_input("Title *", placeholder="Short, descriptive title")
-        with col2:
-            new_priority = st.selectbox("Priority", ["High", "Medium", "Low"])
-        new_desc = st.text_area("Description", placeholder="What should be built and why?", height=80)
-        new_author = st.text_input("Your name / initials", placeholder="e.g. Hugo")
-
-        submitted = st.form_submit_button("Submit Suggestion", type="primary")
+    section("Add a suggestion")
+    with st.container(border=True):
+        with st.form("add_suggestion_form", clear_on_submit=True, border=False):
+            a, b, c = st.columns([3, 1, 1.4])
+            new_title = a.text_input("Title *", placeholder="Short, descriptive title")
+            new_priority = b.selectbox("Priority", PRIORITIES)
+            new_author = c.text_input("Your name / initials", placeholder="e.g. Hugo")
+            new_desc = st.text_area("Description", placeholder="What should be built and why?",
+                                    height=80)
+            submitted = st.form_submit_button("Add suggestion", type="primary",
+                                              icon=":material/add:")
         if submitted and new_title.strip():
             st.session_state.suggestions.append({
-                "title": new_title.strip(),
-                "description": new_desc.strip(),
-                "priority": new_priority,
-                "author": new_author.strip() or "Anonymous",
+                "title": new_title.strip(), "description": new_desc.strip(),
+                "priority": new_priority, "author": new_author.strip() or "Anonymous",
                 "status": "Planned",
             })
             save_suggestions(st.session_state.suggestions)
-            st.success(f"'{new_title}' added!")
+            st.toast(f"“{new_title.strip()}” added", icon=":material/check:")
             st.rerun()
         elif submitted:
             st.warning("Title is required.")
