@@ -3,7 +3,7 @@
 import streamlit as st
 
 from services.suggestions import PRIORITIES, STATUSES, load_suggestions, save_suggestions
-from ui.components import Stat, badges, empty_state, page_header, section, stat_grid
+from ui.components import panel, Stat, badges, empty_state, page_header, section, stat_grid
 
 _PRIORITY_TONE = {"High": "neg", "Medium": "warn", "Low": "accent"}
 _STATUS_TONE = {"Done": "pos", "In Progress": "accent", "Planned": "default", "Rejected": "default"}
@@ -35,7 +35,7 @@ def _edit_form(i: int, s: dict) -> None:
 
 
 def _item(i: int, s: dict) -> None:
-    with st.container(border=True):
+    with panel():
         main, actions = st.columns([9, 1], vertical_alignment="center")
         with main:
             st.markdown(f"**{s['title']}**")
@@ -91,7 +91,7 @@ def render():
         _item(i, s)
 
     section("Add a suggestion")
-    with st.container(border=True):
+    with panel():
         with st.form("add_suggestion_form", clear_on_submit=True, border=False):
             a, b, c = st.columns([3, 1, 1.4])
             new_title = a.text_input("Title *", placeholder="Short, descriptive title")

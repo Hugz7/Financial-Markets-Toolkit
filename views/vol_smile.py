@@ -8,7 +8,7 @@ from scipy.interpolate import griddata
 
 from models.volatility import atm_iv, otm_composite, skew_metrics
 from services.options import clear_cache, fetch_expiries, fetch_smile
-from ui.components import (Stat, callout, chart, empty_state, page_header, require,
+from ui.components import (panel, Stat, callout, chart, empty_state, page_header, require,
                            section, stat_grid)
 from ui.formatting import num, pct
 from ui.theme import C, SEQUENTIAL, SERIES
@@ -26,7 +26,7 @@ def _iv_axis(fig: go.Figure, x_title: str) -> None:
 
 
 def _controls() -> tuple[str, float, float, bool]:
-    with st.container(border=True):
+    with panel():
         c_t, c_r, c_q, c_b = st.columns([2, 1, 1, 1], vertical_alignment="bottom")
         ticker = c_t.text_input("Ticker", value="SPY", key="vs_ticker").strip().upper()
         r = c_r.number_input("Risk-free rate r", value=0.045, step=0.005, format="%.3f", key="vs_r")

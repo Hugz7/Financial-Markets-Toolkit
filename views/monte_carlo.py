@@ -10,7 +10,7 @@ from models.monte_carlo import (
     convergence_analysis, histogram_data, price_options_mc, sample_paths,
     simulate_gbm, terminal_distribution_stats,
 )
-from ui.components import Stat, chart, empty_state, page_header, require, section, stat_grid
+from ui.components import panel, Stat, chart, empty_state, page_header, require, section, stat_grid
 from ui.formatting import num, pct
 from ui.theme import C, SERIES, rgba
 
@@ -29,7 +29,7 @@ def render():
     )
 
     # ── Inputs ──
-    with st.container(border=True):
+    with panel():
         st.markdown("**Market**")
         c1, c2, c3, c4, c5, c6 = st.columns(6)
         S0 = c1.number_input("Spot S₀", value=100.0, step=1.0, key="mc_S")

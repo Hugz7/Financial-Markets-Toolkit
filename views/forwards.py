@@ -9,7 +9,7 @@ from models.forwards import (
     equity_forward, equity_term_structure, forward_value, forward_vs_rate,
     forward_vs_spot, fx_forward, fx_term_structure, implied_cost_of_carry,
 )
-from ui.components import Stat, callout, chart, hline_zero, page_header, require, section, stat_grid
+from ui.components import panel, Stat, callout, chart, hline_zero, page_header, require, section, stat_grid
 from ui.theme import C, SERIES, rgba
 
 _MODELS = {
@@ -40,7 +40,7 @@ def render():
 
     # ── Inputs ──
     with col_in:
-        with st.container(border=True):
+        with panel():
             st.markdown("**Parameters**")
             S = st.number_input(
                 "Spot price S" if fwd_type != "fx" else "Spot rate S (dom/for)",

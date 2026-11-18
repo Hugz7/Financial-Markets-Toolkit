@@ -35,7 +35,17 @@ tests/               pytest suite for models/
 
 The dependency direction is one-way: `views → ui, services, models`; `services → models`; `models` depends on nothing in the app. Views contain no inline HTML or hard-coded colours: every colour comes from `ui/theme.py`, and every chart is rendered through `ui.components.chart`, which applies the shared template.
 
-Chart colours use a validated categorical palette (colour-blind-safe adjacent pairs, ≥ 3:1 contrast against the dark surface), assigned in fixed order.
+## Design
+
+The look follows Apple's "Pro" product pages:
+
+- **Canvas and texture**: a true-black background with slowly drifting coloured light and a faint film-grain overlay.
+- **Materials and depth**: translucent graphite panels with background blur, top-edge highlights and layered shadows; cards lift on hover.
+- **Typography**: SF Pro on Apple devices (Inter elsewhere), large gradient headlines, and two-tone section titles ("Valuation. Grey continuation.").
+- **Navigation**: a translucent top bar with section menus, which becomes a drawer on phones.
+- **Motion**: staggered rise-in on load, scroll-driven reveals for sections and charts (where the browser supports them), and pill and segmented controls. All motion is disabled under `prefers-reduced-motion`.
+
+Chart colours use Apple's system hues, stepped to a readable lightness and ordered so adjacent series stay distinguishable for colour-blind readers (checked against the chart surface). They are assigned in fixed order.
 
 ## Setup
 

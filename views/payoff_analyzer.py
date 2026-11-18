@@ -7,7 +7,7 @@ import streamlit as st
 
 from models.payoffs import (DIRECTIONS, INSTRUMENTS, NO_PRESET, STRATEGY_PRESETS,
                             compute_leg_payoff)
-from ui.components import Stat, callout, chart, page_header, section, stat_grid
+from ui.components import panel, Stat, callout, chart, page_header, section, stat_grid
 from ui.formatting import num
 from ui.theme import C, SERIES, rgba
 
@@ -94,7 +94,7 @@ def render():
     )
 
     # ── Setup ──
-    with st.container(border=True):
+    with panel():
         c1, c2, c3, c4 = st.columns([2.2, 1, 1, 1])
         preset = c1.selectbox("Strategy preset", list(STRATEGY_PRESETS), key="sp_preset",
                               help="Quick-load a classic strategy into the legs below.")
@@ -122,7 +122,7 @@ def render():
     # ── Legs ──
     section("Legs", f"{n_visible} of {N_LEGS} shown · legs with zero quantity are ignored")
     legs = st.session_state.legs
-    with st.container(border=True):
+    with panel():
         _leg_editor(legs, n_visible)
 
     # ── Compute ──

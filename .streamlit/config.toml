@@ -1,5 +1,5 @@
-# Native Streamlit theme — the single source of truth for widget styling.
-# Colours mirror the tokens in ui/theme.py; keep the two in sync.
+# Native Streamlit theme — Apple "Pro" dark aesthetic.
+# Colours mirror the tokens in ui/theme.py and ui/styles.css; keep them in sync.
 
 [client]
 toolbarMode = "minimal"
@@ -10,34 +10,36 @@ gatherUsageStats = false
 
 [theme]
 base = "dark"
-primaryColor = "#5B8DEF"
-backgroundColor = "#0B0D11"
-secondaryBackgroundColor = "#151922"
-textColor = "#E7E9EE"
-borderColor = "#252A35"
-dataframeBorderColor = "#252A35"
-dataframeHeaderBackgroundColor = "#12151C"
-showWidgetBorder = true
-showSidebarBorder = true
-baseRadius = "0.6rem"
-buttonRadius = "0.5rem"
-baseFontSize = 14
-font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
-headingFontWeights = [650, 600, 600, 600, 600, 600]
-headingFontSizes = ["1.75rem", "1.25rem", "1.05rem", "0.95rem", "0.9rem", "0.85rem"]
-metricValueFontSize = "1.45rem"
+primaryColor = "#0A84FF"
+backgroundColor = "#000000"
+secondaryBackgroundColor = "#1C1C1E"
+textColor = "#F5F5F7"
+borderColor = "#2C2C2E"
+dataframeBorderColor = "#2C2C2E"
+dataframeHeaderBackgroundColor = "#141416"
+showWidgetBorder = false
+showSidebarBorder = false
+baseRadius = "0.85rem"
+buttonRadius = "full"
+baseFontSize = 15
+# SF Pro on Apple devices; Inter is loaded as the cross-platform fallback.
+font = "-apple-system, BlinkMacSystemFont, SF Pro Text, Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap, sans-serif"
+headingFont = "-apple-system, BlinkMacSystemFont, SF Pro Display, Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap, sans-serif"
+codeFont = "SF Mono, JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap, monospace"
+headingFontWeights = [700, 600, 600, 600, 600, 600]
+headingFontSizes = ["2.5rem", "1.5rem", "1.2rem", "1rem", "0.95rem", "0.9rem"]
+metricValueFontSize = "1.75rem"
 metricValueFontWeight = 600
-linkColor = "#7FA6F5"
+linkColor = "#2997FF"
 linkUnderline = false
-greenColor = "#2FBF71"
-redColor = "#EF5B67"
-yellowColor = "#E8A93B"
-blueColor = "#5B8DEF"
-chartCategoricalColors = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#0ca30c", "#9085e9", "#e66767"]
+greenColor = "#30D158"
+redColor = "#FF453A"
+yellowColor = "#FF9F0A"
+blueColor = "#0A84FF"
+violetColor = "#BF5AF2"
+chartCategoricalColors = ["#0A84FF", "#D27306", "#BF5AF2", "#239E45", "#6E6CF0", "#FF375F", "#2A93C2", "#A88600"]
 
 [theme.sidebar]
-backgroundColor = "#0E1116"
-secondaryBackgroundColor = "#151922"
-borderColor = "#1E232C"
+backgroundColor = "#0B0B0C"
+secondaryBackgroundColor = "#1C1C1E"
+borderColor = "#1C1C1E"

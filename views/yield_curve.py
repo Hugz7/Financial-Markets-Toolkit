@@ -19,7 +19,7 @@ from models.yield_curve import (
     spot_to_par,
     z_spread as calc_z_spread,
 )
-from ui.components import (Stat, badges, callout, chart, empty_state, page_header,
+from ui.components import (panel, Stat, badges, callout, chart, empty_state, page_header,
                            section, stat_grid)
 from ui.theme import C, SERIES, rgba
 
@@ -133,7 +133,7 @@ def _render_interpretation(spreads: dict) -> None:
 # ── Inputs ────────────────────────────────────────────────────────────────────
 
 def _settings_panel():
-    with st.container(border=True):
+    with panel():
         section("Curve settings")
         c1, c2 = st.columns(2)
         interp = c1.selectbox("Interpolation", ["Cubic Spline", "Linear"], key="yc_interp",
@@ -144,7 +144,7 @@ def _settings_panel():
         show_fwd = t1.toggle("Forward", value=True, key="yc_fwd")
         show_par = t2.toggle("Par", value=True, key="yc_par")
 
-    with st.container(border=True):
+    with panel():
         section("Instruments", "edit, add or exclude rows")
         st.caption("T-Bills: zero-coupon, rate = simple yield. T-Notes / T-Bonds: "
                    "semi-annual coupon, price = dirty price.")
@@ -326,7 +326,7 @@ def render():
 
 def _bond_spreads(mats: np.ndarray, spots: np.ndarray, T_max: float, method: str) -> None:
     section("Bond spread analysis", "relative to the bootstrapped curve")
-    with st.container(border=True):
+    with panel():
         b1, b2, b3, b4 = st.columns(4)
         bond_coupon = b1.number_input(
             "Annual coupon", value=0.0450, step=0.0025, format="%.4f", key="yc_cpn",

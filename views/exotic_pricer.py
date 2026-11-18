@@ -11,7 +11,7 @@ from models.black_scholes import (
     call_greeks, call_price, put_greeks, put_price,
 )
 from models.exotic_options import price_all_exotics
-from ui.components import Stat, callout, chart, page_header, require, section, stat_grid
+from ui.components import panel, Stat, callout, chart, page_header, require, section, stat_grid
 from ui.formatting import num
 from ui.theme import C, SEQUENTIAL, SERIES, rgba
 
@@ -100,7 +100,7 @@ def render():
 
     # ── Inputs ──
     col_mkt, col_exo = st.columns(2, gap="medium")
-    with col_mkt, st.container(border=True):
+    with col_mkt, panel():
         st.markdown("**Market**")
         a, b, c = st.columns(3)
         S = a.number_input("Spot S₀", value=100.0, step=1.0, key="ex_S")
@@ -110,7 +110,7 @@ def render():
         r = a.number_input("Rate r", value=0.05, step=0.005, format="%.3f", key="ex_r")
         sigma = b.number_input("Vol σ", value=0.20, step=0.01, format="%.2f", key="ex_sig")
         q = c.number_input("Div. yield q", value=0.02, step=0.005, format="%.3f", key="ex_q")
-    with col_exo, st.container(border=True):
+    with col_exo, panel():
         st.markdown("**Exotic parameters**")
         a, b, c = st.columns(3)
         H_up = a.number_input("Upper barrier H", value=120.0, step=5.0, key="ex_H")

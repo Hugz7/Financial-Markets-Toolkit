@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from models.swaps import DAY_COUNTS, SWAP_TYPES, generate_swap_schedule, swap_metrics
-from ui.components import Stat, callout, chart, hline_zero, page_header, require, section, stat_grid
+from ui.components import panel, Stat, callout, chart, hline_zero, page_header, require, section, stat_grid
 from ui.formatting import money, pct
 from ui.theme import C, SERIES, rgba
 
@@ -27,7 +27,7 @@ def render():
     )
 
     # ── Inputs ──
-    with st.container(border=True):
+    with panel():
         c1, c2, c3, c4 = st.columns(4)
         swap_type = c1.selectbox("Swap type", SWAP_TYPES, key="sw_type")
         notional = c2.number_input("Notional", value=1_000_000, step=100_000, format="%d", key="sw_notional",
@@ -54,7 +54,7 @@ def render():
     # XCCY parameters only matter for XCCY swaps
     fx_spot, foreign_notional, foreign_fixed, foreign_float = 1.08, int(notional * 1.08), 0.025, 0.020
     if swap_type == "XCCY Swap":
-        with st.container(border=True):
+        with panel():
             st.markdown("**Cross-currency leg**")
             c1, c2, c3, c4, c5 = st.columns(5)
             fx_spot = c1.number_input("FX spot (dom/for)", value=1.08, step=0.01, format="%.4f", key="sw_fx")

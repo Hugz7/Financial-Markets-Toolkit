@@ -18,10 +18,10 @@ st.set_page_config(
     page_title="Markets Toolkit",
     page_icon=":material/candlestick_chart:",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",  # desktop: top nav; phones: nav drawer starts closed
 )
 
-from ui.components import inject_styles, sidebar_footer  # noqa: E402
+from ui.components import inject_styles, page_footer  # noqa: E402
 from views import (  # noqa: E402
     exotic_pricer, forwards, market_monitor, monte_carlo, payoff_analyzer,
     roadmap, swaps, vol_smile, yield_curve,
@@ -59,8 +59,8 @@ ASSETS = Path(__file__).parent / "assets"
 
 inject_styles()
 st.logo(str(ASSETS / "logo.svg"), size="large", icon_image=str(ASSETS / "icon.svg"))
-nav = st.navigation(PAGES, position="sidebar", expanded=True)
+nav = st.navigation(PAGES, position="top")
 nav.run()
 
-with st.sidebar:
-    sidebar_footer("Python · Streamlit · NumPy · SciPy · Plotly\nPrices are indicative; not investment advice.")
+page_footer("Markets Toolkit · Python, Streamlit, NumPy, SciPy, Plotly. "
+            "Prices are indicative and for education only; not investment advice.")

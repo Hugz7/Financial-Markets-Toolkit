@@ -1,12 +1,14 @@
 """
 ui/theme.py — Design tokens and the Plotly chart template.
 
-Every colour in the app comes from here. Views never hard-code hex values:
-they use `C.<token>` for UI colours, `SERIES[i]` for chart series (in fixed
-order), and `C.pos` / `C.neg` for gain / loss.
+Apple "Pro" dark aesthetic: true-black canvas, graphite materials, SF type,
+system accent blue. Every colour in the app comes from here. Views never
+hard-code hex values: they use `C.<token>` for UI colours, `SERIES[i]` for
+chart series (in fixed order), and `C.pos` / `C.neg` for gain / loss.
 
-The categorical palette is the validated dark-mode set (CVD-safe adjacent
-pairs, >= 3:1 against the chart surface).
+SERIES uses Apple's system hues stepped to a readable lightness band and
+ordered so every adjacent pair stays distinguishable under colour-vision
+deficiency (validated against the #1C1C1E chart surface).
 """
 
 from types import SimpleNamespace
@@ -15,56 +17,58 @@ import plotly.graph_objects as go
 import plotly.io as pio
 
 C = SimpleNamespace(
-    # Surfaces
-    bg="#0B0D11",
-    surface="#12151C",
-    surface_2="#151922",
-    surface_3="#1B202B",
-    border="#252A35",
-    border_soft="#1E232C",
-    # Text
-    text="#E7E9EE",
-    text_2="#B4BAC6",
-    muted="#8A92A0",
-    subtle="#5F6775",
+    # Canvas & materials (Apple dark system greys)
+    bg="#000000",
+    surface="#1C1C1E",
+    surface_2="#2C2C2E",
+    surface_3="#3A3A3C",
+    border="#38383A",
+    border_soft="#2C2C2E",
+    # Labels
+    text="#F5F5F7",
+    text_2="#D2D2D7",
+    muted="#A1A1A6",
+    subtle="#6E6E73",
     # Accent
-    accent="#5B8DEF",
-    accent_soft="rgba(91,141,239,0.14)",
-    # Semantic (text-grade — readable on dark surfaces)
-    pos="#2FBF71",
-    neg="#EF5B67",
-    warn="#E8A93B",
-    info="#5B8DEF",
+    accent="#0A84FF",
+    accent_2="#2997FF",
+    accent_soft="rgba(10,132,255,0.16)",
+    # Semantic (Apple system colours, dark appearance)
+    pos="#30D158",
+    neg="#FF453A",
+    warn="#FF9F0A",
+    info="#0A84FF",
     # Chart chrome
-    grid="#1C212B",
-    axis="#2A303C",
+    grid="rgba(255,255,255,0.06)",
+    axis="rgba(255,255,255,0.14)",
 )
 
 # Categorical series colours — assign in this order, never cycle past 8.
 SERIES = [
-    "#3987e5",  # blue
-    "#d95926",  # orange
-    "#199e70",  # aqua
-    "#c98500",  # yellow
-    "#d55181",  # magenta
-    "#0ca30c",  # green
-    "#9085e9",  # violet
-    "#e66767",  # red
+    "#0A84FF",  # blue
+    "#D27306",  # orange
+    "#BF5AF2",  # purple
+    "#239E45",  # green
+    "#6E6CF0",  # indigo
+    "#FF375F",  # pink
+    "#2A93C2",  # teal
+    "#A88600",  # yellow
 ]
 
-# Sequential (single hue, dark → light on a dark surface) for surfaces / heatmaps.
+# Sequential (single hue, deep → bright on black) for surfaces / heatmaps.
 SEQUENTIAL = [
-    [0.0, "#184f95"], [0.25, "#256abf"], [0.5, "#3987e5"],
-    [0.75, "#6da7ec"], [1.0, "#b7d3f6"],
+    [0.0, "#06274D"], [0.25, "#0A4A8F"], [0.5, "#0A84FF"],
+    [0.75, "#64B4FF"], [1.0, "#CFE6FF"],
 ]
 
-# Diverging (orange ↔ neutral ↔ blue) for signed quantities.
+# Diverging (orange ↔ neutral graphite ↔ blue) for signed quantities.
 DIVERGING = [
-    [0.0, "#d95926"], [0.5, "#383835"], [1.0, "#3987e5"],
+    [0.0, "#D27306"], [0.5, "#3A3A3C"], [1.0, "#0A84FF"],
 ]
 
-FONT_STACK = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-MONO_STACK = "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace"
+FONT_STACK = ("-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', "
+              "Inter, 'Helvetica Neue', sans-serif")
+MONO_STACK = "'SF Mono', 'JetBrains Mono', ui-monospace, Menlo, monospace"
 
 
 def rgba(hex_color: str, alpha: float) -> str:
@@ -84,11 +88,11 @@ def tone_color(value: float) -> str:
 def _build_template() -> go.layout.Template:
     axis = dict(
         gridcolor=C.grid, gridwidth=1,
-        linecolor=C.axis, linewidth=1, showline=True,
+        linecolor=C.axis, linewidth=1, showline=False,
         zerolinecolor=C.axis, zerolinewidth=1,
-        tickcolor=C.axis, ticks="outside", ticklen=4,
-        tickfont=dict(color=C.muted, size=11),
-        title=dict(font=dict(color=C.muted, size=11), standoff=8),
+        ticks="", ticklen=0,
+        tickfont=dict(color=C.subtle, size=11),
+        title=dict(font=dict(color=C.muted, size=11), standoff=10),
         automargin=True,
     )
     tpl = go.layout.Template()
@@ -99,34 +103,40 @@ def _build_template() -> go.layout.Template:
         plot_bgcolor="rgba(0,0,0,0)",
         # Title pinned to the top of the figure; the legend sits in its own band
         # just above the plot area, so the two never overlap.
-        title=dict(font=dict(size=14, color=C.text), x=0, xref="paper", xanchor="left",
-                   y=1, yref="container", yanchor="top", pad=dict(t=10)),
-        margin=dict(l=8, r=8, t=76, b=8),
+        title=dict(font=dict(size=17, color=C.text, family=FONT_STACK, weight=600),
+                   x=0, xref="paper", xanchor="left",
+                   y=1, yref="container", yanchor="top", pad=dict(t=18)),
+        # Generous margins: charts sit inside glass cards (see styles.css).
+        margin=dict(l=22, r=22, t=92, b=18),
         xaxis=axis,
         yaxis=axis,
         legend=dict(
             orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0,
             bgcolor="rgba(0,0,0,0)", borderwidth=0,
-            font=dict(color=C.text_2, size=11),
+            font=dict(color=C.muted, size=12),
+            itemsizing="constant",
         ),
         hoverlabel=dict(
-            bgcolor=C.surface_3, bordercolor=C.border,
+            bgcolor="rgba(44,44,46,0.92)", bordercolor="rgba(255,255,255,0.12)",
             font=dict(family=FONT_STACK, color=C.text, size=12),
         ),
         hovermode="x unified",
         scene=dict(
             xaxis=dict(backgroundcolor="rgba(0,0,0,0)", gridcolor=C.grid,
-                       zerolinecolor=C.axis, color=C.muted),
+                       zerolinecolor=C.axis, color=C.subtle),
             yaxis=dict(backgroundcolor="rgba(0,0,0,0)", gridcolor=C.grid,
-                       zerolinecolor=C.axis, color=C.muted),
+                       zerolinecolor=C.axis, color=C.subtle),
             zaxis=dict(backgroundcolor="rgba(0,0,0,0)", gridcolor=C.grid,
-                       zerolinecolor=C.axis, color=C.muted),
+                       zerolinecolor=C.axis, color=C.subtle),
         ),
         colorscale=dict(sequential=SEQUENTIAL, diverging=DIVERGING),
-        bargap=0.25,
+        bargap=0.3,
+        transition=dict(duration=500, easing="cubic-in-out"),
     )
-    tpl.data.scatter = [go.Scatter(line=dict(width=2), marker=dict(size=8))]
-    tpl.data.bar = [go.Bar(marker=dict(line=dict(width=0)))]
+    # Lines stay linear: smoothing would round payoff kinks and misstate the data.
+    tpl.data.scatter = [go.Scatter(line=dict(width=2.25),
+                                   marker=dict(size=8, line=dict(width=2, color=C.bg)))]
+    tpl.data.bar = [go.Bar(marker=dict(line=dict(width=0), cornerradius=4))]
     return tpl
 
 

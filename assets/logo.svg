@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="32" viewBox="0 0 200 32">
   <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#5B8DEF"/><stop offset="1" stop-color="#9085E9"/></linearGradient></defs>
+    <stop offset="0" stop-color="#2997FF"/><stop offset="1" stop-color="#BF5AF2"/></linearGradient></defs>
   <rect x="0" y="2" width="28" height="28" rx="7" fill="url(#g)"/>
   <path d="M7 21 L12 15 L16 18 L21 10" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="38" y="21.5" font-family="Inter, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="650" fill="#E7E9EE" letter-spacing="-0.2">Markets Toolkit</text>
+  <text x="38" y="21.5" font-family="Inter, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="650" fill="#F5F5F7" letter-spacing="-0.2">Markets Toolkit</text>
 </svg>
