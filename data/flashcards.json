@@ -4,10 +4,10 @@
    "id": "markets",
    "title": "Markets — technical",
    "short": "Technical",
-   "source": "20 Common Technical Interview Questions for Markets (questions); answers written for this toolkit",
+   "source": "Questions 1–20 from '20 Common Technical Interview Questions for Markets'; questions 21–100 and all answers written for this toolkit",
    "cards": [
     {
-     "id": "mkt-01",
+     "id": "mkt-001",
      "q": "What is a market order, and how does it differ from a limit order?",
      "a": "A market order buys or sells immediately at the best price currently available. It guarantees execution but not price: in a thin or fast market it can fill well away from the last quote (slippage). A limit order sets the worst price you will accept — a maximum to buy, a minimum to sell. It guarantees price but not execution: if the market never reaches your limit, nothing trades. Limit orders that rest in the book add liquidity; market orders take it.",
      "points": [
@@ -15,10 +15,11 @@
       "Limit order: certainty of price, uncertain execution",
       "Market orders take liquidity and pay the spread; resting limits provide it"
      ],
-     "topic": "Market structure"
+     "topic": "Market structure",
+     "difficulty": "easy"
     },
     {
-     "id": "mkt-02",
+     "id": "mkt-002",
      "q": "Explain the concept of bid-ask spread and its significance in market liquidity.",
      "a": "The bid is the highest price a buyer will pay, the ask the lowest price a seller will accept; the spread is the gap between them. It is the market maker's compensation for providing immediacy and bearing inventory and adverse-selection risk, and it is a round-trip cost for anyone who crosses it. Tight spreads signal a liquid market — many participants, high volume, low uncertainty. Spreads widen when volatility rises, information is asymmetric, or the instrument trades rarely.",
      "points": [
@@ -26,10 +27,11 @@
       "Compensates for inventory and adverse-selection risk",
       "Tighter spread ⇒ deeper, more liquid market; widens in stress"
      ],
-     "topic": "Market structure"
+     "topic": "Market structure",
+     "difficulty": "easy"
     },
     {
-     "id": "mkt-03",
+     "id": "mkt-003",
      "q": "What factors can affect supply and demand in financial markets?",
      "a": "Macro fundamentals — growth, inflation, employment — and central-bank policy, which sets the price of money and the discount rate on every asset. Company or issuer specifics: earnings, guidance, credit quality, new issuance and buybacks. Flows: index rebalancing, pension and fund allocations, margin calls, hedging by dealers. Sentiment and risk appetite, geopolitics and regulation. In fixed income, supply is driven heavily by government deficits and debt-management choices.",
      "points": [
@@ -38,10 +40,11 @@
       "Flows, positioning and forced selling",
       "Sentiment, geopolitics, regulation"
      ],
-     "topic": "Macro"
+     "topic": "Macro",
+     "difficulty": "easy"
     },
     {
-     "id": "mkt-04",
+     "id": "mkt-004",
      "q": "How do you calculate the price-to-earnings ratio and what does it indicate about a company's valuation?",
      "a": "P/E = share price ÷ earnings per share (equivalently market cap ÷ net income). Trailing P/E uses the last twelve months; forward P/E uses consensus estimates. It tells you how many years of current earnings you pay for the stock. A high P/E usually prices in strong expected growth or low risk; a low one may mean cheapness, low growth or elevated risk. It is only meaningful against peers, the company's history and the rate environment, and breaks down when earnings are negative or distorted by one-offs.",
      "points": [
@@ -50,10 +53,11 @@
       "Compare to peers, history and rates; earnings yield = 1/P/E",
       "Useless for loss-making firms; check EV/EBITDA, PEG"
      ],
-     "topic": "Equities"
+     "topic": "Equities",
+     "difficulty": "easy"
     },
     {
-     "id": "mkt-05",
+     "id": "mkt-005",
      "q": "What are the main differences between equity markets and fixed-income markets?",
      "a": "Equity is ownership: a residual claim on profits with uncapped upside, no maturity, voting rights, and value driven by expected growth. Fixed income is a loan: contractual coupons and principal, a maturity date, priority over equity in default, and value driven mainly by interest rates and credit spreads. Equities trade largely on exchanges; most bonds trade over the counter through dealers and are less liquid and less transparent. Bond risk is measured with duration and convexity; equity risk with beta and volatility.",
      "points": [
@@ -62,10 +66,11 @@
       "Exchange-traded vs mostly OTC dealer markets",
       "Beta/vol vs duration, convexity, spread"
      ],
-     "topic": "Asset classes"
+     "topic": "Asset classes",
+     "difficulty": "easy"
     },
     {
-     "id": "mkt-06",
+     "id": "mkt-006",
      "q": "Describe the role of a market maker in a financial market.",
      "a": "A market maker continuously quotes two-way prices — a bid and an ask — and stands ready to trade at them, giving other participants immediacy. It earns the spread and manages the inventory it accumulates, hedging delta and other risks and skewing quotes to offload unwanted positions. Its main danger is adverse selection: trading with better-informed counterparties. By absorbing temporary order imbalances, market makers reduce volatility and transaction costs.",
      "points": [
@@ -74,10 +79,11 @@
       "Key risk: adverse selection",
       "Improves liquidity and price continuity"
      ],
-     "topic": "Market structure"
+     "topic": "Market structure",
+     "difficulty": "medium"
     },
     {
-     "id": "mkt-07",
+     "id": "mkt-007",
      "q": "How does the Federal Reserve's monetary policy impact financial markets?",
      "a": "The Fed sets the policy-rate range and steers short-term rates through administered rates (interest on reserves, the reverse-repo facility) and its balance sheet. Rate changes, and expectations of them, move the whole yield curve, the discount rate applied to every asset, the dollar and credit conditions. Easing tends to lift equities and credit and weaken the dollar; tightening does the opposite. Communication — dot plots, forward guidance — often moves markets more than the decision itself, because prices already reflect what is expected.",
      "points": [
@@ -87,10 +93,11 @@
       "Surprises versus expectations drive the move"
      ],
      "topic": "Macro",
-     "link": "yield-curve"
+     "link": "yield-curve",
+     "difficulty": "medium"
     },
     {
-     "id": "mkt-08",
+     "id": "mkt-008",
      "q": "Explain the concept of market efficiency and its implications for investors.",
      "a": "The Efficient Market Hypothesis says prices reflect available information. Weak form: past prices are priced in, so technical analysis cannot earn excess returns. Semi-strong: all public information is priced in, so fundamental analysis of public data cannot either. Strong: even private information is priced in. If markets are efficient, consistently beating them after costs is very hard, which supports low-cost passive investing. In practice anomalies (momentum, value), bubbles and limits to arbitrage suggest markets are efficient to a degree, not perfectly.",
      "points": [
@@ -99,10 +106,11 @@
       "Anomalies and behavioural finance challenge it",
       "Limits to arbitrage let mispricings persist"
      ],
-     "topic": "Theory"
+     "topic": "Theory",
+     "difficulty": "medium"
     },
     {
-     "id": "mkt-09",
+     "id": "mkt-009",
      "q": "What is the significance of volume and open interest in analyzing futures markets?",
      "a": "Volume counts contracts traded in a period and measures activity; open interest counts contracts still outstanding and measures how much capital is committed. Read together they qualify a price move: price up with rising open interest suggests new longs entering — a strong trend; price up with falling open interest suggests short covering — a weaker move. High volume confirms a breakout; thin volume questions it. Open interest also shows liquidity and where it migrates at roll.",
      "points": [
@@ -111,10 +119,11 @@
       "Price ↑ + OI ↓ → short covering",
       "Watch roll periods for OI migration"
      ],
-     "topic": "Derivatives"
+     "topic": "Derivatives",
+     "difficulty": "medium"
     },
     {
-     "id": "mkt-10",
+     "id": "mkt-010",
      "q": "How do you interpret candlestick charts in technical analysis?",
      "a": "Each candle shows open, high, low and close for a period. The body spans open to close — filled or red when the close is lower, hollow or green when higher — and the wicks show the extremes. Long bodies show conviction; long wicks show rejection of a price level. Traders look for patterns such as doji (indecision), hammer and shooting star (possible reversal) and engulfing candles, ideally confirmed by volume and support/resistance. They describe sentiment; they are not reliable predictors on their own.",
      "points": [
@@ -123,10 +132,11 @@
       "Doji, hammer, engulfing patterns",
       "Confirm with volume and levels"
      ],
-     "topic": "Technical analysis"
+     "topic": "Technical analysis",
+     "difficulty": "easy"
     },
     {
-     "id": "mkt-11",
+     "id": "mkt-011",
      "q": "What are the major factors that influence exchange rates in the foreign exchange market?",
      "a": "Interest-rate differentials and expected central-bank paths, which drive carry and capital flows; inflation differentials (purchasing-power parity over the long run); growth and the current-account balance; fiscal position and political risk; and risk sentiment — safe havens such as USD, JPY and CHF rally in stress. Positioning, central-bank intervention and commodity prices for commodity currencies matter too. In the forward market, the forward rate is pinned by covered interest-rate parity.",
      "points": [
@@ -136,10 +146,11 @@
       "Forwards: F = S·e^((r_d − r_f)T)"
      ],
      "topic": "FX",
-     "link": "forwards"
+     "link": "forwards",
+     "difficulty": "medium"
     },
     {
-     "id": "mkt-12",
+     "id": "mkt-012",
      "q": "Describe the difference between forward contracts and futures contracts.",
      "a": "Both lock in a price today for delivery later. A forward is a private OTC contract: fully customised size and date, settled at maturity, and exposed to counterparty credit risk. A future is standardised and exchange-traded: it clears through a central counterparty, requires initial margin and is marked to market daily with variation margin, which nearly eliminates credit risk and makes it liquid. Because of daily settlement, futures and forward prices differ slightly when rates are stochastic and correlated with the underlying.",
      "points": [
@@ -149,10 +160,11 @@
       "Price difference from rate–underlying correlation"
      ],
      "topic": "Derivatives",
-     "link": "forwards"
+     "link": "forwards",
+     "difficulty": "medium"
     },
     {
-     "id": "mkt-13",
+     "id": "mkt-013",
      "q": "How does the Black-Scholes model estimate option prices in the options market?",
      "a": "It prices a European option by building a portfolio of the underlying and cash that replicates the option's payoff, so the price must be the cost of that hedge. Assumptions: lognormal prices (geometric Brownian motion) with constant volatility and rates, no arbitrage, continuous frictionless trading. Result: C = S·N(d₁) − K·e^(−rT)·N(d₂). Inputs are spot, strike, time, rate, dividend yield and volatility — the only unobservable one, which is why markets quote options in implied volatility. The volatility smile shows where its assumptions fail.",
      "points": [
@@ -162,10 +174,11 @@
       "Smile and skew reveal broken assumptions"
      ],
      "topic": "Derivatives",
-     "link": "exotics"
+     "link": "exotics",
+     "difficulty": "hard"
     },
     {
-     "id": "mkt-14",
+     "id": "mkt-014",
      "q": "What is the role of the Securities and Exchange Commission (SEC) in regulating securities market?",
      "a": "The SEC is the US federal regulator whose mission is to protect investors, maintain fair, orderly and efficient markets, and facilitate capital formation. It enforces disclosure — registration of offerings and periodic filings such as 10-Ks and 10-Qs — prosecutes fraud and insider trading, and oversees exchanges, broker-dealers, investment advisers, funds and self-regulatory organisations such as FINRA. Futures and most derivatives on commodities fall under the CFTC instead.",
      "points": [
@@ -174,10 +187,11 @@
       "Enforcement: fraud, insider trading, manipulation",
       "Oversees exchanges, brokers, funds, FINRA; CFTC covers futures"
      ],
-     "topic": "Regulation"
+     "topic": "Regulation",
+     "difficulty": "easy"
     },
     {
-     "id": "mkt-15",
+     "id": "mkt-015",
      "q": "Explain the concept of market segmentation in financial markets.",
      "a": "Market segmentation means different groups of investors operate in separate parts of a market and do not move freely between them. Its best-known form is the segmented-markets theory of the yield curve: banks prefer short maturities and pension funds and insurers long ones to match their liabilities, so each segment's yield is set by its own supply and demand rather than by expectations. The preferred-habitat theory softens this: investors will leave their segment if paid a premium. Segmentation also appears across countries, ratings and investor types.",
      "points": [
@@ -187,10 +201,11 @@
       "Contrast with expectations theory"
      ],
      "topic": "Rates",
-     "link": "yield-curve"
+     "link": "yield-curve",
+     "difficulty": "medium"
     },
     {
-     "id": "mkt-16",
+     "id": "mkt-016",
      "q": "How do stock market indices represent overall market performance?",
      "a": "An index tracks a basket of stocks as a single number, so its change summarises how that segment performed. The weighting method matters: price-weighted (Dow) — high-priced stocks dominate; market-cap-weighted (S&P 500) — the largest companies dominate, today with heavy concentration; equal-weighted — each name counts the same. Free-float adjustment and periodic rebalancing keep it investable. An index represents its universe, not the whole economy, and its return shown is often price-only rather than total return.",
      "points": [
@@ -200,10 +215,11 @@
       "Price return vs total return"
      ],
      "topic": "Equities",
-     "link": "markets"
+     "link": "markets",
+     "difficulty": "easy"
     },
     {
-     "id": "mkt-17",
+     "id": "mkt-017",
      "q": "Describe the concept of alpha and beta in relation to portfolio performance.",
      "a": "Beta measures sensitivity to the market: the slope of the portfolio's excess returns against the market's. Beta 1.2 means the portfolio tends to move 1.2% for a 1% market move; beta is cheap to obtain through index funds. Alpha is the return left after accounting for that market exposure — in CAPM terms, α = R_p − [r_f + β(R_m − r_f)]. Positive alpha suggests manager skill, but it must be statistically significant and survive fees and a proper benchmark, otherwise it is often hidden beta or factor exposure.",
      "points": [
@@ -212,10 +228,11 @@
       "Beta is cheap; alpha is what managers charge for",
       "Check significance, fees and factor exposures"
      ],
-     "topic": "Portfolio"
+     "topic": "Portfolio",
+     "difficulty": "medium"
     },
     {
-     "id": "mkt-18",
+     "id": "mkt-018",
      "q": "What are the major risks associated with investing in emerging markets?",
      "a": "Currency risk — sharp depreciations, often when the dollar strengthens or global rates rise. Political and governance risk: expropriation, capital controls, weak rule of law and minority-shareholder protection. Liquidity risk: thin markets that gap in stress. Macro and credit risk from external debt, inflation and commodity dependence. Lower disclosure standards add information risk. These risks are correlated: in global risk-off episodes, outflows hit currencies, bonds and equities together, so diversification fails exactly when needed.",
      "points": [
@@ -224,10 +241,11 @@
       "Liquidity and information risk",
       "Contagion: correlated sell-offs in risk-off"
      ],
-     "topic": "Macro"
+     "topic": "Macro",
+     "difficulty": "medium"
     },
     {
-     "id": "mkt-19",
+     "id": "mkt-019",
      "q": "How do central banks use open market operations to influence interest rates?",
      "a": "In open market operations the central bank buys or sells government securities, often through repos. Buying adds reserves to the banking system and pushes short-term rates down; selling drains reserves and pushes them up, keeping the overnight rate near target. In today's ample-reserves regime, the Fed and ECB steer rates mainly with administered rates — interest on reserves and the reverse-repo or deposit facility — while large-scale asset purchases (QE) or run-offs (QT) influence longer-term yields through term premia.",
      "points": [
@@ -237,10 +255,11 @@
       "QE / QT act on the long end"
      ],
      "topic": "Rates",
-     "link": "yield-curve"
+     "link": "yield-curve",
+     "difficulty": "medium"
     },
     {
-     "id": "mkt-20",
+     "id": "mkt-020",
      "q": "Explain the role of market surveillance in maintaining fair and orderly markets.",
      "a": "Market surveillance monitors orders and trades — at exchanges, regulators and firms' compliance teams — to detect abuse such as insider trading, spoofing and layering, wash trades, front-running and price manipulation. It relies on real-time alerts, pattern analytics and cross-market data, and leads to investigations and sanctions. Its purpose is confidence: investors trade only if they believe prices are fair and the rules apply to everyone, which in turn supports liquidity and capital formation. Circuit breakers and trading halts support orderly markets in extreme moves.",
      "points": [
@@ -249,7 +268,1020 @@
       "Investigation and enforcement",
       "Builds the trust that sustains liquidity"
      ],
-     "topic": "Regulation"
+     "topic": "Regulation",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-021",
+     "q": "What is delta, and how does it behave as an option moves in or out of the money and approaches expiry?",
+     "a": "Delta is the sensitivity of the option price to the underlying, Δ = ∂V/∂S, and it is the hedge ratio: the number of shares that neutralises small spot moves. In Black-Scholes a call has Δ = N(d1), between 0 and 1, and a put has Δ = N(d1) − 1, between −1 and 0. An at-the-money call sits near 0.5, slightly above because of the forward drift; deep in-the-money calls approach 1 and far out-of-the-money calls approach 0. As expiry nears, the delta curve steepens towards a step function at the strike, so near-the-money deltas swing violently. Traders often read delta loosely as the probability of finishing in the money, though the risk-neutral probability is actually N(d2).",
+     "points": [
+      "Δ = ∂V/∂S is the hedge ratio",
+      "Call delta 0 to 1, put delta −1 to 0",
+      "ATM ≈ 0.5; becomes a step function near expiry",
+      "N(d2), not N(d1), is the risk-neutral ITM probability"
+     ],
+     "topic": "Greeks",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-022",
+     "q": "What is gamma, where is it largest, and why do a call and a put with the same strike have the same gamma?",
+     "a": "Gamma is the rate of change of delta with spot, Γ = ∂²V/∂S² = ∂Δ/∂S, so it measures the convexity of the position. In Black-Scholes Γ = N′(d1)/(S·σ·√T), which peaks near the at-the-money strike and falls off for deep in- or out-of-the-money options. As expiry approaches, at-the-money gamma blows up while gamma away from the strike collapses to zero. A call and a put with the same strike and expiry have identical gamma because put-call parity says C − P = S − K·e^(−rT), which is linear in S; differentiating twice gives zero, so their second derivatives match. The same argument shows they also share vega. Long options are long gamma; short options are short gamma.",
+     "points": [
+      "Γ = ∂Δ/∂S measures convexity",
+      "Peaks ATM, explodes ATM near expiry",
+      "Parity is linear in S, so call and put gammas match",
+      "Long options means long gamma"
+     ],
+     "topic": "Greeks",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-023",
+     "q": "What is theta, when is it largest, and can a long option ever have positive theta?",
+     "a": "Theta is the change in option value as time passes, Θ = ∂V/∂t, and for most long options it is negative: you pay time decay for holding convexity. It is largest in magnitude for at-the-money options and accelerates into expiry, roughly as 1/√T; with zero rates Θ ≈ −S·σ·N′(d1)/(2√T). For S = 100, σ = 20%, T = 1 that is about −4.0 per year, or roughly −1.1 cents per calendar day, and it grows sharply in the final weeks. There are exceptions: a deep in-the-money European put can have positive theta when rates are high, because the main effect of time passing is that the strike you will receive gets discounted less. Similarly a deep in-the-money European call on a high-dividend stock can gain value with time.",
+     "points": [
+      "Θ = ∂V/∂t, usually negative for long options",
+      "Largest ATM, accelerates roughly as 1/√T",
+      "Deep ITM European puts can have positive theta"
+     ],
+     "topic": "Greeks",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-024",
+     "q": "What is rho, which sign does it have for calls and puts, and when does it actually matter?",
+     "a": "Rho is the sensitivity of the option price to the risk-free rate, ρ = ∂V/∂r. Calls have positive rho and puts negative rho: a higher rate raises the forward price of the stock and lowers the present value of the strike you pay, which helps the call holder and hurts the put holder. In Black-Scholes ρ_call = K·T·e^(−rT)·N(d2) and ρ_put = −K·T·e^(−rT)·N(−d2). Rho scales with time to expiry and with moneyness, so it is negligible for short-dated equity options but significant for long-dated LEAPS. For example, a one-year at-the-money call on a 100 stock has rho of roughly 0.45 to 0.55, so a 1% rate rise adds about 50 cents. For rates options and long-dated structured products it is a primary risk.",
+     "points": [
+      "ρ = ∂V/∂r: calls positive, puts negative",
+      "Scales with T; negligible for short-dated equity options",
+      "Matters for LEAPS, structured products and rates desks"
+     ],
+     "topic": "Greeks",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-025",
+     "q": "What is the difference between implied volatility and realised volatility?",
+     "a": "Realised volatility is backward-looking: the annualised standard deviation of the underlying's log returns over a window, for example σ_realised = √(252/n · Σ r_i²) using daily returns. Implied volatility is forward-looking: the single σ that, plugged into Black-Scholes, reproduces the option's market price, so it is really a quote convention for option prices that embeds supply, demand and risk premia. A handy rule is that daily moves of about 1% correspond to roughly 16% annualised volatility, since √252 ≈ 15.9. On equity indices implied volatility has historically exceeded subsequent realised volatility on average, the variance risk premium, because investors pay up for crash protection. Option traders essentially bet on whether future realised volatility will be above or below today's implied.",
+     "points": [
+      "Realised: historical std dev of returns, annualised",
+      "Implied: σ that matches the market option price",
+      "Rule of 16: 1% daily ≈ 16% annual vol",
+      "Index implied usually exceeds realised: variance risk premium"
+     ],
+     "topic": "Volatility",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-026",
+     "q": "What is the difference between a long straddle and a long strangle, and how would you quickly estimate the price of an at-the-money straddle?",
+     "a": "A long straddle is a call plus a put at the same strike, usually at the money; a long strangle is an out-of-the-money call plus an out-of-the-money put at different strikes. Both are long volatility: long gamma and vega, short theta, and roughly delta-neutral at inception. The strangle is cheaper but needs a larger move to pay off, with breakevens at the call strike plus premium and the put strike minus premium, while the straddle breaks even at K ± premium. A useful approximation is ATM straddle ≈ 0.8·σ·S·√T, because √(2/π) ≈ 0.8. For S = 100, σ = 20% and three months, that is 0.8 × 20 × 0.5 ≈ 8, implying the market expects roughly an 8-point move by expiry.",
+     "points": [
+      "Straddle: same strike; strangle: OTM call and put",
+      "Both long gamma and vega, short theta",
+      "ATM straddle ≈ 0.8·σ·S·√T"
+     ],
+     "topic": "Options",
+     "difficulty": "easy",
+     "link": "payoff"
+    },
+    {
+     "id": "mkt-027",
+     "q": "State put-call parity, and walk me through the arbitrage if it is violated.",
+     "a": "For European options on the same underlying, strike and expiry, C − P = S·e^(−qT) − K·e^(−rT). Both sides pay S_T − K at expiry, since a long call plus short put is a synthetic forward, so they must cost the same today. Take S = 100, K = 100, r = 5%, T = 1, no dividends: C − P should be 100 − 100·e^(−0.05) ≈ 4.88. If the market shows C − P = 6, the call is rich relative to the put: sell the call, buy the put, buy the stock and borrow 95.12. You collect 1.12 upfront and at expiry the stock is delivered at exactly K, repaying the loan. If C − P is too low, do the reverse conversion.",
+     "points": [
+      "C − P = S·e^(−qT) − K·e^(−rT)",
+      "Long call + short put = synthetic forward",
+      "Call rich: sell call, buy put, buy stock, borrow PV(K)",
+      "Holds only for Europeans; American gives inequalities"
+     ],
+     "topic": "Options",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-028",
+     "q": "Is vega larger for at-the-money or out-of-the-money options, and how does it change with maturity?",
+     "a": "Vega is ∂V/∂σ and in Black-Scholes vega = S·e^(−qT)·N′(d1)·√T. In absolute terms it peaks for options near the at-the-money forward, because that is where an extra unit of volatility most changes the chance of ending in the money. For S = 100, σ = 20%, T = 1 and zero rates, ATM vega is about 0.40 per vol point on a premium of about 8. Out-of-the-money options have smaller absolute vega but much larger vega relative to their premium, so their percentage sensitivity to vol is higher, which is why wings are popular for leveraged vol bets. Vega grows with √T, so long-dated options carry far more vega than short-dated ones, whereas gamma is concentrated at the short end.",
+     "points": [
+      "Vega = S·N′(d1)·√T, peaks near ATM forward",
+      "OTM: lower absolute vega, higher vega per premium",
+      "Vega grows with √T; gamma concentrated short-dated"
+     ],
+     "topic": "Greeks",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-029",
+     "q": "Explain the gamma-theta trade-off and calculate the daily breakeven move for a delta-hedged long option.",
+     "a": "For a delta-hedged option the Black-Scholes PDE, with rates set to zero, reduces to Θ + ½σ²S²Γ = 0, so Θ = −½σ²S²Γ. Being long gamma is paid for with theta: the convexity profit you earn from moves must offset the decay. Over one day the gamma gain from a move ΔS is ½Γ(ΔS)², while the theta cost is ½ΓS²σ²/252. Setting them equal gives a breakeven move of ΔS = S·σ/√252 ≈ S·σ/16. So for a 100 stock with 16% implied volatility, the hedged long option breaks even on a 1-point daily move: larger moves make money, smaller ones lose. Short-gamma books are the mirror image, collecting theta while hoping realised moves stay below that threshold.",
+     "points": [
+      "Θ ≈ −½σ²S²Γ for a hedged option",
+      "Daily gamma P&L = ½Γ(ΔS)²",
+      "Breakeven daily move ≈ S·σ/16"
+     ],
+     "topic": "Greeks",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-030",
+     "q": "Walk me through gamma scalping a long straddle.",
+     "a": "Buy an at-the-money straddle and delta-hedge it to neutral. Because you are long gamma, when the stock rises your delta becomes positive, so you sell shares to re-flatten; when it falls your delta turns negative, so you buy shares back. You are mechanically selling high and buying low, and each round trip locks in about ½Γ(ΔS)². With Γ = 0.10 and a 2-point move, that is ½ × 0.10 × 4 = 0.20 per rehedge. The scalping profits fight against theta decay, so the trade pays only if realised volatility exceeds the implied volatility you bought. Rehedging more often reduces P&L variance but raises transaction costs; some traders rehedge at fixed delta bands instead. A short-gamma book does the opposite: it buys high, sells low and earns theta.",
+     "points": [
+      "Long gamma hedging sells rallies and buys dips",
+      "Each rehedge earns about ½Γ(ΔS)²",
+      "Profitable only if realised exceeds implied",
+      "Rehedge frequency trades variance against costs"
+     ],
+     "topic": "Greeks",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-031",
+     "q": "Why do equity index options show a negative volatility skew?",
+     "a": "In equity indices out-of-the-money puts trade at higher implied volatility than equidistant out-of-the-money calls, so implied vol slopes down with strike. Several reasons reinforce each other. Return distributions are left-skewed and fat-tailed: crashes are sharper than rallies, which Black-Scholes lognormality underprices. There is structural demand for downside protection from long-only investors, while call overwriting supplies upside calls, so dealers end up short puts and charge for it. The leverage effect and spot-vol correlation mean volatility rises when prices fall, so a down move lands you in a higher-vol regime, and the skew has been pronounced since the 1987 crash. Other markets differ: many commodities show positive call skew from supply shocks, and FX smiles are more symmetric.",
+     "points": [
+      "OTM puts carry higher implied vol than OTM calls",
+      "Crash risk and fat left tail",
+      "Demand for puts, supply of overwritten calls",
+      "Negative spot-vol correlation; persistent since 1987"
+     ],
+     "topic": "Volatility",
+     "difficulty": "medium",
+     "link": "vol-smile"
+    },
+    {
+     "id": "mkt-032",
+     "q": "What does the implied volatility term structure usually look like, and how do you compute a forward volatility from two expiries?",
+     "a": "The term structure plots at-the-money implied volatility against expiry. In calm markets it is usually upward sloping, because short-dated vol is low and expected to mean-revert up to its long-run level, plus a term premium. In stress it inverts: short-dated vol spikes far above long-dated, as in a sell-off when one-month vol trades well above one-year. Event dates such as earnings put a bump in the expiry just after the event. Variances add over time, so the forward variance between T1 and T2 is σ_fwd² = (σ2²·T2 − σ1²·T1)/(T2 − T1). With one-month vol at 20% and two-month at 25%, σ_fwd² = (0.0625×2 − 0.04×1)/1 = 0.085, so forward vol ≈ 29.2%. Total variance σ²T must increase with T, or there is calendar arbitrage.",
+     "points": [
+      "Upward sloping in calm markets, inverted in stress",
+      "Earnings and events create term structure bumps",
+      "σ_fwd² = (σ2²T2 − σ1²T1)/(T2 − T1)",
+      "Total variance must rise with maturity"
+     ],
+     "topic": "Volatility",
+     "difficulty": "medium",
+     "link": "vol-smile"
+    },
+    {
+     "id": "mkt-033",
+     "q": "Price a one-step binomial call: stock at 100 goes to 120 or 80, strike 100, zero rates. Why don't real-world probabilities matter?",
+     "a": "The call pays 20 in the up state and 0 in the down state. Replicate it with Δ shares plus borrowing: Δ = (20 − 0)/(120 − 80) = 0.5. Holding 0.5 shares is worth 60 up and 40 down, so borrow 40 to make the down-state value zero and the up-state value 20, matching the call. The cost is 0.5 × 100 − 40 = 10. Equivalently, the risk-neutral probability is q = (e^(rΔt) − d)/(u − d) = (1 − 0.8)/(1.2 − 0.8) = 0.5, and the price is the discounted expectation 0.5 × 20 = 10. The real-world probability does not appear because the option is perfectly replicable; any other price creates arbitrage, and investors' risk preferences are already embedded in the stock price.",
+     "points": [
+      "Δ = (Cu − Cd)/(Su − Sd) = 0.5",
+      "q = (e^(rΔt) − d)/(u − d)",
+      "Price = discounted risk-neutral expectation = 10",
+      "Replication makes real-world probabilities irrelevant"
+     ],
+     "topic": "Options",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-034",
+     "q": "How do you price a knock-in option if you know the vanilla and the knock-out, and what is unusual about the risk of an up-and-out call?",
+     "a": "With the same strike, barrier, expiry and no rebate, knock-in plus knock-out equals the vanilla, because on every path exactly one of the two is alive at expiry. So if the vanilla call is worth 10 and the down-and-out call with the same barrier is 7, the down-and-in call is worth 3. Knock-outs are always cheaper than the vanilla, which is why they are popular in structured products. An up-and-out call with the barrier above the strike is interesting: its payoff rises with spot and then drops to zero at the barrier. Near the barrier its delta turns sharply negative, gamma is large and negative, and vega can be negative, because more volatility raises the chance of being knocked out.",
+     "points": [
+      "Knock-in + knock-out = vanilla, same terms, no rebate",
+      "Knock-outs are always cheaper than vanillas",
+      "Up-and-out call: negative delta and vega near barrier"
+     ],
+     "topic": "Options",
+     "difficulty": "medium",
+     "link": "exotics"
+    },
+    {
+     "id": "mkt-035",
+     "q": "When is it optimal to exercise an American call or an American put early?",
+     "a": "An American call on a non-dividend-paying stock should never be exercised early. Its value satisfies C ≥ S − K·e^(−rT) > S − K, so selling the option always beats exercising, which throws away both time value and the interest on K. With dividends, early exercise can be optimal just before the ex-dividend date, when the dividend exceeds the remaining time value, roughly D > K(1 − e^(−rτ)) plus the value of the equivalent put. An American put can be optimal to exercise early even with no dividends. Deep in the money, receiving K now and earning interest on it outweighs the small remaining optionality; with the stock near zero the payoff is capped at K, so waiting only loses interest. Higher rates encourage early put exercise; dividends discourage it.",
+     "points": [
+      "Never exercise a non-dividend American call early",
+      "Calls: exercise just before ex-div if dividend exceeds time value",
+      "Deep ITM puts: interest on K beats remaining optionality",
+      "High rates favour put exercise; dividends deter it"
+     ],
+     "topic": "Options",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-036",
+     "q": "Derive the P&L of a delta-hedged option and explain why it is path-dependent.",
+     "a": "Buy an option at implied vol σ_i and delta-hedge it continuously at σ_i. Over each interval, the option's gain from convexity is ½Γ(ΔS)², and the theta you pay is ½ΓS²σ_i²dt, so the instantaneous P&L is ½ΓS²[(ΔS/S)² − σ_i²dt] ≈ ½ΓS²(σ_r² − σ_i²)dt. Total P&L is the integral of that over the option's life, discounted. The key point is the weight ½ΓS², the dollar gamma: realised variance only pays where you hold gamma. Example: Γ = 0.05, S = 100, σ_r = 25%, σ_i = 20% gives ½ × 0.05 × 10,000 × 0.0225/252 ≈ 0.022 per day. If you instead hedged at the realised vol, the final P&L would be locked in at V(σ_r) − V(σ_i) but noisier along the way.",
+     "points": [
+      "Daily P&L ≈ ½ΓS²(σ_r² − σ_i²)dt",
+      "Weighted by dollar gamma, so path-dependent",
+      "Hedging at realised vol locks V(σ_r) − V(σ_i)"
+     ],
+     "topic": "Volatility",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-037",
+     "q": "You are long an ATM option bought at 20% implied, delta-hedged daily, and realised vol over the life comes out at 25%. Can you still lose money?",
+     "a": "Yes. The hedged P&L is Σ ½Γ_t·S_t²·(σ_r,t² − σ_i²)·dt, so what matters is realised variance weighted by dollar gamma, not the average realised vol. Suppose the stock sits quietly near the strike while expiry approaches and gamma is huge, and theta bleeds heavily, then it drifts away and becomes very volatile once the option is far out of the money and gamma is near zero. Measured realised vol for the period can be 25%, yet almost all of that variance accrues where you hold no gamma, while the quiet period near the strike cost you theta. This path dependence is why traders who want clean exposure to volatility use variance swaps, which hold constant dollar gamma via a 1/K² strip of options.",
+     "points": [
+      "Realised variance only pays where you hold gamma",
+      "Quiet near strike, volatile far away loses money",
+      "Variance swaps give path-independent vol exposure"
+     ],
+     "topic": "Volatility",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-038",
+     "q": "How do the Greeks of a cash-or-nothing digital call behave close to expiry, and how do desks actually hedge one?",
+     "a": "A cash-or-nothing call paying 1 if S_T > K is worth e^(−rT)·N(d2). Its delta, e^(−rT)·N′(d2)/(S·σ·√T), behaves like a vanilla's gamma: it spikes towards infinity at the strike as expiry approaches. Gamma changes sign across the strike, positive below and negative above, and vega flips too: positive when out of the money, since more vol raises the chance of finishing in, and negative when in the money. Delta-hedging this near expiry is impractical. Desks therefore price and hedge the digital as a tight call spread, long 1/ε calls at K − ε and short 1/ε calls at K, which dominates the digital payoff and so is a conservative overhedge for the seller. Since digital = −∂C/∂K, negative skew makes the digital call worth more than flat-vol Black-Scholes.",
+     "points": [
+      "Digital delta resembles vanilla gamma, spikes at strike",
+      "Gamma and vega change sign at the strike",
+      "Hedged as a tight call spread, a conservative overhedge",
+      "Digital = −∂C/∂K, so it picks up skew"
+     ],
+     "topic": "Greeks",
+     "difficulty": "hard",
+     "link": "exotics"
+    },
+    {
+     "id": "mkt-039",
+     "q": "What is pin risk, and how would you manage it into expiry?",
+     "a": "Pin risk arises when the underlying closes very near the strike of a large option position at expiry, so you do not know whether your options will be exercised or assigned and hence what stock position you will hold afterwards. Suppose you are short 1,000 calls struck at 50, 100,000 shares, and the stock closes at 50.02: holders may or may not exercise, and they can decide using after-hours prices, so you could wake up Monday long or short 100,000 shares unhedged into a gap. Near the strike gamma explodes and delta flips between 0 and 1, so hedging is unreliable. Dealers long gamma can also pin the stock to large-open-interest strikes as they sell rallies and buy dips. Management means closing or rolling near-the-money positions before expiry.",
+     "points": [
+      "Uncertain assignment when spot closes at the strike",
+      "After-hours moves change exercise decisions",
+      "Large long-gamma open interest can pin the stock",
+      "Close or roll near-ATM positions before expiry"
+     ],
+     "topic": "Options",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-040",
+     "q": "What are vanna and volga, which positions carry them, and how are they used in FX smile pricing?",
+     "a": "Vanna is ∂²V/∂S∂σ, equivalently the change in delta with vol or vega with spot; volga, or vomma, is ∂²V/∂σ², the change in vega with vol. An at-the-money option has roughly zero vanna and volga. Out-of-the-money calls have positive vanna and out-of-the-money puts negative, so a long 25-delta risk reversal, long call and short put, is long vanna. Wing options have positive volga, so a long butterfly or strangle against ATM is long volga. In FX the vanna-volga method prices exotics by taking the flat-vol Black-Scholes price and adding the market cost of hedging the exotic's vanna with risk reversals and its volga with butterflies. Risk reversals price spot-vol correlation; butterflies price vol of vol.",
+     "points": [
+      "Vanna = ∂Δ/∂σ; volga = ∂vega/∂σ",
+      "Risk reversal carries vanna; butterfly carries volga",
+      "Vanna-volga: BS price plus smile hedging cost"
+     ],
+     "topic": "Greeks",
+     "difficulty": "hard",
+     "link": "vol-smile"
+    },
+    {
+     "id": "mkt-041",
+     "q": "Why do bond prices fall when yields rise?",
+     "a": "A bond's price is the present value of fixed cash flows discounted at its yield: P = Σ C/(1+y)^t + F/(1+y)^T. The cash flows are fixed, so a higher discount rate mechanically lowers their present value. Intuitively, if new bonds come to market at higher yields, an existing bond with a lower coupon must cheapen until its yield matches the market. Example: a 10-year 4% annual-coupon bond prices at 100 when yields are 4%; at 5% it falls to about 92.28, while at 3% it rises to about 108.53. The relationship is convex, so a yield fall raises the price more than an equal rise lowers it. A bond trades at a premium when its coupon exceeds its yield and pulls to par as maturity approaches.",
+     "points": [
+      "Price is PV of fixed cash flows at the yield",
+      "Higher yield, lower price; the relation is convex",
+      "Coupon above yield means premium; pull to par over time"
+     ],
+     "topic": "Rates",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-042",
+     "q": "What is the difference between Macaulay duration and modified duration?",
+     "a": "Macaulay duration is the present-value-weighted average time to receive a bond's cash flows, D_mac = Σ t·PV(CF_t)/P, measured in years. Modified duration turns that into price sensitivity: D_mod = D_mac/(1 + y/k), where k is the coupon frequency, and ΔP/P ≈ −D_mod·Δy. For a zero-coupon bond Macaulay duration equals maturity. Example: a 10-year zero at a 5% annual yield has D_mac = 10 and D_mod = 10/1.05 ≈ 9.52, so a 10bp rise in yield cuts its price by about 0.95%. Duration rises with maturity and falls with higher coupons or higher yields. For bonds with embedded options, desks use effective duration, computed by bumping the curve and repricing, because the cash flows themselves change with rates.",
+     "points": [
+      "Macaulay: PV-weighted average time to cash flows",
+      "Modified = Macaulay/(1 + y/k); gives % price change",
+      "Zero-coupon: Macaulay duration equals maturity"
+     ],
+     "topic": "Rates",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-043",
+     "q": "Why is positive convexity valuable, and does it come for free?",
+     "a": "Convexity is the curvature of the price–yield relationship: ΔP/P ≈ −D_mod·Δy + ½·C·(Δy)². The second-order term is positive for an option-free bond whichever way yields move, so the bond gains more when yields fall than it loses when they rise by the same amount; it behaves like being long gamma on rates. It is not free: in equilibrium a more convex bond trades at a lower yield than a less convex bond of the same duration, so you give up carry to own it. Whether it pays off depends on realised versus implied rate volatility, exactly like a delta-hedged option. Convexity grows roughly with maturity squared, which is why a convexity bias pulls 30-year yields below what rate expectations and term premium alone would imply.",
+     "points": [
+      "Convexity gains from large moves in either direction",
+      "Paid for with lower yield, i.e. negative carry",
+      "Pays off if realised rate vol exceeds implied"
+     ],
+     "topic": "Rates",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-044",
+     "q": "Walk me through the DV01 of a $10m position in a bond priced at 98 with modified duration 8.2.",
+     "a": "DV01, or PV01, is the dollar change in value for a one-basis-point move in yield: DV01 = D_mod × market value × 0.0001. Here market value is 98% of $10m, or $9.8m, so DV01 = 8.2 × 9,800,000 × 0.0001 ≈ $8,036 per basis point. If yields rise 15bp the long position loses about $120,500, ignoring convexity. Strictly you should use the dirty price, so add accrued interest to the market value. On a desk DV01 is the common currency of rate risk: positions are sized, hedged and limit-checked in DV01, and the hedge ratio between two instruments is simply the ratio of their DV01s. Clarify conventions, since PV01 sometimes means the value of 1bp of running spread, i.e. the annuity.",
+     "points": [
+      "DV01 = D_mod × dirty market value × 0.0001",
+      "$9.8m × 8.2 × 1bp ≈ $8,036 per bp",
+      "Hedge ratio = ratio of DV01s"
+     ],
+     "topic": "Rates",
+     "difficulty": "medium",
+     "link": "swaps"
+    },
+    {
+     "id": "mkt-045",
+     "q": "What do the different shapes of the yield curve tell you?",
+     "a": "A normal, upward-sloping curve means long yields exceed short yields, reflecting expected future rate rises and a positive term premium for holding duration; it is typical in expansions. An inverted curve, for example a negative 2s10s spread, signals the market expects the central bank to cut, usually because it anticipates slowing growth or recession; US 2s10s inversion has preceded most recent recessions, with a lag of roughly 6 to 24 months. A flat curve usually marks late-cycle tightening or a transition. A humped curve peaks in the belly, often when near-term hikes are priced followed by cuts. Under the expectations hypothesis long yields are averages of expected short rates, so slope reflects the expected policy path plus a term premium.",
+     "points": [
+      "Upward slope: expected hikes plus positive term premium",
+      "Inversion: priced cuts, historically a recession signal",
+      "Slope = expected rate path + term premium"
+     ],
+     "topic": "Rates",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-046",
+     "q": "Explain spot, forward and par rates, and how you bootstrap a zero curve.",
+     "a": "A spot or zero rate is the yield on a single cash flow from today to time T. A forward rate is the rate locked in today for a period between two future dates, implied by no-arbitrage: (1+s₂)² = (1+s₁)(1+f₁,₂). With a 1-year spot at 3% and a 2-year spot at 4%, the 1y1y forward is 1.04²/1.03 − 1 ≈ 5.01%. A par rate is the coupon that makes a bond price at par on the zero curve. Bootstrapping extracts zeros sequentially from par instruments: the shortest gives the first discount factor directly, then each longer instrument is priced at par using the discount factors already solved, leaving one unknown each time. On an upward-sloping curve, forwards sit above spots, which sit above par yields.",
+     "points": [
+      "Forward from spots: (1+s₂)² = (1+s₁)(1+f)",
+      "3% and 4% spots imply 1y1y ≈ 5.01%",
+      "Bootstrap: solve one discount factor per instrument"
+     ],
+     "topic": "Rates",
+     "difficulty": "medium",
+     "link": "yield-curve"
+    },
+    {
+     "id": "mkt-047",
+     "q": "How is a vanilla interest rate swap valued, and what is the swap rate?",
+     "a": "A swap exchanges fixed for floating payments on a notional, and its value to the fixed payer is PV(floating) − PV(fixed). The fixed leg is K·Σ τᵢ·D(tᵢ), where D are discount factors and A = Σ τᵢ·D(tᵢ) is the annuity. The floating leg is Σ τᵢ·Fᵢ·D(tᵢ) using projected forward rates; in a single-curve world it collapses to 1 − D(Tₙ) per unit notional. The swap rate is the fixed rate that sets NPV to zero at inception: S = Σ τᵢFᵢD(tᵢ)/A, an annuity-weighted average of the forwards. After inception, the mark-to-market for the payer is about (S_market − K) × A × notional, so a payer swap gains when rates rise. SOFR swaps are discounted on the OIS curve.",
+     "points": [
+      "Value = PV(float) − PV(fixed)",
+      "Swap rate = annuity-weighted average of forwards",
+      "Payer MTM ≈ (S_mkt − K) × annuity × notional"
+     ],
+     "topic": "Rates",
+     "difficulty": "medium",
+     "link": "swaps"
+    },
+    {
+     "id": "mkt-048",
+     "q": "Why did 30-year US swap spreads turn negative, and what does that tell you?",
+     "a": "The swap spread is the swap rate minus the Treasury yield of the same maturity. Classically it was positive, because Treasuries were the risk-free benchmark and swaps embedded bank credit through LIBOR. The 30-year spread went negative in 2008 and has stayed mostly negative since, meaning swaps yield less than Treasuries. Reasons: post-crisis balance-sheet rules such as the supplementary leverage ratio make it expensive for dealers to hold repo-funded Treasuries, so the arbitrage of buying Treasuries and paying fixed is costly to run; heavy Treasury supply weighs on cash bonds; pension funds and insurers receive fixed at the long end to hedge liabilities; and SOFR swaps carry little credit risk. Negative spreads reflect balance-sheet scarcity, not doubts about Treasury credit.",
+     "points": [
+      "Swap spread = swap rate − Treasury yield",
+      "Leverage rules make the arbitrage balance-sheet expensive",
+      "Liability hedgers receive long-dated fixed, pushing swaps down"
+     ],
+     "topic": "Rates",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-049",
+     "q": "What is a repo, and what is a haircut?",
+     "a": "A repo is a sale of securities with an agreement to repurchase them later at a slightly higher price, which is economically a collateralised loan. The cash borrower does the repo; the cash lender does a reverse repo and holds the collateral. Repo interest = cash lent × repo rate × days/360. A haircut is the excess collateral the lender demands to protect against a fall in collateral value if the borrower defaults. Example: borrowing against $100m of Treasuries with a 2% haircut raises $98m of cash; at 5% for 7 days, interest is 98m × 0.05 × 7/360 ≈ $95,300. Haircuts are larger for longer-duration, less liquid or riskier collateral. A bond in heavy demand trades special, at a repo rate below general collateral.",
+     "points": [
+      "Repo is a collateralised loan; reverse repo is the lender side",
+      "Haircut = overcollateralisation protecting the cash lender",
+      "Specials trade at repo rates below general collateral"
+     ],
+     "topic": "Rates",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-050",
+     "q": "Why did markets move from LIBOR to SOFR, and how do the two rates differ?",
+     "a": "LIBOR was an unsecured term rate based on panel banks' estimates of their borrowing costs rather than actual trades, which made it manipulable, as the 2012 scandals showed, and the underlying interbank term market had largely dried up. SOFR is the overnight rate on Treasury-collateralised repo, computed from over a trillion dollars of daily transactions. SOFR is secured, so it is essentially credit-risk free, while LIBOR embedded bank credit and term premia. SOFR is overnight and backward-looking, compounded in arrears over each period, whereas LIBOR was forward-looking and known at the start. Legacy contracts moved to ISDA fallbacks of compounded SOFR plus a fixed spread adjustment, 26.161bp for 3-month USD LIBOR. USD LIBOR panels ceased in June 2023.",
+     "points": [
+      "LIBOR: unsecured, estimate-based, forward-looking term rate",
+      "SOFR: secured overnight repo, transaction-based, compounded in arrears",
+      "Fallback spread for 3M LIBOR is 26.161bp"
+     ],
+     "topic": "Rates",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-051",
+     "q": "What are carry and roll-down on a bond position?",
+     "a": "Carry is the income from holding a position if nothing changes: for a repo-funded long bond, roughly the coupon yield minus the repo funding rate. Roll-down is the price gain from the bond ageing along an unchanged upward-sloping curve, so it is revalued at a lower, shorter-maturity yield. Example: buy a 10-year at 4.20% funded at 3.80% repo, so one-year carry is about 40bp. If the 9-year yields 4.10%, the bond rolls down 10bp, worth about 10bp × a duration of roughly 7.5, or 75bp of price. Total expected return is about 1.15% if the curve is unchanged. Dividing by duration gives a breakeven: yields can rise about 15bp over the year before the trade loses money.",
+     "points": [
+      "Carry = coupon yield − repo funding rate",
+      "Roll-down = yield drop from ageing × duration",
+      "Carry plus roll-down over duration gives yield breakeven"
+     ],
+     "topic": "Rates",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-052",
+     "q": "Why do callable bonds exhibit negative convexity?",
+     "a": "A callable bond is a straight bond minus a call option held by the issuer: P_callable = P_straight − Call. When yields fall, the issuer becomes increasingly likely to redeem at the call price and refinance more cheaply, so the price compresses towards the call price and stops rising: upside is capped while the downside when yields rise is retained. That flattening of the price–yield curve at low yields is negative convexity. The investor is short volatility and is compensated with extra yield, measured by the option-adjusted spread. Mortgage-backed securities behave the same way because homeowners prepay when rates fall. As MBS effective duration shortens in a rally, hedgers must buy duration, for example by receiving fixed, which can amplify rate moves.",
+     "points": [
+      "Callable = straight bond − issuer's call option",
+      "Price capped near call price as yields fall",
+      "Investor is short vol, paid via option-adjusted spread"
+     ],
+     "topic": "Rates",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-053",
+     "q": "What is a credit spread and what drives it?",
+     "a": "A credit spread is the extra yield a risky bond pays over a benchmark such as Treasuries or swaps of the same maturity. It compensates for expected default loss, approximated by the credit triangle s ≈ PD × (1 − R): a 2% annual default probability with 40% recovery implies about 120bp. Observed spreads usually exceed this because they also contain a risk premium for default and spread volatility, a liquidity premium and tax effects. Issuer drivers are leverage, interest coverage, cash-flow volatility, rating and seniority. Market drivers are the economic cycle, risk appetite, equity volatility, fund flows and new-issue supply. Spreads widen in recessions and sell-offs, and high yield moves far more than investment grade.",
+     "points": [
+      "Credit triangle: spread ≈ PD × (1 − recovery)",
+      "Spreads include risk and liquidity premia beyond expected loss",
+      "Driven by leverage, cycle, risk appetite and supply"
+     ],
+     "topic": "Credit",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-054",
+     "q": "Explain how a credit default swap works and what the CDS–bond basis is.",
+     "a": "In a CDS the protection buyer pays a running premium, standardised at 100bp or 500bp plus an upfront, and after a credit event receives par minus recovery, set by an ISDA auction. Buying protection is economically like being short the bond. The basis is the CDS spread minus the bond's spread over the funding curve, usually its Z-spread or asset swap spread. In theory it is near zero, since a funded bond plus protection is close to risk-free. A negative basis trade buys the bond and buys protection to lock in the gap; it persists because funding the bond costs more than SOFR and balance sheet is scarce, as in 2008 when bases reached hundreds of basis points. Positive basis comes from the cheapest-to-deliver option and hard-to-short bonds.",
+     "points": [
+      "Protection buyer pays premium, receives par minus recovery",
+      "Basis = CDS spread − bond Z-spread or ASW",
+      "Negative basis: buy bond and protection; funding risk"
+     ],
+     "topic": "Credit",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-055",
+     "q": "What is breakeven inflation, and is it a clean forecast of inflation?",
+     "a": "Inflation-linked bonds such as TIPS pay a real coupon on principal indexed to CPI, so they trade on a real yield. Breakeven inflation is the nominal yield minus the real yield of the same maturity: with 10-year Treasuries at 4.30% and 10-year TIPS at 1.90%, breakeven is 2.40%, or exactly from (1 + n) = (1 + r)(1 + π). If realised CPI over the life exceeds 2.40%, the TIPS outperforms the nominal bond. It is not a pure forecast: breakeven equals expected inflation plus an inflation risk premium, minus a liquidity premium because TIPS are less liquid than nominals, and it is distorted by the deflation floor on principal and the indexation lag. Desks watch 5y5y forward breakevens as a gauge of long-run inflation expectations.",
+     "points": [
+      "Breakeven = nominal yield − real yield",
+      "Includes inflation risk premium and TIPS liquidity discount",
+      "5y5y forward breakeven tracks long-run expectations"
+     ],
+     "topic": "Rates",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-056",
+     "q": "What is the difference between a bond's Z-spread and its asset swap spread?",
+     "a": "The Z-spread is the constant spread z added to every point of the zero curve, usually the swap curve, so that discounted cash flows equal the dirty price: P = Σ CF·e^(−(r(t)+z)t). It uses the whole curve shape rather than a single benchmark yield. The par-par asset swap spread is the spread over the floating rate an investor earns when buying the bond for par and swapping its fixed coupons into floating; any premium or discount to par is amortised into the spread via the annuity: ASW = (P_swap − P_market)/A, where P_swap is the bond priced off the swap curve. The two are close for bonds near par but diverge for bonds far from par or on steep curves.",
+     "points": [
+      "Z-spread: parallel shift of zero curve to match price",
+      "ASW: floating spread on a par-par swap package",
+      "They diverge for bonds far from par"
+     ],
+     "topic": "Credit",
+     "difficulty": "hard",
+     "link": "yield-curve"
+    },
+    {
+     "id": "mkt-057",
+     "q": "How do you construct a DV01-neutral 2s10s steepener, and why weight it that way?",
+     "a": "A steepener profits if the 2s10s spread widens: buy the 2-year, or receive fixed in swaps, and sell the 10-year, or pay fixed. Weighting by DV01 makes the trade insensitive to a parallel shift, so P&L comes only from the slope. Suppose the 2-year DV01 is about $190 per $1m and the 10-year about $850 per $1m. Buying $100m of 2-years gives $19,000 per bp, so sell 19,000/850 ≈ $22.4m of 10-years. If the curve steepens 10bp, the trade makes about $190,000 whether the move is a bull or bear steepening. Residual risks are differing carry on each leg, convexity, and the fact that the legs do not move one-for-one, so some desks beta-weight instead of DV01-weighting.",
+     "points": [
+      "Steepener: long front end, short long end",
+      "Notional ratio = inverse ratio of DV01s",
+      "DV01-neutral removes parallel risk; consider beta-weighting"
+     ],
+     "topic": "Rates",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-058",
+     "q": "What happens to a bond portfolio if the curve bear-steepens?",
+     "a": "A bear steepening means yields rise across the curve, with long yields rising more than short ones, typically on rising term premium, inflation fears or heavy supply rather than central bank hikes. Every long-duration position loses, but losses concentrate at the long end because both the yield move and the duration are larger there. Use key-rate DV01s: with $50k per bp at 2 years and $100k per bp at 10 years, a move of +5bp in 2s and +25bp in 10s loses $250k + $2.5m = $2.75m. For equal duration, a barbell of 2s and 30s does worse than a 10-year bullet, because most of its DV01 sits at the long end; barbells are effectively long flattening. Hedges include steepeners, paying long-dated swaps or cutting long-end duration.",
+     "points": [
+      "Long yields rise most; long-end holdings lose most",
+      "Use key-rate DV01s to attribute losses",
+      "Duration-matched barbell underperforms bullet in steepening"
+     ],
+     "topic": "Rates",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-059",
+     "q": "A bond has modified duration 7 and convexity 60; estimate its price change for a 100bp rise and a 100bp fall in yields.",
+     "a": "Use the second-order Taylor expansion: ΔP/P ≈ −D_mod·Δy + ½·C·(Δy)². For +100bp, Δy = 0.01, so −7 × 0.01 + 0.5 × 60 × 0.0001 = −7.0% + 0.3% = −6.7%. For −100bp it is +7.0% + 0.3% = +7.3%. The asymmetry, gaining 7.3% but losing only 6.7%, is the convexity benefit, and the correction has the same sign for both moves because (Δy)² is positive. Duration alone would predict ±7%, overstating the loss and understating the gain. For a 10bp move the convexity term is only 0.003%, which is why DV01 suffices for day-to-day hedging, but for large moves or long-dated bonds the convexity correction matters.",
+     "points": [
+      "ΔP/P ≈ −D·Δy + ½·C·Δy²",
+      "+100bp: −6.7%; −100bp: +7.3%",
+      "Convexity term negligible for small moves"
+     ],
+     "topic": "Rates",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-060",
+     "q": "What is the cheapest-to-deliver in Treasury futures, and how do you identify it?",
+     "a": "A Treasury futures contract lets the short deliver any bond from a basket of eligible issues. Each is scaled by a conversion factor, its price per $1 face at a 6% yield, so the invoice amount is futures price × CF + accrued interest. The short delivers whichever bond is cheapest relative to that invoice, the cheapest-to-deliver, found as the bond with the highest implied repo rate or the lowest net basis, where gross basis = cash price − futures price × CF. Because the factor assumes 6%, when yields are below 6% low-duration bonds tend to be CTD, and above 6% high-duration bonds. The short's delivery options, switching, timing and the wildcard, have value, so futures trade slightly below the CTD's forward price divided by its CF.",
+     "points": [
+      "Invoice = futures price × conversion factor + accrued",
+      "CTD has highest implied repo or lowest net basis",
+      "Yields below 6%: short-duration bonds tend to be CTD"
+     ],
+     "topic": "Rates",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-061",
+     "q": "Walk me through a DCF and how you get the WACC, in about a minute.",
+     "a": "A DCF values the business as the present value of its unlevered free cash flows: project FCF = EBIT(1 − t) + D&A − capex − ΔNWC for five to ten years, add a terminal value TV = FCF_N·(1 + g)/(WACC − g), and discount everything at the WACC. WACC = E/V·r_e + D/V·r_d·(1 − t), with the cost of equity from CAPM, r_e = r_f + β·ERP; with r_f 4%, β 1.2 and ERP 5%, r_e is 10%. That gives enterprise value; subtract net debt to reach equity value and divide by diluted shares. The terminal value is often 60–80% of the total and very rate sensitive: with next-year FCF of 102 and g = 2%, TV is 1,700 at an 8% WACC but about 1,457 at 9%.",
+     "points": [
+      "Discount unlevered FCF at WACC to get enterprise value",
+      "r_e = r_f + β·ERP; debt cost taken after tax",
+      "Terminal value dominates and is highly sensitive to WACC − g"
+     ],
+     "topic": "Equities",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-062",
+     "q": "What is the difference between enterprise value and equity value, and why do people use EV/EBITDA rather than P/E?",
+     "a": "Equity value is what belongs to shareholders, market cap = share price × diluted shares. Enterprise value is the value of the whole operating business to all capital providers: EV = equity value + debt + preferred + minority interest − cash. If market cap is 800, debt 300 and cash 100, EV is 1,000; with EBITDA of 125 the stock trades at 8x EV/EBITDA. EBITDA is earned before interest, so it belongs to both debt and equity holders and must be matched with EV, while earnings after interest belong to equity holders and are matched with price. EV/EBITDA is therefore capital-structure neutral and less distorted by depreciation policy and tax, which makes it better for comparing firms with different leverage.",
+     "points": [
+      "EV = equity value + debt + prefs + minorities − cash",
+      "Match the numerator to whoever owns the denominator",
+      "EV/EBITDA is neutral to leverage; P/E is not"
+     ],
+     "topic": "Equities",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-063",
+     "q": "What happens to a stock's price on the ex-dividend date?",
+     "a": "On the ex-dividend date the stock starts trading without the right to the upcoming dividend, so the price opens lower by roughly the dividend amount: a $50 stock paying a $1 dividend should open near $49, all else equal. A holder's wealth is unchanged because the share price drop is offset by the $1 cash they will receive, before taxes. In practice the drop can be a little smaller than the dividend because of tax effects and noise. For derivatives, the drop is already priced in: forwards and options use S − PV(dividends), so calls are cheaper and puts dearer, and it can be optimal to exercise an American call just before the ex-date to capture a large dividend.",
+     "points": [
+      "Price drops by roughly the dividend at the open",
+      "Holder's total wealth is unchanged before tax",
+      "Forwards and options already price the expected dividend"
+     ],
+     "topic": "Equities",
+     "difficulty": "easy",
+     "link": "forwards"
+    },
+    {
+     "id": "mkt-064",
+     "q": "A company does a 2-for-1 stock split; what happens to its share price and market cap, and how does a buyback differ?",
+     "a": "In a 2-for-1 split each share becomes two, so a $200 stock becomes $100 with twice the share count; market cap and each holder's stake are unchanged. It is purely cosmetic, though a lower price can help retail access and index eligibility in price-weighted indices like the Dow. A buyback actually moves cash out to shareholders: a firm worth 1,000 with 100 shares at $10, including 100 of cash, buys back 10 shares for 100, leaving equity worth 900 over 90 shares, still $10. Fairly priced, it is value neutral, like a dividend. EPS rises when the earnings yield exceeds the after-tax yield on the cash spent, and the buyback creates value only if the shares are bought below intrinsic value.",
+     "points": [
+      "Split: more shares, lower price, same market cap",
+      "Buyback returns cash; value neutral at a fair price",
+      "Higher EPS alone does not mean value is created"
+     ],
+     "topic": "Equities",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-065",
+     "q": "How do you calculate the fair value of an index future, and what is the basis?",
+     "a": "By cost of carry, buying the future is equivalent to borrowing to buy the index while losing the dividends, so F = S·e^((r − q)T), with r the financing rate and q the dividend yield, or F = (S − PV(divs))·e^(rT) with discrete dividends. With the index at 5,000, r = 5%, q = 1.5% and three months to expiry, F = 5,000·e^(0.035 × 0.25) ≈ 5,043.9, so fair value is about 44 points above spot. The basis is the gap between futures and spot (quoted as F − S or S − F by convention), and it converges to zero at expiry. If the future trades above fair value plus transaction costs, arbitrageurs sell futures and buy the basket, and the reverse if it trades below.",
+     "points": [
+      "F = S·e^((r − q)T); dividends lower the forward",
+      "Basis converges to zero at expiry",
+      "Rich or cheap to fair value means index arbitrage"
+     ],
+     "topic": "Equities",
+     "difficulty": "medium",
+     "link": "forwards"
+    },
+    {
+     "id": "mkt-066",
+     "q": "How does ETF creation and redemption work, and why does an ETF's price stay close to its NAV?",
+     "a": "Only authorised participants, usually large dealers, can create or redeem ETF shares directly with the issuer, in large blocks called creation units, often 50,000 shares. To create, the AP delivers the underlying basket (or cash) and receives new ETF shares; to redeem, it hands back ETF shares and receives the basket. This makes arbitrage possible: if the ETF trades at a premium to NAV, the AP buys the basket, creates shares and sells them; at a discount it buys ETF shares, redeems them and sells the basket. That keeps the price within transaction costs of NAV. Gaps open when the underlying is hard to trade, as in corporate bond ETFs in March 2020, where the ETF became the price discovery venue and traded at large discounts.",
+     "points": [
+      "APs create or redeem in kind against the basket",
+      "Premium means create; discount means redeem",
+      "Illiquid underlyings let the ETF diverge from NAV"
+     ],
+     "topic": "Equities",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-067",
+     "q": "What are dividend futures, and why have they historically traded below the dividends that were later paid?",
+     "a": "An index dividend future, such as the Euro Stoxx 50 contract, settles on the sum of dividends paid by the index constituents over a calendar year, in index points; a dividend swap exchanges a fixed strike for those realised dividends. They let investors trade dividends separately from the share price. The structural seller is the bank exotics desk: by selling autocallables and other structured products, investors effectively sell the bank puts, and a long put is long dividends because higher dividends lower the forward. Banks hedge by selling dividend futures, pushing implied dividends below expected payouts, so buyers have earned a risk premium. The risk showed in 2020, when regulators pushed European banks to cancel payouts and the 2020 and 2021 contracts fell sharply.",
+     "points": [
+      "Settles on the sum of index dividends paid in a year",
+      "Exotics desks are structurally long dividends from structured products",
+      "Hedging supply makes implied dividends trade below expected payouts"
+     ],
+     "topic": "Equities",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-068",
+     "q": "EUR/USD spot is 1.1000, one-year USD rates are 5% and EUR rates are 3%; what is the one-year forward and the forward points?",
+     "a": "Covered interest parity says borrowing one currency, converting at spot and investing in the other must earn the same as a forward-hedged position, so F = S·(1 + r_quote·T)/(1 + r_base·T), where EUR is the base and USD the quote currency. Here F = 1.1000 × 1.05/1.03 ≈ 1.1214, so the forward points are about +214 pips, quoted 1.1214 − 1.1000 in units of 0.0001. The lower-yielding currency, EUR, trades at a forward premium: the forward is not a forecast of where spot will be, it simply offsets the 2% interest differential. If the market forward were 1.1300, you would borrow USD, buy EUR spot, invest at 3% and sell EUR forward at 1.1300, locking in a riskless profit.",
+     "points": [
+      "F = S·(1 + r_quote·T)/(1 + r_base·T)",
+      "Low-yielder trades at a forward premium",
+      "Forwards reflect rate differentials, not a forecast"
+     ],
+     "topic": "FX",
+     "difficulty": "medium",
+     "link": "forwards"
+    },
+    {
+     "id": "mkt-069",
+     "q": "What is the FX carry trade, why does it make money on average, and what is its main risk?",
+     "a": "A carry trade borrows a low-yielding funding currency such as JPY or CHF and invests in a high-yielder such as MXN, BRL or AUD, earning the rate differential plus or minus the spot move. Uncovered interest parity says the high-yielder should depreciate by the differential, but empirically it often does not, the forward premium puzzle, so carry has earned positive average returns. Borrowing yen at 0.5% to hold pesos at 10% earns about 9.5% a year if spot is unchanged. The return distribution is negatively skewed: steady gains, then sudden crashes in risk-off when positions unwind and funding currencies spike. AUD/JPY fell about 40% in late 2008, and the yen carry unwind of August 2024 wiped out months of carry in days.",
+     "points": [
+      "Earn the rate differential while spot is roughly stable",
+      "Profits exist because UIP fails empirically",
+      "Negatively skewed: funding currencies spike in risk-off"
+     ],
+     "topic": "FX",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-070",
+     "q": "What is the difference between an FX swap and a cross-currency swap, and what is the cross-currency basis?",
+     "a": "An FX swap is a spot exchange plus an opposite forward exchange, usually under a year, with no intermediate payments; the interest differential is embedded in the forward points, making it essentially collateralised borrowing in one currency against another. A cross-currency swap exchanges notionals at the start and swaps them back at maturity at the same initial rate, with periodic floating coupons in each currency, such as SOFR against €STR plus a spread, and runs for years. That spread is the cross-currency basis, the deviation from covered interest parity. A negative EUR/USD basis means synthetic dollars cost more than direct dollar borrowing, reflecting structural dollar funding demand and bank balance-sheet limits; it widened sharply in 2008 and March 2020 until Fed swap lines eased it.",
+     "points": [
+      "FX swap: spot plus forward, short-dated, no coupons",
+      "XCCY: notional exchange plus floating coupons, long-dated",
+      "Basis measures CIP deviation and dollar funding stress"
+     ],
+     "topic": "FX",
+     "difficulty": "hard",
+     "link": "swaps"
+    },
+    {
+     "id": "mkt-071",
+     "q": "Why does the US dollar tend to strengthen in a risk-off episode?",
+     "a": "The dollar is the world's funding currency: trillions of dollars of debt are owed by non-US borrowers, and global trade and funding markets run on dollars. In a shock, those borrowers and leveraged investors must deleverage, buy dollars to repay or post margin, and their dollar funding lines shrink, creating a squeeze. At the same time carry trades financed against high-yielders unwind, and global investors buy Treasuries as the safest liquid asset. March 2020 was the clearest case: the DXY rose about 8% in two weeks until the Fed opened swap lines with other central banks. JPY and CHF also rally because their investors are net creditors who repatriate, and when the shock originates in the US and the Fed cuts aggressively, the yen can beat the dollar.",
+     "points": [
+      "USD is the global funding and invoicing currency",
+      "Deleveraging creates forced dollar demand",
+      "JPY and CHF also rally on repatriation"
+     ],
+     "topic": "FX",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-072",
+     "q": "What are contango and backwardation in a commodity futures curve, and what is the convenience yield?",
+     "a": "Contango means futures prices are above spot and rise with maturity; backwardation means they are below spot and fall with maturity. Cost of carry gives F = S·e^((r + u − y)T), where r is financing, u the storage cost and y the convenience yield, the benefit of physically holding the commodity, such as keeping a refinery running or avoiding a stock-out. When inventories are plentiful, y is small and the curve sits in contango, bounded by full carry: if futures exceed spot plus financing and storage, traders buy spot, store it and sell forward. When inventories are tight, y is high and the curve goes into backwardation, which has no arbitrage bound because you cannot borrow physical barrels that do not exist.",
+     "points": [
+      "Contango: F above S; backwardation: F below S",
+      "F = S·e^((r + u − y)T)",
+      "High convenience yield and tight inventories cause backwardation"
+     ],
+     "topic": "Commodities",
+     "difficulty": "easy",
+     "link": "forwards"
+    },
+    {
+     "id": "mkt-073",
+     "q": "What is roll yield for a commodity index investor, and how does the shape of the curve affect returns?",
+     "a": "Commodity indices and ETFs hold futures, not barrels, so before each contract expires they sell the front month and buy the next. In contango they sell low and buy high: rolling from a $70 front to a $72 second month costs about 2.9% for that roll, which compounds over a year. In backwardation they sell high and buy low and earn positive roll. Total return is roughly the spot price change plus roll yield plus the interest earned on collateral. This is why in 2009 oil roughly doubled from its lows while USO-type funds lagged badly in steep contango. Strictly the roll is not a separate cost: in contango, futures already price a rising spot, so you lose only if spot rises less than the curve implied.",
+     "points": [
+      "Rolling in contango gives negative roll yield",
+      "Total return = spot change + roll + collateral yield",
+      "Futures exposure can diverge sharply from spot"
+     ],
+     "topic": "Commodities",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-074",
+     "q": "How did the May 2020 WTI contract settle at minus $37.63, and what does it teach you about storage economics?",
+     "a": "WTI futures are physically settled at Cushing, Oklahoma. In April 2020 COVID cut oil demand by roughly a fifth while supply was still flowing, so inventories surged and storage at Cushing was close to full. As expiry approached, longs who could not take delivery, including retail products and funds that had to roll, had to sell to the few holders of storage space. The marginal cost of storing a barrel exploded, and on 20 April the May contract settled at −$37.63 while June stayed around $20. The lesson is that contango is bounded by the full cost of carry, and when storage is scarce that cost can exceed the commodity's value. Cash-settled Brent never went negative.",
+     "points": [
+      "Physical delivery forces longs to find storage or sell",
+      "Contango blows out when storage capacity runs out",
+      "Price can go negative when carry costs exceed value"
+     ],
+     "topic": "Commodities",
+     "difficulty": "hard",
+     "link": "forwards"
+    },
+    {
+     "id": "mkt-075",
+     "q": "How would an upside inflation surprise typically move equities, bonds and the currency?",
+     "a": "A hot CPI print makes the market price more central bank tightening, so front-end yields jump most and the curve usually bear flattens, while breakevens rise. Equities fall because the discount rate rises and margins may be squeezed, with long-duration growth and tech stocks hit hardest and banks and value relatively better. The currency usually strengthens if the central bank is seen as credible and willing to hike, since rate differentials widen. On 13 September 2022 US core CPI came in at 0.6% month on month against 0.3% expected and the S&P 500 fell about 4.3% that day, its worst day since 2020. The regime matters: when inflation is the dominant risk, stock-bond correlation turns positive and bonds stop hedging equities.",
+     "points": [
+      "Front-end yields up, curve bear flattens",
+      "Equities down, growth and tech hit hardest",
+      "Currency up if the central bank is credible"
+     ],
+     "topic": "Macro",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-076",
+     "q": "What does an inverted yield curve signal, and what does it imply for equities?",
+     "a": "An inversion, such as the 10-year yield below the 2-year or the 3-month, means the market expects policy rates to fall, typically because tight policy is expected to cause a slowdown. It has preceded every US recession since the late 1960s, with lead times of roughly 6 to 24 months. For equities it is not an immediate sell signal: stocks have often rallied for a year or more after the first inversion, as in 2019 and after the long 2022–2024 inversion. The more dangerous moment is usually the re-steepening, when the Fed starts cutting into weakness and the curve bull steepens as front-end yields collapse. Sector-wise, inversion squeezes bank net interest margins. Treat it as a probabilistic signal: the lead time is long and variable, and false alarms happen (1966 is the classic one).",
+     "points": [
+      "Inversion prices future rate cuts and a slowdown",
+      "Long, variable lag before any recession",
+      "Bull re-steepening is often the riskier signal for stocks"
+     ],
+     "topic": "Macro",
+     "difficulty": "hard",
+     "link": "yield-curve"
+    },
+    {
+     "id": "mkt-077",
+     "q": "How are FX pairs quoted, and what are pips and forward points?",
+     "a": "A pair like EUR/USD 1.0850 means one unit of the base currency, EUR, costs 1.0850 units of the quote currency, USD; if the rate rises, the base currency has strengthened. A pip is the fourth decimal place, 0.0001, or 0.01 for yen pairs, so on a €10 million position one pip is worth $1,000. Dealers quote two-way prices such as 1.0849/1.0851, buying the base currency on the bid and selling it on the offer. Spot normally settles T+2, with USD/CAD at T+1. A forward is quoted as spot plus forward points in pips, set by the interest differential: spot 1.0850 with +45 points gives an outright of 1.0895.",
+     "points": [
+      "Base/quote: price of one base unit in quote currency",
+      "Pip = 0.0001, or 0.01 for JPY pairs",
+      "Outright forward = spot + forward points"
+     ],
+     "topic": "FX",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-078",
+     "q": "Pitch me a trade idea.",
+     "a": "A good pitch has a clear structure: view, why the market is mispriced, instrument, risk and sizing, catalyst, and exit levels. For example: I think the RBA will hike once more while the market prices cuts, so AUD/USD is too low. The market prices about 25bp of easing over six months, but core inflation is running above target and the labour market is tight. I would buy a three-month 0.6600/0.6850 call spread, which caps premium at risk and is cheaper than an outright call. The catalyst is the quarterly CPI release. If trading spot instead, enter at 0.6600, target 0.6850, stop at 0.6480 below support: 250 pips of upside for 120 of risk, about 2:1. I would exit if CPI disappoints.",
+     "points": [
+      "View, mispricing, instrument, risk, catalyst, stop",
+      "State what the market prices versus your view",
+      "Give concrete levels and the risk/reward ratio"
+     ],
+     "topic": "Macro",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-079",
+     "q": "A stock is added to the S&P 500; what happens to its price, and how do desks trade the event?",
+     "a": "S&P announces additions about five trading days before they take effect, and passive funds tracking the index must own the stock at the closing price on the effective date, so there is a large, predictable, price-insensitive buy order at that close. The price typically jumps on the announcement as event-driven funds buy ahead; that premium used to be several percent and has shrunk as the trade became crowded. Arbitrageurs then sell to the index funds in the closing auction, and the stock often partly reverses afterwards. Index desks offer passive clients guaranteed execution at the close and manage the risk. Tesla's December 2020 inclusion, added in a single tranche, required roughly $80 billion of index-fund buying, much of it concentrated in the closing auction on the effective date.",
+     "points": [
+      "Index funds must buy at the effective-date close",
+      "Price jump on announcement has shrunk over time",
+      "Event-driven funds pre-position and supply liquidity at the close"
+     ],
+     "topic": "Equities",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-080",
+     "q": "Why is gold usually inversely related to real yields, and why did that relationship break down after 2022?",
+     "a": "Gold pays no coupon, so its opportunity cost is the real yield you give up, best measured by the 10-year TIPS yield. When real yields fall, holding gold costs less and its price tends to rise; from 2006 to 2021 the correlation was strongly negative, and gold hit records in 2020 as real yields went to about −1%. Because gold is priced in dollars, it also tends to move inversely to the dollar. After 2022 the relationship broke: real yields rose from about −1% to above +2%, yet gold rallied to new highs. The driver was emerging-market central bank buying, accelerated by the freezing of Russia's reserves in 2022, along with geopolitical hedging, a price-insensitive demand source the real-rate model leaves out.",
+     "points": [
+      "Real yield is gold's opportunity cost",
+      "Gold is also inverse to the dollar",
+      "Central bank buying has overridden the real-rate link since 2022"
+     ],
+     "topic": "Commodities",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-081",
+     "q": "What is Value-at-Risk, and what are the three main ways to compute it?",
+     "a": "VaR is the loss threshold that a portfolio should not exceed over a given horizon at a given confidence level, so a 1-day 99% VaR of $1m means losses above $1m are expected on roughly 1 day in 100. Historical simulation revalues today's positions under, say, the last 500 days of actual market moves and reads off the quantile. Parametric (variance-covariance) VaR assumes normal returns: VaR = z·σ·V, so a $10m book with 1% daily vol gives 2.33 × 1% × $10m ≈ $233k at 99%. Monte Carlo VaR simulates thousands of scenarios from a chosen model, fully revalues the book, and handles options and nonlinearity better.",
+     "points": [
+      "VaR = loss quantile at a confidence level over a horizon",
+      "Historical: real past moves, no distribution assumption",
+      "Parametric: z·σ·V, fast but assumes normality",
+      "Monte Carlo: flexible, handles nonlinearity, computationally heavy"
+     ],
+     "topic": "Risk",
+     "difficulty": "easy",
+     "link": "monte-carlo"
+    },
+    {
+     "id": "mkt-082",
+     "q": "What are the main limitations of VaR as a risk measure?",
+     "a": "VaR tells you the threshold but nothing about how bad losses are beyond it, so two books with the same 99% VaR can have very different tail losses; a desk selling deep out-of-the-money options can show tiny VaR while carrying a huge tail. It is not subadditive, so the VaR of a combined portfolio can exceed the sum of the parts, which breaks the logic of diversification and invites gaming. It is backward-looking: historical VaR depends on the lookback window, and quiet periods produce low VaR just before a crisis. Parametric versions understate fat tails, and the normal z of 2.33 badly underestimates real 99% moves. It also ignores liquidity and assumes positions are frozen over the horizon.",
+     "points": [
+      "Silent on loss size beyond the quantile",
+      "Not subadditive, so not a coherent risk measure",
+      "Procyclical and window-dependent; low before crises",
+      "Easily gamed by selling tail risk"
+     ],
+     "topic": "Risk",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-083",
+     "q": "What is expected shortfall, and why did regulators replace VaR with it under FRTB?",
+     "a": "Expected shortfall, or CVaR, is the average loss given that the loss exceeds the VaR level: ES_α = E[L | L ≥ VaR_α]. Unlike VaR it looks inside the tail, so a short deep-OTM option position that VaR barely sees shows up in ES. It is also subadditive and therefore coherent, so combining books never increases measured risk. Basel's Fundamental Review of the Trading Book replaced 99% VaR with 97.5% ES, calibrated to a period of significant stress and scaled by liquidity horizons. The level was chosen because under normality the two are almost identical: ES at 97.5% is about 2.34σ versus VaR at 99% of 2.33σ, but ES is much larger when tails are fat.",
+     "points": [
+      "ES = average loss beyond the VaR quantile",
+      "Coherent and subadditive, captures tail severity",
+      "FRTB: 97.5% ES on stressed calibration",
+      "Harder to backtest than VaR"
+     ],
+     "topic": "Risk",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-084",
+     "q": "When does square-root-of-time scaling of VaR or volatility break down?",
+     "a": "The rule σ_T = σ_1·√T, so 10-day VaR ≈ √10 × 1-day VaR ≈ 3.16×, only holds if daily returns are independent and identically distributed with zero mean. With positive autocorrelation, as in trending or illiquid marked-to-model assets, variance grows faster: for AR(1) with correlation ρ, two-day variance is 2σ²(1 + ρ), so √T understates risk; mean reversion does the opposite. Volatility clustering means today's high vol persists, so scaling a calm 1-day number misleads. Fat tails do not scale like a normal at short horizons, and over long horizons the drift term grows with T rather than √T. It also assumes a frozen portfolio, ignoring rebalancing, option gamma and liquidity horizons that differ by asset.",
+     "points": [
+      "Needs iid, zero-mean returns",
+      "Autocorrelation: 2-day variance = 2σ²(1+ρ)",
+      "Vol clustering and fat tails break scaling",
+      "Ignores drift, gamma and changing positions"
+     ],
+     "topic": "Risk",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-085",
+     "q": "What is the difference between the Sharpe ratio, the Sortino ratio and the information ratio?",
+     "a": "The Sharpe ratio is excess return per unit of total volatility, (R_p − R_f)/σ_p; a fund returning 10% with a 2% risk-free rate and 16% vol has a Sharpe of 0.5. The Sortino ratio replaces σ with downside deviation, measured only on returns below a target, so it does not penalise upside volatility and is better suited to skewed strategies. The information ratio is active return over tracking error, (R_p − R_b)/σ(R_p − R_b), and measures how consistently a manager beats a benchmark. Annualise Sharpe by multiplying a daily figure by √252. All three can be flattered by strategies that sell tail risk, since smooth returns hide rare large losses.",
+     "points": [
+      "Sharpe: excess return over total vol",
+      "Sortino: penalises only downside deviation",
+      "IR: active return over tracking error",
+      "Short-vol strategies can flatter all three"
+     ],
+     "topic": "Risk",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-086",
+     "q": "Why does diversification often fail in a crisis?",
+     "a": "For N equally weighted assets with the same vol σ and pairwise correlation ρ, portfolio variance is σ_p² = σ²[ρ + (1 − ρ)/N], which tends to ρσ² as N grows: correlation sets the floor on risk. With σ = 20% and ρ = 0.3, a large portfolio has vol of about √0.3 × 20% ≈ 11%; if correlations jump to 0.8 in a sell-off, that floor rises to about 18%, so most of the diversification benefit disappears exactly when it is needed. Correlations rise in crises because of common deleveraging, margin calls, forced selling and a flight to quality, where everything risky trades as one factor. Correlation matrices estimated in calm periods therefore understate stressed risk.",
+     "points": [
+      "σ_p² = σ²[ρ + (1−ρ)/N] → ρσ²",
+      "Correlation, not asset count, sets the risk floor",
+      "Forced deleveraging drives correlations toward 1",
+      "Calm-period correlations understate stressed risk"
+     ],
+     "topic": "Risk",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-087",
+     "q": "What are the practical pitfalls of mean-variance portfolio optimisation?",
+     "a": "Markowitz optimisation is an error maximiser: it overweights assets whose expected returns are overestimated and whose risk is underestimated, because those estimation errors look like opportunities. Weights are extremely sensitive to expected returns, which are estimated with huge noise; a 1% change in one asset's mean can flip a large long into a short. The sample covariance matrix of many assets is poorly conditioned, and its inverse amplifies noise, producing extreme long-short corner solutions. Variance also treats upside and downside symmetrically and ignores fat tails. Practitioners respond with constraints, Ledoit–Wolf shrinkage of the covariance, Black–Litterman blending of views with market-implied equilibrium returns, resampling, or risk-based approaches like minimum variance and risk parity that avoid estimating means.",
+     "points": [
+      "Optimiser maximises estimation error",
+      "Weights hypersensitive to expected-return inputs",
+      "Noisy covariance inverse gives extreme positions",
+      "Fixes: shrinkage, Black–Litterman, constraints, risk parity"
+     ],
+     "topic": "Risk",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-088",
+     "q": "How does stress testing differ from VaR, and why do you need both?",
+     "a": "VaR is a statistical estimate of a loss quantile based on a distribution of normal-ish market moves, usually over recent history. Stress testing instead asks what happens to the book under a specific severe scenario, whether historical, such as a 2008 credit blowout or the March 2020 dash for cash, or hypothetical, such as rates up 200bp with equities down 30% and credit spreads doubling. It does not assign a probability, but it captures moves outside the VaR window, correlation breakdowns, liquidity gaps and nonlinear option exposures. VaR is good for day-to-day limits and capital, while stress tests reveal concentrations and tail vulnerabilities; reverse stress testing works backwards from the loss that would break the firm.",
+     "points": [
+      "VaR: probabilistic, based on recent distribution",
+      "Stress test: specific severe scenario, no probability",
+      "Captures tails, correlation breaks and nonlinearity",
+      "Reverse stress test: find scenarios that break you"
+     ],
+     "topic": "Risk",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-089",
+     "q": "What are the key properties of Brownian motion, and why do we model stock prices with geometric Brownian motion?",
+     "a": "A standard Brownian motion W_t starts at zero, has independent increments, has W_t − W_s ~ N(0, t − s), and has continuous paths that are nowhere differentiable, with quadratic variation equal to t, which is why (dW)² = dt in stochastic calculus. We do not model prices as arithmetic Brownian motion because prices could go negative and the volatility would not scale with the price level. Geometric Brownian motion, dS = μS dt + σS dW, keeps prices positive, makes returns rather than price changes normal, and gives lognormal prices with constant percentage volatility. That is the Black–Scholes assumption; its weaknesses are constant vol, no jumps and thin tails, which is why we see a smile.",
+     "points": [
+      "Independent, normal increments with variance t − s",
+      "Continuous but nowhere differentiable; (dW)² = dt",
+      "GBM: dS = μS dt + σS dW, lognormal prices",
+      "Prices stay positive; returns are normal"
+     ],
+     "topic": "Probability",
+     "difficulty": "easy",
+     "link": "monte-carlo"
+    },
+    {
+     "id": "mkt-090",
+     "q": "Where does the −σ²/2 term come from in the solution of geometric Brownian motion?",
+     "a": "Apply Itô's lemma to f(S) = ln S with dS = μS dt + σS dW. Because Brownian increments are of order √dt, the second-order term does not vanish: (dS)² = σ²S² dt. So d(ln S) = dS/S − (1/2)(dS)²/S² = (μ − σ²/2)dt + σ dW, giving S_T = S_0·exp((μ − σ²/2)T + σW_T). Intuitively, ln is concave, so by Jensen's inequality the expected log return is below the arithmetic drift: volatility drag. The mean of S_T is still S_0·e^(μT), but the median is S_0·e^((μ − σ²/2)T). With 20% vol the drag is 2% a year; a +50% then −50% path leaves you at 0.75, not 1.",
+     "points": [
+      "Itô: (dS)² = σ²S² dt does not vanish",
+      "d ln S = (μ − σ²/2)dt + σ dW",
+      "Jensen/concavity: volatility drag on log returns",
+      "Mean grows at μ; median at μ − σ²/2"
+     ],
+     "topic": "Probability",
+     "difficulty": "hard",
+     "link": "monte-carlo"
+    },
+    {
+     "id": "mkt-091",
+     "q": "What is the difference between the risk-neutral measure and the real-world measure, and when do you use each?",
+     "a": "Under the real-world measure P, assets drift at their actual expected return μ, which includes a risk premium. Under the risk-neutral measure Q, every traded asset drifts at the risk-free rate, so the discounted price is a martingale and a derivative's value is V_0 = e^(−rT)·E^Q[payoff]. This works because a derivative can be replicated by dynamically hedging with the underlying, so its price cannot depend on anyone's risk preferences or on μ; that is why μ is absent from Black–Scholes. Girsanov's theorem changes the drift but not the volatility. You use Q for pricing and hedging derivatives, and P for risk management, VaR, scenario analysis and forecasting, where actual probabilities matter.",
+     "points": [
+      "Q: assets drift at r; discounted prices are martingales",
+      "Price = e^(−rT)·E^Q[payoff]",
+      "μ drops out because of replication",
+      "Use P for VaR, forecasting and risk"
+     ],
+     "topic": "Probability",
+     "difficulty": "medium",
+     "link": "monte-carlo"
+    },
+    {
+     "id": "mkt-092",
+     "q": "You roll a fair die and are paid the face value, but you may re-roll once and must accept the second roll; what is the game worth and what is your strategy?",
+     "a": "Work backwards. If you re-roll, you get the expected value of a single roll, which is 3.5. So you should keep any first roll that beats 3.5, meaning 4, 5 or 6, and re-roll on 1, 2 or 3. The value is P(keep)·E[roll | keep] + P(re-roll)·3.5 = (1/2)·5 + (1/2)·3.5 = 2.5 + 1.75 = 4.25. So you would pay up to $4.25 to play. The logic extends by backward induction: with two re-rolls the continuation value is 4.25, so you keep only 5 or 6 on the first roll, giving (1/3)·5.5 + (2/3)·4.25 ≈ 4.67.",
+     "points": [
+      "Solve by backward induction from the last roll",
+      "Keep if roll beats continuation value 3.5",
+      "Value = 0.5·5 + 0.5·3.5 = 4.25",
+      "Two re-rolls: keep 5 or 6, value ≈ 4.67"
+     ],
+     "topic": "Probability",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-093",
+     "q": "What is the expected number of fair coin tosses needed to get two heads in a row?",
+     "a": "Let E be the expected number of tosses from the start. Condition on the first outcomes. With probability 1/2 the first toss is tails, you have used one toss and are back at the start: 1 + E. With probability 1/4 you get heads then tails, using two tosses and restarting: 2 + E. With probability 1/4 you get heads then heads and are done in two tosses. So E = (1/2)(1 + E) + (1/4)(2 + E) + (1/4)(2), which simplifies to E = 1.5 + 0.75E, so 0.25E = 1.5 and E = 6. The general result for n heads in a row is 2^(n+1) − 2, so three in a row takes 14 tosses on average.",
+     "points": [
+      "Set up states and condition on first tosses",
+      "E = ½(1+E) + ¼(2+E) + ¼·2",
+      "Answer: 6 tosses",
+      "n in a row: 2^(n+1) − 2"
+     ],
+     "topic": "Probability",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-094",
+     "q": "Make me a market on the sum of three fair dice, and how would you adjust if I have already seen one of them?",
+     "a": "Each die has mean 3.5 and variance 35/12, so the sum has mean 10.5 and standard deviation √(3 × 35/12) = √8.75 ≈ 2.96, with a range of 3 to 18. With no information asymmetry I would quote tight around fair, say 10 at 11. If you have seen one die, you know more than me. Conditional on that die, the fair value is that die plus 7, ranging from 8 to 13, so your edge can be up to 2.5 points. I would widen to protect against that, perhaps 9 at 12, and then learn from your trade: if you lift my 12 offer, you most likely saw a 6, worth 13, so I would move my market up, toward 12.5 at 13.5.",
+     "points": [
+      "Sum of three dice: mean 10.5, sd ≈ 2.96",
+      "Informed counterparty: fair value = seen die + 7",
+      "Widen quotes when you face adverse selection",
+      "Update quotes on the direction of their trade"
+     ],
+     "topic": "Probability",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-095",
+     "q": "What is the expected number of rolls of a fair die needed to see all six faces?",
+     "a": "This is the coupon collector problem. Break it into stages: after you have seen k distinct faces, each roll shows a new face with probability (6 − k)/6, so the wait for the next new face is geometric with mean 6/(6 − k). Summing over the stages gives E = 6/6 + 6/5 + 6/4 + 6/3 + 6/2 + 6/1 = 6·(1 + 1/2 + 1/3 + 1/4 + 1/5 + 1/6) = 6 × 2.45 = 14.7 rolls. The general answer for n faces is n·H_n ≈ n·ln n + 0.577n. The insight interviewers look for is linearity of expectation over the waiting stages, and noticing that the last face alone takes 6 rolls on average.",
+     "points": [
+      "Split into stages with geometric waiting times",
+      "Stage wait: 6/(6 − k) rolls",
+      "E = 6·H_6 = 14.7",
+      "General: n·H_n ≈ n ln n"
+     ],
+     "topic": "Probability",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-096",
+     "q": "What is market impact, and how would you estimate the cost of executing a large order?",
+     "a": "Market impact is the adverse price move caused by your own trading: buying pushes the price up as you consume liquidity and reveal information. It has a temporary component, which decays once you stop, and a permanent component reflecting information content. The empirical square-root law says impact ≈ Y·σ·√(Q/V), where σ is daily volatility, Q your order size, V daily volume and Y a constant near 1. So buying 10% of ADV in a stock with 2% daily vol costs roughly 2% × √0.1 ≈ 63bp, before spread. Trading faster raises impact, trading slower raises timing risk; Almgren–Chriss optimisation trades these off depending on risk aversion.",
+     "points": [
+      "Temporary impact decays; permanent impact persists",
+      "Square-root law: impact ≈ σ·√(Q/V)",
+      "10% ADV at 2% vol ≈ 60bp",
+      "Trade-off: impact cost vs timing risk"
+     ],
+     "topic": "Microstructure",
+     "difficulty": "medium"
+    },
+    {
+     "id": "mkt-097",
+     "q": "What is the difference between VWAP and TWAP execution, and when would you use each?",
+     "a": "A TWAP algorithm slices an order evenly over time, for example 1/78 of the order in every five-minute bucket of a 6.5-hour day, regardless of volume. A VWAP algorithm slices the order in proportion to the expected intraday volume profile, which is typically U-shaped, so it trades more at the open and close; its benchmark is the volume-weighted average price, Σ P_i·Q_i / Σ Q_i. VWAP tends to reduce impact by trading when liquidity is deepest and is the standard client benchmark. TWAP is simpler and preferred in illiquid names or when volume forecasts are unreliable. Both are predictable, so they can be detected and front-run; good algos randomise slice sizes and timing.",
+     "points": [
+      "TWAP: equal slices over time",
+      "VWAP: slices follow the volume profile",
+      "VWAP = Σ P·Q / Σ Q, standard benchmark",
+      "Both predictable; randomise to avoid detection"
+     ],
+     "topic": "Microstructure",
+     "difficulty": "easy"
+    },
+    {
+     "id": "mkt-098",
+     "q": "Explain adverse selection and the winner's curse from a market maker's perspective.",
+     "a": "A market maker trades with two types of client: uninformed flow, which trades for liquidity or hedging reasons, and informed flow, which trades because it knows something about where the price is going. The market maker earns the spread on the first and loses to the second. Adverse selection means your fills are biased: you get hit on your bid precisely when the price is about to fall. That is the winner's curse: if your quote is the one that trades, especially when you are the best price on the screen, it is evidence that you mispriced it. In the Glosten–Milgrom model the spread is set so that profits from uninformed flow cover losses to informed flow. Market makers respond by widening, skewing quotes, and tiering clients by toxicity.",
+     "points": [
+      "Spread pays for losses to informed traders",
+      "Being filled is information against you",
+      "Winner's curse: best quote is often mispriced",
+      "Defences: widen, skew, tier flow by toxicity"
+     ],
+     "topic": "Microstructure",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-099",
+     "q": "What is CVA, and how would you estimate it for an uncollateralised swap?",
+     "a": "Credit valuation adjustment is the market value of counterparty default risk: the amount by which a derivative's risk-free value must be reduced because the counterparty may default while owing you money. CVA ≈ (1 − R)·Σ EE(t_i)·PD(t_{i−1}, t_i)·DF(t_i), where R is the recovery rate, EE the expected positive exposure from simulating the trade's future MTM, PD the marginal default probability from CDS spreads, and DF the discount factor. A quick approximation is CVA ≈ average EPE × CDS spread × risky annuity, so $5m EPE, a 120bp spread and a 3.7 annuity give about $220k. Wrong-way risk, where exposure rises as the counterparty's credit worsens, increases CVA, while DVA reflects your own default risk.",
+     "points": [
+      "CVA = price of counterparty default risk",
+      "CVA ≈ (1−R)·Σ EE·PD·DF",
+      "Quick: EPE × CDS spread × annuity",
+      "Wrong-way risk increases CVA; DVA is the mirror"
+     ],
+     "topic": "Credit",
+     "difficulty": "hard"
+    },
+    {
+     "id": "mkt-100",
+     "q": "What role do central counterparties and margin play in reducing counterparty risk?",
+     "a": "A CCP steps between the two sides of a trade through novation, becoming buyer to every seller and seller to every buyer, so members face the CCP rather than each other. This allows multilateral netting, which shrinks gross exposures dramatically. Variation margin is exchanged daily, or intraday, to settle mark-to-market moves, so exposure resets to near zero. Initial margin is posted up front to cover potential losses while a defaulter's portfolio is closed out, typically at 99% or more over a 5-day margin period of risk for cleared swaps. If a member defaults, losses run through a waterfall: the defaulter's margin and default-fund contribution, then the CCP's own capital, then surviving members' contributions. Post-2009 G20 reforms mandated clearing of standard OTC derivatives.",
+     "points": [
+      "Novation: CCP faces both sides",
+      "Variation margin settles daily MTM moves",
+      "Initial margin covers close-out risk after default",
+      "Default waterfall mutualises losses beyond margin"
+     ],
+     "topic": "Credit",
+     "difficulty": "easy"
     }
    ]
   },
@@ -263,421 +1295,491 @@
      "id": "beh-01",
      "q": "Tell me about yourself.",
      "a": "Certainly, I'd be happy to. I hold a Bachelor's degree in Computer Science and have spent the last six years working in software development. I've had the opportunity to work on various projects, from developing mobile applications to leading a team of developers in my previous role at XYZ Company. I'm known for my problem-solving skills and my ability to work collaboratively with cross-functional teams. Outside of work, I'm passionate about volunteering for coding boot camps, where I mentor aspiring developers.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-02",
      "q": "Why should we hire you?",
      "a": "You should hire me because I bring a unique combination of technical expertise, leadership experience, and a proven track record of delivering results. In my previous role at ABC Inc., I not only led a team that completed a critical project ahead of schedule but also identified and implemented process improvements that saved the company 20% in operational costs. My ability to collaborate effectively and my commitment to continuous learning make me a valuable asset to any team.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-03",
      "q": "What's your greatest strength?",
      "a": "One of my greatest strengths is my adaptability. I thrive in dynamic work environments and have consistently demonstrated the ability to learn new technologies quickly. For example, at my previous job, I was asked to lead a project that involved using a programming language I had never worked with before. I immersed myself in learning it and successfully delivered the project on time.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-04",
      "q": "What's your greatest weakness?",
      "a": "I used to struggle with delegating tasks, often taking on too much myself. However, I recognized this as a weakness and actively worked on improving my delegation skills. I now understand the importance of empowering team members and have seen how it enhances both productivity and team morale.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-05",
      "q": "Can you describe a challenging situation you faced at work and how you handled it?",
      "a": "Certainly. In my previous role, we faced a tight deadline to complete a project with a high degree of complexity. The team was under immense pressure, and conflicts started to arise. I took the initiative to organize a team meeting, where we openly discussed our concerns and brainstormed solutions. By fostering open communication and reassigning tasks based on team members' strengths, we not only met the deadline but also improved team dynamics.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-06",
      "q": "Where do you see yourself in 5 years?",
      "a": "In five years, I see myself in a leadership role within the company, possibly in a senior project management position. I'm dedicated to continuous growth and would like to leverage my experience to mentor and lead teams to success while contributing to the company's long-term goals.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-07",
      "q": "Why did you leave your last job?",
      "a": "I left my last job because I felt that I had outgrown the opportunities it offered. I was seeking new challenges and a role that aligned better with my career goals. I wanted to contribute my skills and expertise to a company where I could make a more significant impact, which is why I'm excited about the opportunity with your organization.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-08",
      "q": "Tell me about a time you failed and what you learned from it.",
      "a": "One notable failure occurred when I was managing a project that ended up exceeding the budget due to unforeseen challenges. It was a difficult situation, but I took full responsibility, communicated transparently with stakeholders, and devised a cost-cutting plan. This experience taught me the importance of thorough risk assessment and proactive problem-solving, skills I've since honed to prevent similar issues in the future.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-09",
      "q": "How do you handle stress or pressure?",
      "a": "I handle stress and pressure by first staying organized and breaking down tasks into manageable steps. I also prioritize effectively and maintain open communication with my team to ensure everyone is aligned and informed. Additionally, I make it a point to take short breaks to recharge and maintain a healthy work-life balance.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-10",
      "q": "Describe a situation where you had to work with a difficult coworker.",
      "a": "In my previous role, I encountered a colleague who had a different working style and communication approach, leading to conflicts. To address this, I initiated a one-on-one conversation to understand their perspective and find common ground. We established clear communication guidelines, which significantly improved our collaboration and overall team dynamics.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-11",
      "q": "What's your leadership style?",
      "a": "I would describe my leadership style as collaborative and results-oriented. I believe in empowering team members to make decisions within their areas of expertise while providing clear guidance and support. I also emphasize setting measurable goals and regularly checking progress to ensure we stay on track.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-12",
      "q": "How do you stay updated with industry trends and developments?",
      "a": "I stay updated with industry trends by subscribing to industry-specific publications, participating in webinars and conferences, and actively engaging with professional networks and forums. Additionally, I make it a priority to seek out online courses and certifications to continually enhance my skills and knowledge.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-13",
      "q": "What do you know about our company?",
      "a": "I've thoroughly researched your company and am impressed by your innovative products and commitment to sustainability. Your recent expansion into international markets caught my attention, and I believe my experience in global project management aligns well with your company's growth trajectory. Your mission to improve people's lives through technology resonates with my personal and professional values.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-14",
      "q": "Why do you want to work here?",
      "a": "I want to work here because I'm drawn to your company's culture of innovation and your commitment to making a positive impact on the world. Your reputation for fostering employee growth and development also aligns perfectly with my career aspirations. I'm excited about the opportunity to contribute my skills and be part of a dynamic team.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-15",
      "q": "Can you provide an example of a time you had to adapt to a change at work?",
      "a": "Certainly. In my previous role, our company underwent a significant software migration project that required all employees to learn a new system. I embraced this change by proactively seeking training, assisting colleagues in the transition, and providing feedback to improve the process. As a result, our team adapted quickly, and the transition was remarkably smooth.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-16",
      "q": "What motivates you in your career?",
      "a": "What motivates me is the opportunity to continually learn and grow professionally. I thrive when I can tackle new challenges and expand my skill set. Additionally, I find great motivation in knowing that my work contributes to the success of the team and the company as a whole.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-17",
      "q": "Describe a project where you had to meet tight deadlines. How did you manage it?",
      "a": "I encountered a project where we had an unexpectedly tight deadline due to a client's urgent request. To meet the deadline, I implemented a structured project plan, allocated tasks based on team members' strengths, and closely monitored progress. We also maintained open communication with the client, managing expectations and delivering the project on time.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-18",
      "q": "What is your preferred work style: working independently or in a team?",
      "a": "I value both working independently and collaborating with a team. I find that independent work allows me to focus and execute tasks efficiently, while teamwork fosters creativity and diverse perspectives. My approach depends on the project's requirements, and I'm adaptable in both scenarios.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-19",
      "q": "How do you handle constructive criticism?",
      "a": "I welcome constructive criticism as an opportunity for growth. When receiving feedback, I actively listen, ask clarifying questions, and express gratitude for the input. I then take the feedback to heart and use it to improve my performance. Constructive criticism has been instrumental in my professional development.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-20",
      "q": "Can you discuss a time you had to resolve a customer's complaint or issue?",
      "a": "Certainly. In my previous role as a customer service representative, I encountered a situation where a customer was dissatisfied with our product. I empathized with their frustration, actively listened to their concerns, and offered a solution that exceeded their expectations. The customer ultimately became a loyal advocate for our brand.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-21",
      "q": "How do you handle ambiguity and uncertainty in a project?",
      "a": "I thrive in ambiguous situations by breaking down complex problems into manageable tasks. I also engage in thorough research and consultation with team members to gather insights and make informed decisions. My ability to adapt and remain calm under uncertainty has allowed me to successfully navigate challenging projects.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-22",
      "q": "Describe a situation where you had to persuade a team to adopt your idea.",
      "a": "In a previous role, I proposed a new project management software to improve efficiency. To persuade the team, I conducted research to highlight the benefits, presented a clear implementation plan, and invited team members to share their input. By addressing concerns and demonstrating the positive impact, we gained unanimous support for the change.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-23",
      "q": "How do you prioritize tasks when you have multiple deadlines?",
      "a": "I prioritize tasks by assessing their urgency and importance. I create a task list, assign deadlines, and break down larger projects into smaller, manageable steps. Effective time management, delegation when possible, and regular progress checks help me ensure all deadlines are met.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-24",
      "q": "Can you discuss a situation where you had to make a difficult decision at work?",
      "a": "Certainly. I was once tasked with deciding whether to allocate additional resources to salvage a project that was falling behind schedule. After conducting a thorough analysis, I made the tough decision to reallocate resources, which temporarily impacted other projects. In the end, the project was successfully completed, and I learned the importance of making data- driven decisions.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-25",
      "q": "How do you handle a team member who is not meeting their goals or expectations?",
      "a": "When faced with a team member who is struggling, I take a proactive approach. I initiate a private conversation to understand their challenges, offer support, and set clear expectations. If the issues persist, I work with them to develop an improvement plan and provide ongoing feedback and coaching.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-26",
      "q": "What do you consider your most significant professional achievement?",
      "a": "My most significant professional achievement was leading a cross-functional team that successfully launched a product ahead of schedule, resulting in a 30% increase in revenue for the company. This achievement showcased my leadership and project management skills and had a direct positive impact on the organization's bottom line.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-27",
      "q": "Can you describe a time you had to deal with a difficult client or customer?",
      "a": "In a previous role, I worked with a particularly demanding client who was dissatisfied with our services. I maintained professionalism, actively listened to their concerns, and took swift action to address their issues. By exceeding their expectations and providing exceptional service, we not only retained the client but also received positive referrals.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-28",
      "q": "How do you handle failure or setbacks in a project?",
      "a": "I view failure or setbacks as opportunities for learning and improvement. When faced with setbacks, I conduct a thorough analysis to identify the root causes and develop corrective action plans. This proactive approach ensures that I not only address immediate issues but also prevent similar problems in the future.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-29",
      "q": "What role do ethics and integrity play in your work?",
      "a": "Ethics and integrity are fundamental to my work. I believe in conducting business honestly, treating all stakeholders with respect, and adhering to ethical standards and company policies. Upholding these values builds trust, maintains reputation, and contributes to a positive work environment.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-30",
      "q": "Describe a situation where you had to handle confidential information.",
      "a": "In my previous role, I was entrusted with confidential client data. I ensured its security by following strict protocols, limiting access to authorized personnel, and regularly updating encryption measures. Maintaining confidentiality is a core responsibility, and I take it very seriously.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-31",
      "q": "What's your approach to setting and achieving career goals?",
      "a": "I set SMART (Specific, Measurable, Achievable, Relevant, Time-bound) goals to ensure clarity and attainability. I break down larger career goals into smaller, actionable steps and regularly review progress. Additionally, I seek mentorship and professional development opportunities to stay on track and continuously advance.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-32",
      "q": "Can you provide an example of a time you had to lead a team through a crisis?",
      "a": "I once led a team that faced a sudden crisis when a key team member had to take medical leave during a critical project phase. I quickly reassigned tasks, adjusted timelines, and communicated transparently with stakeholders about the situation. By leveraging the team's strengths and maintaining focus, we successfully mitigated the crisis and delivered the project on schedule.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-33",
      "q": "How do you stay organized and manage your time effectively?",
      "a": "I stay organized by using a combination of digital tools and time management techniques. I maintain a detailed calendar, set priorities, and allocate time for specific tasks. I also practice the Pomodoro Technique to maintain focus and productivity throughout the day.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-34",
      "q": "Can you discuss a time you had to negotiate a challenging contract or deal?",
      "a": "Certainly. In my previous role, I negotiated a complex contract with a client who had specific demands and tight budget constraints. To reach an agreement, I conducted thorough research, identified mutually beneficial terms, and engaged in open and transparent communication. We successfully closed the deal, and both parties were satisfied with the outcome.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-35",
      "q": "How do you handle a situation where you disagree with your supervisor's decision?",
      "a": "When I disagree with a supervisor's decision, I approach the situation with respect and professionalism. I seek clarification to understand their perspective, share my viewpoint with supporting evidence, and propose alternative solutions if applicable. Ultimately, I respect their final decision and continue to work collaboratively.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-36",
      "q": "Can you describe a time you had to adapt to a new software or technology quickly?",
      "a": "Certainly. In a previous role, I was required to learn a new project management software within a short timeframe to effectively manage a project. I immersed myself in online tutorials, attended training sessions, and sought guidance from colleagues with expertise in the software. My dedication paid off, as I became proficient in the software and successfully managed the project.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-37",
      "q": "How do you handle a situation where a project is falling behind schedule?",
      "a": "When a project is falling behind schedule, I take immediate action by assessing the reasons for the delay, reallocating resources if necessary, and devising a recovery plan. I also maintain transparent communication with stakeholders, keeping them informed about the situation and the steps being taken to get back on track.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-38",
      "q": "Can you discuss a time you had to resolve a conflict within your team?",
      "a": "In my role as a team leader, I encountered a situation where two team members had a disagreement that was affecting team morale. I facilitated a private discussion, actively listened to both parties, and helped them find common ground. By addressing the issue promptly and effectively, we restored a harmonious working environment.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-39",
      "q": "How do you keep yourself motivated and engaged during routine or repetitive tasks?",
      "a": "I stay motivated during routine tasks by finding ways to make them more engaging and efficient. I seek opportunities to streamline processes, set personal performance goals, and focus on the larger purpose or impact of the task. This approach helps me maintain a high level of motivation and commitment.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-40",
      "q": "Can you discuss a time you had to deliver a presentation to a large audience?",
      "a": "Certainly. I had the opportunity to deliver a presentation at an industry conference attended by over 500 professionals. To prepare, I invested time in researching the topic thoroughly, creating engaging visual aids, and practicing my delivery extensively. The presentation was well-received, and it boosted my confidence in public speaking.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-41",
      "q": "How do you handle high-pressure situations, such as tight deadlines or unexpected crises?",
      "a": "In high-pressure situations, I remain calm and focused by prioritizing tasks, breaking them down into manageable steps, and communicating effectively with the team. I also draw on my problem-solving skills and experience to make informed decisions swiftly.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-42",
      "q": "Can you discuss a time when you had to work on a project with limited resources?",
      "a": "Certainly. In a previous role, we had a project with budget constraints. To maximize our resources, I identified cost-effective solutions, optimized processes, and leveraged the skills of team members effectively. This allowed us to deliver a successful project within the limitations.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-43",
      "q": "What's the most innovative idea you've implemented in your previous role?",
      "a": "In my last role, I introduced an automated data analysis tool that significantly reduced manual data entry and processing time, improving efficiency by 40%. This innovation not only saved time but also enhanced data accuracy.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-44",
      "q": "How do you stay motivated and productive during remote work or when working independently?",
      "a": "To stay motivated and productive during remote work, I establish a dedicated workspace, maintain a structured daily routine, and set clear goals. Regular check-ins with my team and regular breaks help maintain motivation and focus.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-45",
      "q": "Describe a situation where you had to manage competing priorities.",
      "a": "In a previous role, I had to balance multiple projects with overlapping deadlines. To manage competing priorities, I created a priority matrix, assessed the urgency and importance of each task, and adjusted timelines and resources accordingly. Effective communication with stakeholders ensured everyone was aware of the situation.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-46",
      "q": "Can you provide an example of a time when you took the initiative to learn a new skill or technology?",
      "a": "Certainly. I recognized the importance of data analytics in my field, so I proactively enrolled in an online data analytics course and earned a certification. This allowed me to bring valuable data-driven insights to my team and improve decision-making.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-47",
      "q": "How do you handle feedback from peers or subordinates?",
      "a": "I value feedback as an opportunity for growth. I actively listen, consider the feedback objectively, and express gratitude for the insights. I then use the feedback to make improvements in my work or interactions.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-48",
      "q": "Can you discuss a time when you had to navigate a project with a diverse, multicultural team?",
      "a": "I had the opportunity to lead a multicultural team on a global project. To ensure effective collaboration, I promoted cultural sensitivity, encouraged open communication, and leveraged each team member's unique strengths. This approach led to a successful project outcome and enhanced team cohesion.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-49",
      "q": "How do you keep up with the latest industry trends and developments?",
      "a": "I stay current with industry trends by regularly reading industry publications, attending conferences, webinars, and participating in professional associations. I also network with industry peers to exchange insights and ideas.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-50",
      "q": "Can you describe a situation where you had to resolve a technical issue under tight time constraints?",
      "a": "In a previous role, we faced a technical issue during a critical project phase with a tight deadline. I assembled a cross-functional team, conducted a root cause analysis, and implemented a solution within hours, ensuring the project stayed on track.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-51",
      "q": "What's your approach to building and maintaining strong professional relationships?",
      "a": "I prioritize building professional relationships by being approachable, open to collaboration, and actively listening to others' perspectives. I also maintain clear and respectful communication and follow up on commitments, which fosters trust and strengthens relationships.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-52",
      "q": "Can you discuss a time you had to manage a budget for a project?",
      "a": "Certainly. I managed a project budget in my previous role by carefully tracking expenses, identifying cost-saving opportunities, and negotiating with suppliers. This resulted in a 15% cost reduction while still delivering a high-quality project.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-53",
      "q": "How do you handle situations where you have conflicting priorities with a colleague or team member?",
      "a": "In such situations, I seek a middle ground by engaging in open and respectful dialogue with the colleague or team member. I aim to find a compromise that aligns with the overall goals and priorities of the team or organization.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-54",
      "q": "Can you discuss a time when you had to handle a dissatisfied client or customer?",
      "a": "In a previous role, I had to address a dissatisfied client who was unhappy with our service. I actively listened to their concerns, offered solutions to rectify the issue, and maintained regular communication to ensure their satisfaction. Ultimately, we turned the situation around, and the client continued to work with us.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-55",
      "q": "How do you handle setbacks or obstacles in your career?",
      "a": "I view setbacks and obstacles as opportunities for growth and learning. I reflect on the situation, identify areas for improvement, and adapt my approach accordingly. These experiences have often led to personal and professional development.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-56",
      "q": "Can you discuss a time when you had to give a presentation without much preparation time?",
      "a": "Certainly. I once had to deliver an impromptu presentation due to a last-minute scheduling change. I drew on my subject knowledge and experience, organized my thoughts quickly, and delivered a concise and informative presentation that received positive feedback from the audience.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-57",
      "q": "What's your strategy for managing stress outside of work?",
      "a": "To manage stress outside of work, I prioritize self-care activities such as exercise, meditation, and spending quality time with friends and family. These activities help me relax, recharge, and maintain a healthy work-life balance.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-58",
      "q": "Can you provide an example of a time when you had to mediate a conflict between team members?",
      "a": "In a team project, two team members had conflicting ideas on the project's direction. I stepped in as a mediator, encouraged open communication, and facilitated a compromise that allowed us to move forward collaboratively and successfully.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-59",
      "q": "How do you ensure you're up to date with changes in laws, regulations, or compliance standards relevant to your field?",
      "a": "I stay informed about changes in laws, regulations, and compliance standards by regularly reviewing relevant government websites, attending compliance training sessions, and consulting with legal experts when necessary. Compliance is a crucial aspect of my work, and I prioritize staying current.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-60",
      "q": "Can you describe a situation when you had to lead a team through a major change or transition?",
      "a": "I led a team through a major software system transition that required process changes and retraining. To ensure a smooth transition, I created a detailed transition plan, provided comprehensive training, and offered ongoing support. The team successfully adapted to the change with minimal disruptions.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-61",
      "q": "What do you do to stay organized and avoid missing deadlines or commitments?",
      "a": "I use digital tools like calendars and task management apps to track deadlines and commitments. I also maintain a prioritized to-do list and regularly review and adjust it as needed. This systematic approach helps me stay organized and meet all my obligations.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-62",
      "q": "Can you discuss a time when you had to resolve a disagreement with your supervisor or manager?",
      "a": "In a previous role, I had a disagreement with my manager regarding the project's direction. I scheduled a private meeting to discuss our differing perspectives, presented data to support my position, and worked collaboratively to reach a mutually beneficial solution that aligned with the project's goals.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-63",
      "q": "How do you handle situations where you need to provide constructive feedback to a team member or colleague?",
      "a": "I approach providing constructive feedback with empathy and a focus on improvement. I choose an appropriate time and place, use specific examples, and offer solutions or suggestions for improvement. I aim to foster growth and development while maintaining a positive working relationship.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-64",
      "q": "Can you discuss a time when you had to make a decision with incomplete information?",
      "a": "I encountered a situation where I had to make a time-sensitive decision with limited information. I gathered available data, consulted relevant experts, and used my judgment to make the best decision under the circumstances. The decision was successful, and it highlighted my ability to make informed choices in challenging situations.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "hard"
     },
     {
      "id": "beh-65",
      "q": "What role do mentorship and professional development play in your career?",
      "a": "Mentorship and professional development are vital components of my career growth. I actively seek mentorship from experienced professionals to gain valuable insights and guidance. Additionally, I continually invest in professional development opportunities, such as courses and certifications, to stay relevant in my field.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-66",
      "q": "Can you describe a situation when you had to motivate a team member who was demotivated or struggling?",
      "a": "I once had a team member who was demotivated due to personal challenges. I approached them with empathy, offered support, and worked together to adjust their workload and deadlines. By showing understanding and offering assistance, we successfully helped them regain motivation and contribute positively to the team.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-67",
      "q": "How do you ensure your work aligns with the company's mission and values?",
      "a": "I regularly refer to the company's mission and values as guiding principles in my work. I ensure that my actions, decisions, and projects align with these values, and I actively contribute to a positive work culture that reflects the company's mission.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "easy"
     },
     {
      "id": "beh-68",
      "q": "Can you discuss a time when you had to take on additional responsibilities beyond your job description?",
      "a": "In a previous role, my team was short-staffed, and I willingly took on additional responsibilities to ensure project completion. I balanced these tasks alongside my existing workload and communicated effectively with my manager to prioritize deliverables. This flexibility allowed us to meet project deadlines successfully.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-69",
      "q": "How do you handle situations where you need to persuade stakeholders or team members to change their opinion or approach?",
      "a": "To persuade stakeholders or team members, I focus on presenting data-backed arguments and benefits. I actively listen to their concerns, address any objections, and find common ground. Building consensus through open and respectful communication is key to achieving buy-in for change.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     },
     {
      "id": "beh-70",
      "q": "Can you provide an example of a time when you had to navigate a project with tight budget constraints?",
      "a": "Certainly. I managed a project with tight budget constraints by closely monitoring expenses, negotiating with suppliers for favorable terms, and optimizing resource allocation. By prioritizing essential elements and minimizing non-essential costs, we successfully delivered the project within budget.",
-     "topic": "Behavioral"
+     "topic": "Behavioral",
+     "difficulty": "medium"
     }
    ]
   }

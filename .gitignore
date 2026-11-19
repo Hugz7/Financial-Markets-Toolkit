@@ -6,3 +6,7 @@ __pycache__/
 dist/
 build/
 .env
+
+# Local runtime data (market cache, personal flashcard progress)
+data/cache/
+data/user_progress.json

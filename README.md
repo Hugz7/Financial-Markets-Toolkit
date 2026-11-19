@@ -6,7 +6,7 @@ A Streamlit app for pricing, analysing and simulating derivatives and rates prod
 
 | Section | Page | What it does |
 |---------|------|-------------|
-| Markets | **Market Monitor** | Cross-asset quotes (equities, vol, rates, FX, commodities, crypto) and headlines from 8 financial RSS feeds |
+| Markets | **Market Monitor** | Live ticker tape and NYSE session status (auto-refresh every minute), S&P 500 chart with 1M–5Y ranges and key stats, 12 cross-asset tiles with sparklines and 1D/1W/1M changes, leaders & laggards, and the week's top 8 business stories (NYT, Guardian, BBC — ranked by cross-outlet coverage, publisher photos only) |
 | Options | **Payoff Analyzer** | Multi-leg strategy builder with 14 presets and a P&L-at-maturity chart |
 | Options | **Exotic Pricer** | 15 exotic options in closed form, vanillas under BSM, Black-76 and Bachelier |
 | Options | **Volatility Smile** | Implied-vol smiles, term structure and surface from live option chains |
@@ -14,7 +14,7 @@ A Streamlit app for pricing, analysing and simulating derivatives and rates prod
 | Rates & Forwards | **Swaps** | Cashflows, NPV, DV01 and break-even rate for IRS, basis and cross-currency swaps |
 | Rates & Forwards | **Forwards** | Equity, FX and commodity forwards with term structure and sensitivities |
 | Simulation | **Monte Carlo** | GBM paths, 8 payoffs priced with confidence intervals, convergence vs BSM |
-| Practice | **Interview Prep** | 90 flip-card questions (20 technical markets questions with model answers, 70 behavioural), self-scoring, review-missed mode, searchable list |
+| Practice | **Interview Prep** | 170 flip cards: 100 technical markets questions (options & Greeks, rates & credit, equities/FX/commodities, risk & quant) with model answers, and 70 behavioural questions. Easy / Medium / Hard levels you can re-rate per card, difficulty and topic filters, self-scoring, review-missed mode; progress saved locally |
 | Project | **Roadmap** | Editable list of planned features |
 
 ## Architecture
@@ -43,7 +43,7 @@ The dependency direction is one-way: `views → ui, services, models`; `services
 
 The look follows Apple's "Pro" product pages:
 
-- **Canvas and texture**: a true-black background with slowly drifting coloured light, a faint film-grain overlay, a trading-terminal grid, and a procedurally generated candlestick "horizon" (price, moving average, volume) that scrolls slowly along the bottom. Each page title has its own price line that draws itself on load.
+- **Canvas and texture**: a true-black background with slowly drifting coloured light, a faint film-grain overlay, a trading-terminal grid, and a procedurally generated candlestick "horizon" (price, moving average, volume) that scrolls slowly along the bottom. The price line drawn behind every page title and the candles along the bottom are the real S&P 500 (last year of daily closes, last two years of weekly candles), cached locally after the first download; offline before that, a procedural line stands in.
 - **Materials and depth**: translucent graphite panels with background blur, top-edge highlights and layered shadows; cards lift on hover.
 - **Typography**: SF Pro on Apple devices (Inter elsewhere), large gradient headlines, and two-tone section titles ("Valuation. Grey continuation.").
 - **Navigation**: a translucent top bar with section menus, which becomes a drawer on phones.

@@ -18,7 +18,7 @@ from typing import Iterable, Literal, Optional
 import plotly.graph_objects as go
 import streamlit as st
 
-from ui.backdrop import hero_line_svg, market_tile_svg, svg_data_uri
+from ui.backdrop import candles_svg, hero_line_svg, market_tile_svg, svg_data_uri
 from ui.theme import C
 
 Tone = Literal["default", "pos", "neg", "warn", "accent", "muted"]
@@ -37,16 +37,32 @@ def _cls(tone: Optional[str]) -> str:
 
 # ── Global ────────────────────────────────────────────────────────────────────
 
-@lru_cache(maxsize=1)
-def _backdrop_css() -> str:
-    """CSS variables carrying the procedural market artwork (built once per process)."""
+_HERO = "_fm_hero_series"   # (closes, label) of the real index, set per run by main.py
+
+
+@lru_cache(maxsize=4)
+def _backdrop_css(candles: tuple | None) -> str:
+    """CSS carrying the market artwork: real S&P 500 weekly candles when available
+    (static, full-width, slow sway), else the procedural seamless tile (scrolling)."""
+    if candles:
+        uri = svg_data_uri(candles_svg(list(candles)))
+        return (f':root {{ --fm-market-tile: url("{uri}"); }}\n'
+                '[data-testid="stAppViewContainer"]::before { left: -3%; right: -3%; '
+                'background-size: 100% 100%; background-repeat: no-repeat; '
+                'animation: fm-sway 70s ease-in-out infinite alternate; }')
     return f':root {{ --fm-market-tile: url("{svg_data_uri(market_tile_svg())}"); }}'
 
 
-def inject_styles() -> None:
-    """Load ui/styles.css and reset per-run counters (call once from main.py)."""
+def inject_styles(candles: tuple | None = None,
+                  hero_series: tuple[float, ...] | None = None, hero_label: str | None = None) -> None:
+    """Load ui/styles.css and the market artwork; reset per-run counters.
+
+    candles: weekly (open, high, low, close, volume) rows for the background horizon.
+    hero_series / hero_label: closes drawn behind every page title, and their caption.
+    """
     st.session_state[_PANEL_SEQ] = 0
-    _html(f"<style>{_backdrop_css()}\n{_CSS_PATH.read_text(encoding='utf-8')}</style>")
+    st.session_state[_HERO] = (hero_series, hero_label)
+    _html(f"<style>{_backdrop_css(candles)}\n{_CSS_PATH.read_text(encoding='utf-8')}</style>")
 
 
 def require(condition: bool, message: str) -> None:
@@ -75,9 +91,12 @@ def page_header(title: str, subtitle: str | None = None, eyebrow: str | None = N
     """Hero block: gradient eyebrow, large gradient headline, soft subtitle."""
     eb = f"<div class='fm-eyebrow'>{escape(eyebrow)}</div>" if eyebrow else ""
     sub = f"<p class='fm-subtitle'>{escape(subtitle)}</p>" if subtitle else ""
-    svg, dx, dy = hero_line_svg(title)
+    series, label = st.session_state.get(_HERO, (None, None))
+    svg, dx, dy = hero_line_svg(title, series=series)
+    tag = (f"<span class='fm-hero-tag' style='top:{dy:.1f}%'>{escape(label)}</span>"
+           if series and label else "")
     art = (f"<div class='fm-hero-art' aria-hidden='true'>{svg}"
-           f"<span class='fm-hero-dot' style='left:{dx:.1f}%;top:{dy:.1f}%'></span></div>")
+           f"<span class='fm-hero-dot' style='left:{dx:.1f}%;top:{dy:.1f}%'></span>{tag}</div>")
     _html(f"<header class='fm-hero'>{art}{eb}<h1 class='fm-title'>{escape(title)}</h1>{sub}</header>")
 
 
@@ -171,66 +190,123 @@ def hline_zero(fig: go.Figure) -> None:
 
 # ── Market monitor ────────────────────────────────────────────────────────────
 
+def _pct_html(pct: float, cls: str) -> str:
+    if pct != pct:
+        return f"<span class='{cls} fm-muted'>—</span>"
+    tone = "pos" if pct > 0 else "neg" if pct < 0 else "muted"
+    arrow = "▲" if pct > 0 else "▼" if pct < 0 else ""
+    return f"<span class='{cls} fm-{tone}'>{arrow} {pct:+.2f}%</span>"
+
+
+def sparkline_svg(values: list[float], up: bool | None = None, w: int = 120, h: int = 34) -> str:
+    """Tiny inline line + soft area for a quote tile (no axes)."""
+    vals = [v for v in values if v == v]
+    if len(vals) < 2:
+        return ""
+    lo, hi = min(vals), max(vals)
+    span = (hi - lo) or 1
+    pts = [(i / (len(vals) - 1) * w, 3 + (1 - (v - lo) / span) * (h - 6)) for i, v in enumerate(vals)]
+    d = "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts)
+    up = vals[-1] >= vals[0] if up is None else up
+    col = "var(--fm-pos)" if up else "var(--fm-neg)"
+    return (f"<svg class='fm-spark' viewBox='0 0 {w} {h}' preserveAspectRatio='none' aria-hidden='true'>"
+            f"<path d='{d} L{w},{h} L0,{h} Z' fill='{col}' fill-opacity='0.12'/>"
+            f"<path d='{d}' fill='none' stroke='{col}' stroke-width='1.6' stroke-linejoin='round' "
+            f"vector-effect='non-scaling-stroke'/></svg>")
+
+
 def quote_tiles(quotes: Iterable[dict]) -> None:
-    """quotes: dicts with label, symbol, price_str, pct (float, may be NaN)."""
+    """quotes: dicts with label, symbol, price_str, pct (float, may be NaN),
+    and optionally `spark` (list of closes) and `horizon` (e.g. '1W')."""
     tiles = []
     for i, q in enumerate(quotes):
-        pct = q["pct"]
-        if pct == pct:
-            tone = "pos" if pct > 0 else "neg" if pct < 0 else "muted"
-            arrow = "▲" if pct > 0 else "▼" if pct < 0 else ""
-            chg = f"<span class='fm-quote-chg fm-{tone}'>{arrow} {pct:+.2f}%</span>"
-        else:
-            chg = "<span class='fm-quote-chg fm-muted'>—</span>"
+        spark = sparkline_svg(q.get("spark") or [], up=(q["pct"] >= 0) if q["pct"] == q["pct"] else None)
+        hz = f"<span class='fm-quote-hz'>{escape(q.get('horizon', ''))}</span>" if q.get("horizon") else ""
         tiles.append(
             f"<div class='fm-quote' style='--i:{i}'><div class='fm-quote-top'>"
             f"<span class='fm-quote-name'>{escape(q['label'])}</span>"
             f"<span class='fm-quote-sym'>{escape(q['symbol'])}</span></div>"
-            f"<div class='fm-quote-px'>{escape(q['price_str'])}</div>{chg}</div>"
+            f"<div class='fm-quote-px'>{escape(q['price_str'])}</div>"
+            f"<div class='fm-quote-row'>{_pct_html(q['pct'], 'fm-quote-chg')}{hz}</div>{spark}</div>"
         )
     _html("<div class='fm-quotes'>" + "".join(tiles) + "</div>")
 
 
+def ticker_tape(items: Iterable[dict]) -> None:
+    """Endlessly scrolling tape: dicts with label, price_str, pct. Pauses on hover."""
+    cells = "".join(
+        f"<span class='fm-tape-item'><b>{escape(t['label'])}</b>"
+        f"<span class='fm-tape-px'>{escape(t['price_str'])}</span>{_pct_html(t['pct'], 'fm-tape-chg')}</span>"
+        for t in items
+    )
+    if not cells:
+        return
+    # content duplicated so the -50% translate loops seamlessly
+    _html(f"<div class='fm-tape' aria-label='Market ticker'><div class='fm-tape-track'>"
+          f"<div class='fm-tape-run'>{cells}</div><div class='fm-tape-run' aria-hidden='true'>{cells}</div>"
+          f"</div></div>")
+
+
+def live_status(is_open: bool, clock: str, updated: str) -> None:
+    state = ("<span class='fm-live open'><i></i>NYSE open</span>" if is_open
+             else "<span class='fm-live'><i></i>NYSE closed</span>")
+    _html(f"<div class='fm-status'>{state}<span>{escape(clock)}</span>"
+          f"<span>Updated {escape(updated)}</span></div>")
+
+
+def _safe_url(url: str | None) -> str | None:
+    return url if url and url.startswith("https://") else None
+
+
 def news_grid(articles: Iterable[dict]) -> None:
-    """articles: dicts with source, title, link, summary, img, age."""
+    """Ranked stories: the first is a wide lead card, the rest a grid.
+
+    articles: dicts with source, title, link, summary, img, age, rank, also (other outlets)."""
     cards = []
     for i, a in enumerate(articles):
-        link = a.get("link") or "#"
-        if not link.startswith(("http://", "https://")):
-            link = "#"
-        img = a.get("img")
+        link = _safe_url(a.get("link")) or "#"
+        img = _safe_url(a.get("img"))
         img_html = (f"<div class='fm-news-media'><img class='fm-news-img' loading='lazy' "
-                    f"src='{escape(img, quote=True)}' alt=''></div>"
-                    if img and img.startswith(("http://", "https://")) else "")
+                    f"referrerpolicy='no-referrer' src='{escape(img, quote=True)}' alt=''></div>"
+                    if img else "")
         summary = f"<div class='fm-news-sum'>{escape(a['summary'])}</div>" if a.get("summary") else ""
+        also = (f"<div class='fm-news-also'>Also covered by {escape(', '.join(a['also']))}</div>"
+                if a.get("also") else "")
+        lead = " lead" if i == 0 else ""
         cards.append(
-            f"<a class='fm-news-card fm-reveal' style='--i:{i % 3}' href='{escape(link, quote=True)}' "
+            f"<a class='fm-news-card fm-reveal{lead}' style='--i:{i % 4}' href='{escape(link, quote=True)}' "
             f"target='_blank' rel='noopener noreferrer'>"
             f"{img_html}<div class='fm-news-body'>"
-            f"<div class='fm-news-meta'><span class='fm-news-src'>{escape(a['source'])}</span>"
-            f"<span>{escape(a.get('age', ''))}</span></div>"
-            f"<div class='fm-news-title'>{escape(a['title'])}</div>{summary}</div></a>"
+            f"<div class='fm-news-meta'><span class='fm-news-rank'>{i + 1:02d}</span>"
+            f"<span class='fm-news-src'>{escape(a['source'])}</span>"
+            f"<span class='fm-news-age'>{escape(a.get('age', ''))}</span></div>"
+            f"<div class='fm-news-title'>{escape(a['title'])}</div>{summary}{also}</div></a>"
         )
     _html("<div class='fm-news'>" + "".join(cards) + "</div>")
 
 
 # ── Flashcards ────────────────────────────────────────────────────────────────
 
+_LEVEL_TONE = {"easy": ("Easy", "pos"), "medium": ("Medium", "warn"), "hard": ("Hard", "neg")}
+
+
 def flashcard(card_id: str, question: str, answer: str, *, eyebrow: str, counter: str,
-              points: Iterable[str] = (), status: str | None = None) -> None:
+              points: Iterable[str] = (), status: str | None = None, level: str | None = None) -> None:
     """A 3D flip card. Clicking (or Space on the focused card) flips it client-side:
     a visually hidden checkbox drives the rotation, so no rerun is needed.
-    `status` is 'known' or 'review' to show a badge on both faces."""
+    `status` is 'known' or 'review'; `level` is 'easy' / 'medium' / 'hard'. Both show
+    as badges on each face."""
     cid = escape(card_id, quote=True)
-    tag = ""
+    tag = badge(*_LEVEL_TONE[level]) if level in _LEVEL_TONE else ""
     if status == "known":
-        tag = badge("Known", "pos")
+        tag += " " + badge("Known", "pos")
     elif status == "review":
-        tag = badge("To review", "warn")
+        tag += " " + badge("To review", "warn")
     pts = "".join(f"<li>{escape(p)}</li>" for p in points)
     pts_html = f"<ul class='fm-card-points'>{pts}</ul>" if pts else ""
     # Keyed container: a new card mounts fresh DOM, so it starts question-side up
     # and replays the deal-in animation (otherwise React reuses the checked input).
+    tag = f"<span class='fm-card-tags'>{tag}</span>" if tag else ""
     with st.container(key=f"fmcard-{card_id}"):
         _flashcard_markup(cid, question, answer, eyebrow, counter, tag, pts_html)
 

@@ -68,18 +68,56 @@ def market_tile_svg(seed: int = 7, n: int = 96) -> str:
             f"viewBox='0 0 {TILE_W} {TILE_H}'>{''.join(parts)}{ma}</svg>")
 
 
+def candles_svg(ohlc: list[tuple[float, float, float, float, float]]) -> str:
+    """Real candlesticks (open, high, low, close, volume) + 10-period MA + volume,
+    drawn to stretch across the full width (preserveAspectRatio='none')."""
+    n = len(ohlc)
+    W, H = n * 24, TILE_H
+    lows = [r[2] for r in ohlc]
+    highs = [r[1] for r in ohlc]
+    lo_v, hi_v = min(lows), max(highs)
+    pad = (hi_v - lo_v) * 0.06
+    lo_v, hi_v = lo_v - pad, hi_v + pad
+    top, bottom = 30, H - 110
+    y = lambda v: bottom - (v - lo_v) / (hi_v - lo_v) * (bottom - top)  # noqa: E731
+    vmax = max(r[4] for r in ohlc) or 1
+    parts, ma = [], []
+    for i, (o, h, l_, c, v) in enumerate(ohlc):
+        cx, bw = i * 24 + 12, 11
+        up = c >= o
+        parts.append(f"<line x1='{cx}' y1='{y(h):.1f}' x2='{cx}' y2='{y(l_):.1f}' stroke='#FFFFFF' stroke-width='1.2'/>")
+        yt, yb = y(max(o, c)), y(min(o, c))
+        parts.append(f"<rect x='{cx - bw / 2}' y='{yt:.1f}' width='{bw}' height='{max(yb - yt, 1.5):.1f}' rx='1.5' "
+                     f"fill='#FFFFFF' fill-opacity='{0.85 if up else 0}' stroke='#FFFFFF' stroke-width='1.2'/>")
+        vh = 12 + 70 * v / vmax
+        parts.append(f"<rect x='{cx - bw / 2}' y='{H - 20 - vh:.1f}' width='{bw}' height='{vh:.1f}' rx='1.5' "
+                     f"fill='#FFFFFF' fill-opacity='0.35'/>")
+        window = [r[3] for r in ohlc[max(0, i - 9):i + 1]]
+        ma.append(f"{cx},{y(sum(window) / len(window)):.1f}")
+    ma_line = (f"<polyline points='{' '.join(ma)}' fill='none' stroke='#0A84FF' stroke-width='3' "
+               f"stroke-linejoin='round' stroke-linecap='round' vector-effect='non-scaling-stroke'/>")
+    return (f"<svg xmlns='http://www.w3.org/2000/svg' width='{W}' height='{H}' viewBox='0 0 {W} {H}' "
+            f"preserveAspectRatio='none'>{''.join(parts)}{ma_line}</svg>")
+
+
 def svg_data_uri(svg: str) -> str:
     return "data:image/svg+xml;charset=utf-8," + quote(svg, safe="")
 
 
-def hero_line_svg(title: str, n: int = 64) -> tuple[str, float, float]:
-    """A price line unique to each page (seeded by its title), drawn in on load.
+def hero_line_svg(title: str, n: int = 64,
+                  series: tuple[float, ...] | None = None) -> tuple[str, float, float]:
+    """The price line drawn behind each page title.
 
-    Returns (svg, end_x_pct, end_y_pct); the end marker is positioned in HTML so it
-    stays round while the SVG stretches to the hero's width."""
-    rng = random.Random(zlib.crc32(title.encode("utf-8")))
-    pts = _walk(rng, n, 1.0, closed=False)
-    pts = [p + 0.32 * i for i, p in enumerate(pts)]        # clear uptrend
+    With `series` (e.g. S&P 500 daily closes) the line is that real data; otherwise a
+    procedural walk seeded by the title. Returns (svg, end_x_pct, end_y_pct); the end
+    marker is positioned in HTML so it stays round while the SVG stretches."""
+    if series and len(series) > 2:
+        pts = list(series)
+        n = len(pts) - 1
+    else:
+        rng = random.Random(zlib.crc32(title.encode("utf-8")))
+        pts = _walk(rng, n, 1.0, closed=False)
+        pts = [p + 0.32 * i for i, p in enumerate(pts)]    # clear uptrend
     lo, hi = min(pts), max(pts)
     W, H = 640, 220
     xy = [(i / n * W, 18 + (1 - (p - lo) / (hi - lo or 1)) * (H - 36)) for i, p in enumerate(pts)]
